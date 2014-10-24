@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/maik/catkin_ws/src/rsd_camera_functions/build/devel/setup.sh

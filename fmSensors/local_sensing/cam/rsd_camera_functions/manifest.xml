@@ -1,0 +1,18 @@
+<package>
+  <description brief="barcode_detection">
+
+     learning_image_transport
+
+  </description>
+  <author>Maik</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/learning_image_transport</url>
+  <depend package="image_transport"/>
+  <depend package="opencv2"/>
+  <depend package="cv_bridge"/>
+
+
+</package>
+
+

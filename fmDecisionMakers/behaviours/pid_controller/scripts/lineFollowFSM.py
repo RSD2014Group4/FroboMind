@@ -70,12 +70,13 @@ class StateFollowLineQR(smach.State):
         rospy.loginfo("in regto0")
         #TODO: Create ROS topic CONTROL_TWIST
         CTError = self.calcCTError(linePoints)
+        
+        lineRelDirection = self.lineDirection(linePoints)
+        CTError = CTError * lineRelDirection
+        
+        
         dCTError = (CTError - self.memCTError)/(self.PIDPeriod)
         self.iCTError = self.iCTError + ((self.memCTError + CTError)/2)*(self.PIDPeriod)
-        
-        lineRelDirection = self.lineDirection
-        
-        self.iCTError = self.iCTError * lineRelDirection
         self.memCTError = CTError
         
         

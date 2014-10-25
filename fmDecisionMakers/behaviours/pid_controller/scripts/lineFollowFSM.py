@@ -23,7 +23,7 @@ class StateFollowLineQR(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['outcome1','outcome2'])
         rospy.loginfo("in StateFollowLineQR.init")
-        self.p = 1.0 #The further from the goal, the more power.
+        self.p = -0.6 #The further from the goal, the more power.
         self.i = 0.0 #If some external force is influencing the robot, I will slowly overpower this force
         self.d = 0.0 #Should counter the integrated part when an error of 0 is reoptained
         self.myCenter = [0,0]#[0,0] #Robot center located at (0,0)
@@ -55,13 +55,15 @@ class StateFollowLineQR(smach.State):
     
     def lineDirection(self, linePoints):
 	#y value where checked the x sign
-	y=0.5
+	y=0.75
 	# COmpute line equation
 	a=(linePoints[1][1]-linePoints[0][1])/(linePoints[1][0]-linePoints[0][0])
 	
-	b=linePoints[1][1]-m*linePoints[0][0]
+	b=linePoints[0][1]-a*linePoints[0][0]
 	
 	xval=(y-b)/a
+
+	return xval
 	  
 	if xval > 0:
 	  return 1
@@ -74,7 +76,8 @@ class StateFollowLineQR(smach.State):
         CTError = self.calcCTError(linePoints)
         
         lineRelDirection = self.lineDirection(linePoints)
-        CTError = CTError * lineRelDirection
+        #CTError = CTError * lineRelDirection
+	CTError = lineRelDirection
         
         
         dCTError = (CTError - self.memCTError)/(self.PIDPeriod)
@@ -83,7 +86,7 @@ class StateFollowLineQR(smach.State):
         
         
         
-        rospy.loginfo(lineRelDirection)
+        #rospy.loginfo(lineRelDirection)
         rospy.loginfo(CTError)
         rospy.loginfo(self.iCTError)
         rospy.loginfo(dCTError)
@@ -92,6 +95,8 @@ class StateFollowLineQR(smach.State):
 
         controlSignal = self.p*CTError + self.i*self.iCTError + self.d*dCTError
         controlSignalTwist = controlSignal #!!!!!!!!!!!!!!!!HOW TO SEND TWIST?
+
+	rospy.loginfo(controlSignal)
 
         twist = TwistStamped()
         twist.header.stamp = rospy.Time.now()

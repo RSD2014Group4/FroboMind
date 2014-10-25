@@ -63,9 +63,9 @@ class FrobitInterfaceNode():
 		self.motion = self.MOTION_DRIVE
 
 		# locally defined parameters
-		self.deadman_tout_duration = 0.2 # [s]
-		self.cmd_vel_tout_duration = 0.2 # [s]
-		self.frobit_tout_duration = 0.2 # [s]
+		self.deadman_tout_duration = 1 # [s]
+		self.cmd_vel_tout_duration = 1 # [s]
+		self.frobit_tout_duration = 1 # [s]
 
 		# variables
 		self.frobit_state = 0

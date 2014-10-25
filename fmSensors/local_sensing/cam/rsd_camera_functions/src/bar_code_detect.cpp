@@ -2,9 +2,9 @@
 #include <image_transport/image_transport.h>
 #include <sensor_msgs/image_encodings.h>
 #include <sensor_msgs/Image.h>
-#include <opencv/cvwimage.h>
+//#include <opencv/cvwimage.h>
 #include <opencv/cv.h>
-#include <opencv/highgui.h>
+//#include <opencv/highgui.h>
 #include <cv_bridge/cv_bridge.h>
 #include <math.h>
 #include <zbar.h>
@@ -20,7 +20,8 @@ using namespace zbar;
 //Find the correct name for the kinect topic
 //#define PUBLISHER "camera/image"
 //#define SUBSCRIBER "rsd_camera/image"
-#define SUBSCRIBER "rsd_camera/bar_camera"
+//#define SUBSCRIBER "rsd_camera/bar_camera"
+#define SUBSCRIBER "/usb_cam/image_raw"
 //#define SUBSCRIBER "camera/bar_camera"
 #define PUBLISHER "rsd_camera/barcode"
 
@@ -40,7 +41,7 @@ class SubscribeAndPublish
 	void callback(const sensor_msgs::ImageConstPtr& msg)
 	{
 		// To select wheter to show or not the output image
-		bool show_image=false;
+		bool show_image=TRUE;
 
 		std_msgs::String str;
 		cv_bridge::CvImagePtr cv_ptr;
@@ -98,12 +99,13 @@ class SubscribeAndPublish
 			}
 		}
 		// Show result image
+/*
 		if (show_image)	
 		{
 			imshow("Barcode detection output", imgout);
 			cv::waitKey(3);
 		}
-
+*/
 		// Publish the last of the barcodes detected
 
 		if(str.data!=""){

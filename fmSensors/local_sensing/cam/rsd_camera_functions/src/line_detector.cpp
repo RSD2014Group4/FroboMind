@@ -2,9 +2,9 @@
 #include <image_transport/image_transport.h>
 #include <sensor_msgs/image_encodings.h>
 #include <sensor_msgs/Image.h>
-#include <opencv/cvwimage.h>
+//#include <opencv/cvwimage.h>
 #include <opencv/cv.h>
-#include <opencv/highgui.h>
+//#include <opencv/highgui.h>
 #include <cv_bridge/cv_bridge.h>
 #include <math.h>
 
@@ -22,7 +22,8 @@
 using namespace cv;
 
 // Define names of subscriber and publisher
-#define SUBSCRIBER "rsd_camera/bar_camera"
+//#define SUBSCRIBER "rsd_camera/bar_camera"
+#define SUBSCRIBER "/usb_cam/image_raw"
 //#define SUBSCRIBER "rsd_camera/image"
 
 //#define PUBLISHER "camera/angle"
@@ -44,7 +45,7 @@ class SubscribeAndPublish
 	void callback(const sensor_msgs::ImageConstPtr& msg)
 	{
 		// To select wheter to show or not the output image
-		bool show_image=TRUE;
+		bool show_image=FALSE;
 		
 		cv_bridge::CvImagePtr cv_ptr;
 		try
@@ -85,6 +86,7 @@ class SubscribeAndPublish
 		vector<Vec2f> lines_merged=merge_lines(lines);
 	
 		// Show result image
+/*
 		if (show_image)	
 		{
 			//imshow("Color segmented",mask);
@@ -92,7 +94,7 @@ class SubscribeAndPublish
 			display_lines(image,lines_merged,"Lines merged");
 			//display_lines(image,lines,"Lines");	
 		}
-
+*/
 		cv::waitKey(3);
 	
 		vector<Vec2f> result=transform_point(lines_merged,image.cols,image.rows);

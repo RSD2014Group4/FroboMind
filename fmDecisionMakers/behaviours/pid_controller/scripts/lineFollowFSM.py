@@ -54,12 +54,14 @@ class StateFollowLineQR(smach.State):
         return dist
     
     def lineDirection(self, linePoints):
-	xval = 0
-	# Find the point the furthes in front of the robot
-	if linePoints[0][1] > linePoints[1][1]:
-	  xval = linePoints[0][0]
-	else:
-	  xval = linePoints[1][0]
+	#y value where checked the x sign
+	y=0.5
+	# COmpute line equation
+	a=(linePoints[1][1]-linePoints[0][1])/(linePoints[1][0]-linePoints[0][0])
+	
+	b=linePoints[1][1]-m*linePoints[0][0]
+	
+	xval=(y-b)/a
 	  
 	if xval > 0:
 	  return 1

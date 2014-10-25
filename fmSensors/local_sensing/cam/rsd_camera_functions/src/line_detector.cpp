@@ -12,7 +12,7 @@
 
 // INclude msg class
 //#include "rsd_camera_functions/Num.h"
-#include "rsd_camera_functions/line_points.h"
+#include <rsd_camera_functions/line_points.h>
 
 //#include "std_msgs/String.h"
 //#include "std_msgs/float32.h"

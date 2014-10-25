@@ -53,17 +53,38 @@ class StateFollowLineQR(smach.State):
         dist =  num/denum
         return dist
     
+    def lineDirection(self, linePoints):
+	xval = 0
+	# Find the point the furthes in front of the robot
+	if linePoints[0][1] > linePoints[1][1]:
+	  xval = linePoints[0][0]
+	else:
+	  xval = linePoints[1][0]
+	  
+	if xval > 0:
+	  return 1
+	else:
+	  return -1
+    
     def regulateErrorTo0(self,linePoints):
         rospy.loginfo("in regto0")
         #TODO: Create ROS topic CONTROL_TWIST
         CTError = self.calcCTError(linePoints)
         dCTError = (CTError - self.memCTError)/(self.PIDPeriod)
         self.iCTError = self.iCTError + ((self.memCTError + CTError)/2)*(self.PIDPeriod)
+        
+        lineRelDirection = self.lineDirection
+        
+        self.iCTError = self.iCTError * lineRelDirection
         self.memCTError = CTError
+        
+        
+        
+        rospy.loginfo(lineRelDirection)
         rospy.loginfo(CTError)
         rospy.loginfo(self.iCTError)
         rospy.loginfo(dCTError)
-        rospy.loginfo(linePoints[0][0])
+        #rospy.loginfo(linePoints[0][0])
         #rospy.loginfo("p: " + CTError + ", i: " + self.iCTError + ", d: " + dCTError)
 
         controlSignal = self.p*CTError + self.i*self.iCTError + self.d*dCTError

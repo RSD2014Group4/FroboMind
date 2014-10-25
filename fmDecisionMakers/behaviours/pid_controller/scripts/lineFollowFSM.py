@@ -70,10 +70,10 @@ class StateFollowLineQR(smach.State):
         controlSignalTwist = controlSignal #!!!!!!!!!!!!!!!!HOW TO SEND TWIST?
 
         twist = TwistStamped()
-        twist.linear.x = 0.2;                   # our forward speed
-        twist.linear.y = 0; twist.linear.z = 0;     # we can't use these!        
-        twist.angular.x = 0; twist.angular.y = 0;   #          or these!
-        twist.angular.z = controlSignal;    
+        twist.twist.linear.x = 0.2;                   # our forward speed
+        twist.twist.linear.y = 0; twist.twist.linear.z = 0;     # we can't use these!        
+        twist.twist.angular.x = 0; twist.twist.angular.y = 0;   #          or these!
+        twist.twist.angular.z = controlSignal;    
 
 
         self.publisher.publish(twist)        

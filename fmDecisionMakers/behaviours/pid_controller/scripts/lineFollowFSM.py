@@ -9,7 +9,7 @@ import math
 import numpy
 
 from pid_controller.msg import line_points
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import TwistStamped
 
 
 lineData = [[3.0,2.0],[1.0,1.0]]
@@ -32,7 +32,7 @@ class StateFollowLineQR(smach.State):
         self.PIDFreq =2.0
         self.PIDPeriod = 1/self.PIDFreq
         self.PIDRate = rospy.Rate(self.PIDFreq) # 10hz
-        self.publisher = rospy.Publisher('/fmCommand/cmd_vel', Twist)
+        self.publisher = rospy.Publisher('/fmCommand/cmd_vel', TwistStamped)
 
         
 
@@ -69,7 +69,7 @@ class StateFollowLineQR(smach.State):
         controlSignal = self.p*CTError + self.i*self.iCTError + self.d*dCTError
         controlSignalTwist = controlSignal #!!!!!!!!!!!!!!!!HOW TO SEND TWIST?
 
-        twist = Twist()
+        twist = TwistStamped()
         twist.linear.x = 0.2;                   # our forward speed
         twist.linear.y = 0; twist.linear.z = 0;     # we can't use these!        
         twist.angular.x = 0; twist.angular.y = 0;   #          or these!

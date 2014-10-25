@@ -70,6 +70,7 @@ class StateFollowLineQR(smach.State):
         controlSignalTwist = controlSignal #!!!!!!!!!!!!!!!!HOW TO SEND TWIST?
 
         twist = TwistStamped()
+        twist.header.stamp = rospy.Time.now()
         twist.twist.linear.x = 0.2;                   # our forward speed
         twist.twist.linear.y = 0; twist.twist.linear.z = 0;     # we can't use these!        
         twist.twist.angular.x = 0; twist.twist.angular.y = 0;   #          or these!

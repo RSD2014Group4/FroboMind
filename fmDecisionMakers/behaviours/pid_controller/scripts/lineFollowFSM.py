@@ -32,7 +32,7 @@ class StateFollowLineQR(smach.State):
         self.PIDFreq =2.0
         self.PIDPeriod = 1/self.PIDFreq
         self.PIDRate = rospy.Rate(self.PIDFreq) # 10hz
-        self.publisher = rospy.Publisher('cmd_vel', Twist)
+        self.publisher = rospy.Publisher('/fmCommand/cmd_vel', Twist)
 
         
 

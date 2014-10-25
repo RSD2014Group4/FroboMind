@@ -326,7 +326,7 @@ void compute_intersections(vector<Vec2f> horizontal_lines,vector<Vec2f> vertical
 			   }
 }
 
-void display_lines(Mat image, vector<Vec2f> lines,string name )
+Mat display_lines(Mat image, vector<Vec2f> lines,string name )
 {
 	// Display on image the lines contained in lines.
 	for( size_t i = 0; i < lines.size(); i++ )
@@ -342,7 +342,8 @@ void display_lines(Mat image, vector<Vec2f> lines,string name )
 	                  cvRound(y0 - 1000*(a)));
 	        line( image, pt1, pt2, Scalar(0,0,255), 1, 8 );
 	    }
-		imshow(name,image);
+		//imshow(name,image);
+	return image;
 }
 
 

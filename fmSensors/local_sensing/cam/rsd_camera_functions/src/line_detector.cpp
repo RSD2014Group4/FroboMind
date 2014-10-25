@@ -28,6 +28,7 @@ using namespace cv;
 
 //#define PUBLISHER "camera/angle"
 #define PUBLISHER "rsd_camera/line_points"
+#define IMAGE_PUBLISHER "rsd_camera/image_lines"
 
 class SubscribeAndPublish
 {
@@ -36,7 +37,8 @@ class SubscribeAndPublish
 	{
 		//Topic to publish
 		pub_ = n_.advertise<rsd_camera_functions::line_points>(PUBLISHER, 1);
-		
+		im_pub_ = n_.advertise<sensor_msgs::Image>(IMAGE_PUBLISHER, 1);
+
 		//Topic to subscribe
 		sub_ = n_.subscribe(SUBSCRIBER, 1, &SubscribeAndPublish::callback, this);
 	}
@@ -95,6 +97,10 @@ class SubscribeAndPublish
 			//display_lines(image,lines,"Lines");	
 		}
 */
+
+		Mat image_lines;
+		image_lines=display_lines(image,lines_merged,"Lines merged");
+
 		cv::waitKey(3);
 	
 		vector<Vec2f> result=transform_point(lines_merged,image.cols,image.rows);
@@ -106,6 +112,23 @@ class SubscribeAndPublish
 			cout<<"Point "<<i<<": "<<result[i]<<endl;	
 		}
 	*/
+
+		// Publish output image
+	     cv_bridge::CvImage cvi;
+	     cvi.header.stamp = ros::Time::now();
+	     cvi.header.frame_id = "image";
+	     cvi.encoding = "bgr8";
+	
+             cvi.image=image_lines;
+
+	     sensor_msgs::Image im;
+	     cvi.toImageMsg(im);		
+	
+	     im_pub_.publish(im);
+
+
+		
+
 		rsd_camera_functions::line_points to_publish;
 		if(result.size()!=0)
 		{		
@@ -125,6 +148,7 @@ class SubscribeAndPublish
 	private:
 	ros::NodeHandle n_; 
 	ros::Publisher pub_;
+	ros::Publisher im_pub_;
 	ros::Subscriber sub_;
 
 };

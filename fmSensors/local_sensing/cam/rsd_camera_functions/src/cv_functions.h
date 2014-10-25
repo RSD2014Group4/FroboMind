@@ -42,7 +42,7 @@ Vec2f intersection(Vec2f line1,Vec2f line2);
 
 void compute_intersections(vector<Vec2f> horizontal_lines,vector<Vec2f> vertical_lines,vector<Vec2f>&intersection_points_1,vector<Vec2f>& intersection_points_2);
 
-void display_lines(Mat image, vector<Vec2f> lines,string name );
+Mat display_lines(Mat image, vector<Vec2f> lines,string name );
 
 
 

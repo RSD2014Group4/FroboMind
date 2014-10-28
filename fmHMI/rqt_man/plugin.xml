@@ -1,0 +1,17 @@
+<library path="src">
+  <class name="Man" type="rqt_man.man.Man" base_class_type="qt_gui_py::Plugin">
+    <description>
+      A Python GUI plugin displaying and interacting with web tools.
+    </description>
+    <qtgui>
+      <group>
+        <label>RSD</label>
+        <icon type="theme">folder</icon>
+        <statustip>Plugins related to rsd course 2014</statustip>
+      </group>
+      <label>Man</label>
+      <icon type="theme">input-keyboard</icon>
+      <statustip>A Python GUI plugin for controlling RSD robot</statustip>
+    </qtgui>
+  </class>
+</library>

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package>
+  <name>rqt_man</name>
+  <version>0.0.0</version>
+  <description>The rqt_man_con package for manual control of robot</description>
+
+  <maintainer email="MaSkr09@student.sdu.dk">Martin Skriver</maintainer> 
+  <license>BSD 3-Clause</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>python-rospkg</run_depend>
+  <run_depend>qt_gui</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>rqt_gui</run_depend>
+  <run_depend>rqt_gui_py</run_depend>
+
+  <export>
+    <architecture_independent/>
+    <qt_gui plugin="${prefix}/plugin.xml"/>
+  </export>
+</package>

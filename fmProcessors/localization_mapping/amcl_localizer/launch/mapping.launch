@@ -2,11 +2,6 @@
 
   	<!-- Gmapping - SLAM -->
   	<arg name="scan_topic" default="base_scan"/>
-  	<node name="slam_gmapping" pkg="gmapping" type="slam_gmapping" args="$(arg scan_topic)" />
-
-  	<!-- Map server -->
-  	<node name="map_saver" pkg="map_server" type="map_saver"/>
-
-
+  	<node name="slam_gmapping" pkg="gmapping" type="slam_gmapping" args="scan:=$(arg scan_topic)" />
 </launch>
 

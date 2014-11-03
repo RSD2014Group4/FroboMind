@@ -9,8 +9,8 @@ RoboCard based frobits using 1800/700 ohm voltage dividers:
 -->
 <launch>
 	<!-- Static transforms -->
-	<node pkg="tf" type="static_transform_publisher" name="linkToFoot" args=" 0 0 0 0 0 1 base_footprint base_link 50" />
-	<node pkg="tf" type="static_transform_publisher" name="laserToLink" args="0 0.265 0 0 0 0 1 base_link laser_mount_link 50" />
+	<node pkg="tf" type="static_transform_publisher" name="linkToFoot" args=" 0 0 0 0 0 1 base_footprint base_link 20" />
+	<node pkg="tf" type="static_transform_publisher" name="laserToLink" args="0 0.265 0 0 0 0 1 base_link laser_mount_link 20" />
 
 	<!-- frobit parameters --> 
 	<param name="diff_steer_wheel_distance" value="0.23"/>

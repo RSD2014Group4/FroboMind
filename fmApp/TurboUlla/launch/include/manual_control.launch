@@ -1,0 +1,6 @@
+<launch>
+  <node pkg="twist_to_twist_stamped" name="cmd_vel_converter" type="cmd_vel_converter.py" >
+    <param name="cmd_vel_pub" value="/fmCommand/cmd_vel"/>
+    <param name="cmd_vel_sub" value="/fmCommand/cmd_vel_twist"/>
+  </node>
+</launch>

@@ -1,5 +1,4 @@
 <launch>
-
   	<!-- Gmapping - SLAM -->
   	<arg name="scan_topic" default="base_scan"/>
   	<node name="slam_gmapping" pkg="gmapping" type="slam_gmapping" args="scan:=$(arg scan_topic)" />

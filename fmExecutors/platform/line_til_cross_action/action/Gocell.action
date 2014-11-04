@@ -1,0 +1,12 @@
+# Define the goal
+# uint32 dishwasher_id  # Specify which dishwasher we want to use
+string cell_name  # To what workcell we want to go
+
+---
+# Define the result
+# uint32 total_dishes_cleaned
+string cell_final  # final workcell that we go
+---
+# Define a feedback message
+# float32 percent_complete
+string cell_current  #cell that we are now

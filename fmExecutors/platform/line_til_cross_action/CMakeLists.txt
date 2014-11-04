@@ -1,0 +1,34 @@
+cmake_minimum_required(VERSION 2.8.3)
+project(line_til_cross_action)
+
+## Find catkin macros and libraries
+## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
+## is used, also find other catkin packages
+
+find_package(catkin REQUIRED COMPONENTS roscpp actionlib_msgs actionlib cv_bridge image_transport)
+
+
+
+add_action_files( DIRECTORY action FILES Gocell.action
+)
+
+
+generate_messages(DEPENDENCIES actionlib_msgs std_msgs )
+
+
+catkin_package(	CATKIN_DEPENDS actionlib_msgs  )
+
+# include_directories(include)
+include_directories(
+  ${catkin_INCLUDE_DIRS}
+)
+
+## Declare a cpp executable
+add_executable(line_client src/action_client.cpp)
+add_executable(line_server  src/action_server.cpp)
+
+
+target_link_libraries(line_client ${catkin_LIBRARIES})
+target_link_libraries(line_server ${catkin_LIBRARIES})
+
+

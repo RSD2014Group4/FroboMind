@@ -2,138 +2,228 @@
 #include <image_transport/image_transport.h>
 #include <sensor_msgs/image_encodings.h>
 #include <sensor_msgs/Image.h>
-//#include <opencv/cvwimage.h>
 #include <opencv/cv.h>
-#include <opencv/highgui.h>
 #include <cv_bridge/cv_bridge.h>
 #include <math.h>
-#include <zbar.h>
 
-#include "std_msgs/String.h"
+#include <actionlib/server/simple_action_server.h>
+#include <line_til_cross_action/GocellAction.h>
+#include <std_msgs/Bool.h>
+#include <std_msgs/String.h>
 
-#include <sstream>
+#define IMAGE_SUBSCRIBER "usb_cam/image_raw"
+#define IMAGE_PUBLISHER "line_action/image_raw"
+#define PID_ENABLE_PUBLISHER "line_action/pid_enable"
 
-using namespace cv;
-using namespace zbar;
-
-
-//Find the correct name for the kinect topic
-//#define PUBLISHER "camera/image"
-//#define SUBSCRIBER "rsd_camera/image"
-//#define SUBSCRIBER "rsd_camera/bar_camera"
-#define SUBSCRIBER "line_action/image_raw"
-//#define SUBSCRIBER "camera/bar_camera"
-#define PUBLISHER "line_node/barcode"
+#define CROSS_DETECTED_SUBSCRIBER "line_node/cross_detected"
+#define BAR_CODE_SUBSCRIBER "line_node/barcode"
 
 
-class SubscribeAndPublish
+
+class GocellAction
 {
-	public:
-	SubscribeAndPublish()
-	{
-		//Topic to publish
-		pub_ = n_.advertise<std_msgs::String>(PUBLISHER, 1000);
-		//Topic you want to subscribe
-		sub_ = n_.subscribe(SUBSCRIBER, 1, &SubscribeAndPublish::callback, this);
-	}
+protected:
 
-	// Define Callback function called by the subscriber
-	void callback(const sensor_msgs::ImageConstPtr& msg)
-	{
-		// To select wheter to show or not the output image
-		bool show_image=TRUE;
+  ros::NodeHandle nh_;
+  // NodeHandle instance must be created before this line. Otherwise strange error may occur.
+  actionlib::SimpleActionServer<line_til_cross_action::GocellAction> as_;
+  std::string action_name_;
+  // create messages that are used to published feedback/result
+  line_til_cross_action::GocellFeedback feedback_;
+  line_til_cross_action::GocellResult result_;
 
-		std_msgs::String str;
-		cv_bridge::CvImagePtr cv_ptr;
-		try
-		{
-			cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
-		}
-		catch (cv_bridge::Exception& e)
-		{
-			ROS_ERROR("cv_bridge exception: %s", e.what());
-			return;
-		}
+  ros::Publisher image_pub_;
+  ros::Publisher pid_pub_;
 
-	   // Bar_code detection
-		// Image out is used to show the input image with the barcode with a rectangle
-		Mat imgout; 
-		if (show_image){imgout=cv_ptr->image;} 
-		// Input image hav to be in grayscale. Otherwise barcode detection does not work
-		Mat img;
-		cvtColor(cv_ptr->image,img,CV_BGR2GRAY);
-		
+  ros::Subscriber image_sub_;
+  ros::Subscriber cross_sub_;
+  ros::Subscriber barcode_sub_;
 
 
-		// Create detector object
-		ImageScanner scanner;
-		scanner.set_config(ZBAR_NONE, ZBAR_CFG_ENABLE, 1);
-		int width = img.cols;
-		int height = img.rows;
-		uchar *raw = (uchar *)img.data;
-		// wrap image data
-		Image image(width, height, "Y800", raw, width * height);
-		// scan the image for barcodes
-		scanner.scan(image);
+  cv::Mat image_;
 
-		// Publish all detected barcodes
-		for(Image::SymbolIterator symbol = image.symbol_begin();symbol != image.symbol_end();++symbol) 
-		{
-			// Add string with barcode data to the message
-			str.data=symbol->get_data();
-			
-			// Draw rectangles on barcodes
-			if (show_image)
-			{
-				int n = symbol->get_location_size();
-				vector<Point> vp;
-				for(int i=0;i<n;i++)
-				{
-				   	vp.push_back(Point(symbol->get_location_x(i),symbol->get_location_y(i)));
-				}
-				RotatedRect r = minAreaRect(vp);
-				Point2f pts[4];
-				r.points(pts);
-				for(int i=0;i<4;i++)
-				{
-					line(imgout,pts[i],pts[(i+1)%4],Scalar(255,0,0),3);
-				}
-			}
-		}
-		// Show result image
 
-		if (show_image)	
-		{
-			imshow("Barcode detection output", imgout);
-			cv::waitKey(3);
-		}
+   std::string barcode_value_;
+   bool success_;
+  int counter_;
 
-		// Publish the last of the barcodes detected
 
-		if(str.data!=""){
-		pub_.publish(str);
-		}
-	}
+public:
 
-	private:
-	ros::NodeHandle n_; 
-	ros::Publisher pub_;
-	ros::Subscriber sub_;
+    GocellAction(std::string name) :
+
+    // action server
+    as_(nh_, name, boost::bind(&GocellAction::executeCB, this, _1), false),
+    action_name_(name)
+  {
+        // Sibscribers and publishers
+    image_pub_ = nh_.advertise<sensor_msgs::Image>(IMAGE_PUBLISHER, 1);
+    image_sub_ = nh_.subscribe(IMAGE_SUBSCRIBER, 1, &GocellAction::callback_image, this);
+    pid_pub_=nh_.advertise<std_msgs::Bool>(PID_ENABLE_PUBLISHER,1);
+    cross_sub_ = nh_.subscribe(CROSS_DETECTED_SUBSCRIBER, 1, &GocellAction::callback_cross_detected, this);
+    barcode_sub_ = nh_.subscribe(BAR_CODE_SUBSCRIBER, 1, &GocellAction::callback_barcode_detected, this);
+
+
+    counter_=0;
+    success_=FALSE;
+
+    as_.start();
+  }
+
+  ~GocellAction(void)
+  {
+
+  }
+
+    void callback_barcode_detected(const std_msgs::StringPtr& msg)
+    {
+        ROS_INFO("Barcode detected");
+        barcode_value_=msg->data;
+    }
+
+    void callback_cross_detected(const std_msgs::BoolConstPtr& msg)
+    {
+        ROS_INFO("cross detected");
+
+        success_=msg->data;
+
+
+        // Send to PID to stop publishing
+
+        std_msgs::Bool pid_message;
+        pid_message.data=FALSE;
+
+        pid_pub_.publish(pid_message);
+
+    }
+
+
+
+
+
+
+    void callback_image(const sensor_msgs::ImageConstPtr& msg)
+    {
+
+            // Copy the message
+//            image_message_=msg;
+
+//            ROS_INFO("Image received");
+
+            cv_bridge::CvImagePtr cv_ptr;
+            try
+            {
+                cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
+            }
+            catch (cv_bridge::Exception& e)
+            {
+                ROS_ERROR("cv_bridge exception: %s", e.what());
+                return;
+            }
+            image_=cv_ptr->image;
+
+          // counter_=counter_+1;
+
+    }
+
+
+
+
+
+  void executeCB(const line_til_cross_action::GocellGoalConstPtr &goal)
+  {
+    // helper variables
+
+    success_ = false;
+
+
+    // Publish the image to the line_detector
+    // Publish output image
+
+    //If the image is not empty
+
+    counter_=0;
+
+    std_msgs::Bool pid_message;
+    pid_message.data=TRUE;
+
+    pid_pub_.publish(pid_message);
+
+
+    ros::Rate r(25);
+    while (ros::ok())
+    {
+        if(counter_>300)
+        {
+            break;
+        }
+
+        if(success_)
+        {
+            break;
+        }
+
+        if(image_.data)
+        {
+                ROS_INFO("publishing image");
+                cv_bridge::CvImage cvi;
+                cvi.header.stamp = ros::Time::now();
+                cvi.header.frame_id = "image";
+                cvi.encoding = "bgr8";
+                cvi.image=image_;
+                sensor_msgs::Image im;
+                cvi.toImageMsg(im);
+                image_pub_.publish(im);
+        }
+        counter_++;
+      r.sleep();
+    }
+
+
+      //result_.sequence = feedback_.sequence;
+        result_.cell_final="final_robot";
+         ROS_INFO("%s: Succeeded", action_name_.c_str());
+      // set the action state to succeeded
+
+         if(success_){
+            as_.setSucceeded(result_);
+         }else{
+             as_.setAborted(result_);
+         }
+
+    }
 
 };
 
 
-//End of class SubscribeAndPublish
-
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
-  //Initiate ROS
-  ros::init(argc, argv, "rsd_barcode_detect");
+  ros::init(argc, argv, "Gocell");
 
-  //Create an object of class SubscribeAndPublish that will take care of everything
-  SubscribeAndPublish SAPObject;
-
+  GocellAction gocell(ros::this_node::getName());
   ros::spin();
-
   return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

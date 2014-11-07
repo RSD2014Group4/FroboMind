@@ -8,14 +8,12 @@
 #include <cv_bridge/cv_bridge.h>
 #include <math.h>
 
+#include <std_msgs/Bool.h>
+
 #include "cv_functions.h"
 
 // INclude msg class
-//#include "rsd_camera_functions/Num.h"
-#include <rsd_camera_functions/line_points.h>
-
-//#include "std_msgs/String.h"
-//#include "std_msgs/float32.h"
+#include <line_nodes/line_points.h>
 
 #include <sstream>
 
@@ -23,12 +21,15 @@ using namespace cv;
 
 // Define names of subscriber and publisher
 //#define SUBSCRIBER "rsd_camera/bar_camera"
-#define SUBSCRIBER "/usb_cam/image_raw"
-//#define SUBSCRIBER "rsd_camera/image"
+
+//#define SUBSCRIBER "/usb_cam/image_raw"
+#define SUBSCRIBER "/line_action/image_raw"
+
 
 //#define PUBLISHER "camera/angle"
-#define PUBLISHER "rsd_camera/line_points"
-#define IMAGE_PUBLISHER "rsd_camera/image_lines"
+#define PUBLISHER "line_node/line_points"
+#define IMAGE_PUBLISHER "line_node/image_lines"
+#define CROSS_DETECTED_PUBLISHER "line_node/cross_detected"
 
 class SubscribeAndPublish
 {
@@ -36,8 +37,10 @@ class SubscribeAndPublish
 	SubscribeAndPublish()
 	{
 		//Topic to publish
-		pub_ = n_.advertise<rsd_camera_functions::line_points>(PUBLISHER, 1);
+        pub_ = n_.advertise<line_nodes::line_points>(PUBLISHER, 1);
 		im_pub_ = n_.advertise<sensor_msgs::Image>(IMAGE_PUBLISHER, 1);
+        cross_pub_=n_.advertise<std_msgs::Bool>(CROSS_DETECTED_PUBLISHER,1);
+
 
 		//Topic to subscribe
 		sub_ = n_.subscribe(SUBSCRIBER, 1, &SubscribeAndPublish::callback, this);
@@ -47,7 +50,7 @@ class SubscribeAndPublish
 	void callback(const sensor_msgs::ImageConstPtr& msg)
 	{
 		// To select wheter to show or not the output image
-		bool show_image=FALSE;
+        bool show_image=TRUE;
 		
 		cv_bridge::CvImagePtr cv_ptr;
 		try
@@ -87,8 +90,11 @@ class SubscribeAndPublish
 		// Merge lines
 		vector<Vec2f> lines_merged=merge_lines(lines);
 	
+
+
+
 		// Show result image
-/*
+
 		if (show_image)	
 		{
 			//imshow("Color segmented",mask);
@@ -96,14 +102,57 @@ class SubscribeAndPublish
 			display_lines(image,lines_merged,"Lines merged");
 			//display_lines(image,lines,"Lines");	
 		}
-*/
+
 
 		Mat image_lines;
 		image_lines=display_lines(image,lines_merged,"Lines merged");
 
 		cv::waitKey(3);
 	
-		vector<Vec2f> result=transform_point(lines_merged,image.cols,image.rows);
+
+
+
+
+        if(lines_merged.size()>1)
+        {
+            // there is a cross comming
+
+            std_msgs::Bool pushed_msg;
+            pushed_msg.data=TRUE;
+
+            cross_pub_.publish(pushed_msg);
+
+        }
+
+        int index=0;
+        double max_difference=90;
+
+
+        cout<<"New"<<endl;
+        // Find the line with less angle with the angle closser to 90 degrees
+        for (uint i=0;i<lines_merged.size();i++)
+        {
+            double difference=abs(lines_merged[i][1]);
+
+            cout<<"angle_line: "<<lines_merged[i][1]<<" difference "<<difference<<endl;
+
+            if(difference<max_difference)
+            {
+
+                max_difference=difference;
+                index=i;
+                cout<<"final index= "<<index<<endl;
+
+            }
+        }
+
+        vector<Vec2f> line_followed;
+
+        if(lines_merged.size()>0)
+        {
+            line_followed.push_back(lines_merged.at(index));
+        }
+        vector<Vec2f> result=transform_point(line_followed,image.cols,image.rows);
 
 		// Print the points of the lines
 	/*
@@ -129,7 +178,7 @@ class SubscribeAndPublish
 
 		
 
-		rsd_camera_functions::line_points to_publish;
+        line_nodes::line_points to_publish;
 		if(result.size()!=0)
 		{		
 			to_publish.x1=result[0][0];
@@ -149,7 +198,9 @@ class SubscribeAndPublish
 	ros::NodeHandle n_; 
 	ros::Publisher pub_;
 	ros::Publisher im_pub_;
+    	ros::Publisher cross_pub_;
 	ros::Subscriber sub_;
+
 
 };
 

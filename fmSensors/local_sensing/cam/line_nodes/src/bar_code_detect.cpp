@@ -4,7 +4,7 @@
 #include <sensor_msgs/Image.h>
 //#include <opencv/cvwimage.h>
 #include <opencv/cv.h>
-//#include <opencv/highgui.h>
+#include <opencv/highgui.h>
 #include <cv_bridge/cv_bridge.h>
 #include <math.h>
 #include <zbar.h>
@@ -62,6 +62,8 @@ class SubscribeAndPublish
 		// Input image hav to be in grayscale. Otherwise barcode detection does not work
 		Mat img;
 		cvtColor(cv_ptr->image,img,CV_BGR2GRAY);
+		
+
 
 		// Create detector object
 		ImageScanner scanner;
@@ -99,13 +101,13 @@ class SubscribeAndPublish
 			}
 		}
 		// Show result image
-/*
+
 		if (show_image)	
 		{
 			imshow("Barcode detection output", imgout);
 			cv::waitKey(3);
 		}
-*/
+
 		// Publish the last of the barcodes detected
 
 		if(str.data!=""){

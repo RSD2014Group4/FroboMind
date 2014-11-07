@@ -8,21 +8,23 @@ import smach_ros
 import math
 import numpy
 
-from pid_controller.msg import line_points
+from pid_controller_new.msg import line_points
 from geometry_msgs.msg import TwistStamped
+from std_msgs.msg import Bool
 
 
 lineData = [[3.0,2.0],[1.0,1.0]]
 
 #class BehaviourFollowLine():
-
+pid_enabled=False
+error_enable=0
 
 
 #Follow line using camera until Correct QR is found.
 class StateFollowLineQR(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['outcome1','outcome2'])
-        rospy.loginfo("in StateFollowLineQR.init")
+      #  rospy.loginfo("in StateFollowLineQR.init")
         self.p = -0.6 #The further from the goal, the more power.
         self.i = 0.0 #If some external force is influencing the robot, I will slowly overpower this force
         self.d = 0.0 #Should counter the integrated part when an error of 0 is reoptained
@@ -33,6 +35,7 @@ class StateFollowLineQR(smach.State):
         self.PIDPeriod = 1/self.PIDFreq
         self.PIDRate = rospy.Rate(self.PIDFreq) # 10hz
         self.publisher = rospy.Publisher('/fmCommand/cmd_vel', TwistStamped)
+        self.publish_enabled= False
 
         
 
@@ -71,18 +74,18 @@ class StateFollowLineQR(smach.State):
 	  return -1
     
     def regulateErrorTo0(self,linePoints):
-        rospy.loginfo("in regto0")
+       # rospy.loginfo("in regto0")
         #TODO: Create ROS topic CONTROL_TWIST
-        CTError = self.calcCTError(linePoints)
+        # CTError = self.calcCTError(linePoints)
         
         lineRelDirection = self.lineDirection(linePoints)
         #CTError = CTError * lineRelDirection
 	CTError = lineRelDirection
         
         
-        dCTError = (CTError - self.memCTError)/(self.PIDPeriod)
-        self.iCTError = self.iCTError + ((self.memCTError + CTError)/2)*(self.PIDPeriod)
-        self.memCTError = CTError
+        dCTError = error_enable * (CTError - self.memCTError)/(self.PIDPeriod)
+        self.iCTError = error_enable*(self.iCTError + ((self.memCTError + CTError)/2)*(self.PIDPeriod))
+        self.memCTError = error_enable*CTError
         
         
         
@@ -96,7 +99,7 @@ class StateFollowLineQR(smach.State):
         controlSignal = self.p*CTError + self.i*self.iCTError + self.d*dCTError
         controlSignalTwist = controlSignal #!!!!!!!!!!!!!!!!HOW TO SEND TWIST?
 
-	rospy.loginfo(controlSignal)
+	#rospy.loginfo(controlSignal)
 
         twist = TwistStamped()
         twist.header.stamp = rospy.Time.now()
@@ -106,7 +109,8 @@ class StateFollowLineQR(smach.State):
         twist.twist.angular.z = controlSignal;    
 
 
-        self.publisher.publish(twist)        
+        if pid_enabled :
+            self.publisher.publish(twist)        
 
         return controlSignalTwist
     
@@ -115,7 +119,7 @@ class StateFollowLineQR(smach.State):
         return 0
     
     def execute(self, userdata):
-        rospy.loginfo('Executing state StateFollowLineQR')
+       # rospy.loginfo('Executing state StateFollowLineQR')
         #TODO: Get rsd_LineData from Isaacs code        
         
         #linePoints1 = [[1,3],[3,4]]       
@@ -136,7 +140,7 @@ class StateWaitAtQR(smach.State):
         smach.State.__init__(self, outcomes=['outcome2'])
 
     def execute(self, userdata):
-        rospy.loginfo('Executing state StateWaitAtQR')
+        #rospy.loginfo('Executing state StateWaitAtQR')
         return 'outcome2' #loop this state  
 
 
@@ -158,6 +162,30 @@ def callback(data):
     global lineData
     lineData = [[data.x1,data.y1],[data.x2,data.y2]]
    # rospy.loginfo(data.x1)
+   
+   
+def callback_pid_enable(data):
+    #rospy.loginfo(data.data)
+    #rospy.loginfo("%f y: %f" % (data.x1, data.y1))
+   
+    rospy.loginfo("Received from subscriber")  
+   # rospy.loginfo(data.data)   
+    
+    global pid_enabled
+    pid_enabled=data.data
+
+    # Dirty trick!!!
+    # For reseting the error, what I do is multiplying the errormem by 0 when I am not publishing
+    # this way, we avoid the error_i part from growing while we are not doing the line following.    
+    global error_enable
+    if data.data :
+        error_enable=1
+    else :
+        error_enable=0
+   
+    
+   
+   
 # main
 def main():
     #rospy.init_node('smach_example_state_machine')
@@ -172,7 +200,12 @@ def main():
     rospy.loginfo("Started")
 
     #publisher = rospy.Publisher('cmd_vel', Twist)
-    rospy.Subscriber("rsd_camera/line_points", line_points, callback)
+    rospy.Subscriber("line_node/line_points", line_points, callback)
+    
+    ## Subscriber for enabling or not the publishing
+    rospy.Subscriber("line_action/pid_enable",Bool , callback_pid_enable)
+    
+    
 
     # spin() simply keeps python from exiting until this node is stopped
     #rospy.spin()

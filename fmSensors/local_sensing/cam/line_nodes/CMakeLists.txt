@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(rsd_camera_functions)
+project(line_nodes)
 
 find_package(catkin REQUIRED COMPONENTS message_generation std_msgs roscpp cv_bridge image_transport)
 
@@ -12,8 +12,8 @@ add_message_files(
 )
 
 
-add_executable(bar_code_detect src/bar_code_detect.cpp)
-add_executable(line_detector src/line_detector.cpp src/cv_functions.cpp)
+add_executable(barcode_det src/bar_code_detect.cpp)
+add_executable(line_det src/line_detector.cpp src/cv_functions.cpp)
 
 
 ## Generate added messages and services with any dependencies listed here
@@ -71,9 +71,9 @@ catkin_package(
 
 #target_link_libraries(example ${PROJECT_NAME})
 #target_link_libraries(my_subscriber ${catkin_LIBRARIES} zbar)
-target_link_libraries(bar_code_detect ${catkin_LIBRARIES} zbar)
-target_link_libraries(bar_code_detect ${OpenCV_LIBRARIES})
-target_link_libraries(line_detector ${catkin_LIBRARIES})
+target_link_libraries(barcode_det ${catkin_LIBRARIES} zbar)
+target_link_libraries(barcode_det ${OpenCV_LIBRARIES})
+target_link_libraries(line_det ${catkin_LIBRARIES})
 #target_link_libraries(line_detector ${catkin_LIBRARIES} eigen3)
 
 

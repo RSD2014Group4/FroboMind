@@ -31,10 +31,10 @@ using namespace std;
 // Camera focal length
 float f=320;
 // Distance from camera axis to the plane cm
-float dist=0.15;
-float y_offset=0.300;
+float dist=0.10;
+float y_offset=0.200;
 // Angle of rotation of x to put z pointing down
-float alpha=60 * 3.141592654/180;
+float alpha=30 * 3.141592654/180;
 
 float alpha_rot=alpha-3.141592654;
 
@@ -62,9 +62,9 @@ vector<Vec2f> transform_point(vector<Vec2f> lines,int rows, int cols)
 	//cout<<"Image: size"<<cols<<" "<<rows <<endl;
 	vector<Vec2f> points_uv;
 
-	for (int i=0;i<lines.size();i++)
-	{
-		float rho = lines[i][0];
+    for (int i=0;i<lines.size();i++)
+    {
+        float rho = lines[i][0];
 		float theta = lines[i][1];
 		double a = cos(theta), b = sin(theta);
 		double x0 = a*rho, y0 = b*rho;
@@ -81,7 +81,7 @@ vector<Vec2f> transform_point(vector<Vec2f> lines,int rows, int cols)
 		point[1]=y0 - 200*(a)- (float)rows/2;
 		points_uv.push_back(point);
 		//cout<<"Point2: "<<point[0]<<" , "<<point[1]<<endl;
-	}
+    }
 	
 	// Now we have the pixels computed	
 
@@ -342,7 +342,7 @@ Mat display_lines(Mat image, vector<Vec2f> lines,string name )
 	                  cvRound(y0 - 1000*(a)));
 	        line( image, pt1, pt2, Scalar(0,0,255), 1, 8 );
 	    }
-		//imshow(name,image);
+        imshow(name,image);
 	return image;
 }
 

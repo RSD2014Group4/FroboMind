@@ -95,6 +95,7 @@ class SubscribeAndPublish
 
 		// Show result image
 
+		/*
 		if (show_image)	
 		{
 			//imshow("Color segmented",mask);
@@ -102,7 +103,7 @@ class SubscribeAndPublish
 			display_lines(image,lines_merged,"Lines merged");
 			//display_lines(image,lines,"Lines");	
 		}
-
+		*/
 
 		Mat image_lines;
 		image_lines=display_lines(image,lines_merged,"Lines merged");

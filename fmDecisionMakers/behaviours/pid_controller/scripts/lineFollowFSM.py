@@ -8,7 +8,7 @@ import smach_ros
 import math
 import numpy
 
-from pid_controller_new.msg import line_points
+from pid_controller.msg import line_points
 from geometry_msgs.msg import TwistStamped
 from std_msgs.msg import Bool
 

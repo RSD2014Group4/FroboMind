@@ -165,7 +165,7 @@ public:
 
         if(image_.data)
         {
-                ROS_INFO("publishing image");
+              //  ROS_INFO("publishing image");
                 cv_bridge::CvImage cvi;
                 cvi.header.stamp = ros::Time::now();
                 cvi.header.frame_id = "image";

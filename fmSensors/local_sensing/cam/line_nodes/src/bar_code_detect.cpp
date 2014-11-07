@@ -4,7 +4,7 @@
 #include <sensor_msgs/Image.h>
 //#include <opencv/cvwimage.h>
 #include <opencv/cv.h>
-#include <opencv/highgui.h>
+//#include <opencv/highgui.h>
 #include <cv_bridge/cv_bridge.h>
 #include <math.h>
 #include <zbar.h>
@@ -58,7 +58,7 @@ class SubscribeAndPublish
 	   // Bar_code detection
 		// Image out is used to show the input image with the barcode with a rectangle
 		Mat imgout; 
-		if (show_image){imgout=cv_ptr->image;} 
+		//if (show_image){imgout=cv_ptr->image;} 
 		// Input image hav to be in grayscale. Otherwise barcode detection does not work
 		Mat img;
 		cvtColor(cv_ptr->image,img,CV_BGR2GRAY);
@@ -82,6 +82,7 @@ class SubscribeAndPublish
 			// Add string with barcode data to the message
 			str.data=symbol->get_data();
 			
+			/*
 			// Draw rectangles on barcodes
 			if (show_image)
 			{
@@ -99,14 +100,17 @@ class SubscribeAndPublish
 					line(imgout,pts[i],pts[(i+1)%4],Scalar(255,0,0),3);
 				}
 			}
+			*/
 		}
 		// Show result image
 
+		/*
 		if (show_image)	
 		{
 			imshow("Barcode detection output", imgout);
 			cv::waitKey(3);
 		}
+		*/
 
 		// Publish the last of the barcodes detected
 

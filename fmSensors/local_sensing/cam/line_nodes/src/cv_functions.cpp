@@ -31,8 +31,8 @@ using namespace std;
 // Camera focal length
 float f=320;
 // Distance from camera axis to the plane cm
-float dist=0.10;
-float y_offset=0.200;
+float dist=0.35;
+float y_offset=0.300;
 // Angle of rotation of x to put z pointing down
 float alpha=30 * 3.141592654/180;
 
@@ -342,7 +342,7 @@ Mat display_lines(Mat image, vector<Vec2f> lines,string name )
 	                  cvRound(y0 - 1000*(a)));
 	        line( image, pt1, pt2, Scalar(0,0,255), 1, 8 );
 	    }
-        imshow(name,image);
+        //imshow(name,image);
 	return image;
 }
 

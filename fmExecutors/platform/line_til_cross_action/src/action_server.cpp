@@ -2,435 +2,138 @@
 #include <image_transport/image_transport.h>
 #include <sensor_msgs/image_encodings.h>
 #include <sensor_msgs/Image.h>
+//#include <opencv/cvwimage.h>
 #include <opencv/cv.h>
+#include <opencv/highgui.h>
 #include <cv_bridge/cv_bridge.h>
 #include <math.h>
+#include <zbar.h>
 
-#include <actionlib/server/simple_action_server.h>
-#include <line_til_cross_action/GocellAction.h>
-#include <std_msgs/Bool.h>
+#include "std_msgs/String.h"
 
-#define IMAGE_SUBSCRIBER "usb_cam/image_raw"
-#define IMAGE_PUBLISHER "line_action/image_raw"
-#define PID_ENABLE_PUBLISHER "line_action/pid_enable"
+#include <sstream>
 
-#define CROSS_DETECTED_SUBSCRIBER "line_node/cross_detected"
+using namespace cv;
+using namespace zbar;
 
 
-class GocellAction
+//Find the correct name for the kinect topic
+//#define PUBLISHER "camera/image"
+//#define SUBSCRIBER "rsd_camera/image"
+//#define SUBSCRIBER "rsd_camera/bar_camera"
+#define SUBSCRIBER "line_action/image_raw"
+//#define SUBSCRIBER "camera/bar_camera"
+#define PUBLISHER "line_node/barcode"
+
+
+class SubscribeAndPublish
 {
-protected:
+	public:
+	SubscribeAndPublish()
+	{
+		//Topic to publish
+		pub_ = n_.advertise<std_msgs::String>(PUBLISHER, 1000);
+		//Topic you want to subscribe
+		sub_ = n_.subscribe(SUBSCRIBER, 1, &SubscribeAndPublish::callback, this);
+	}
 
-  ros::NodeHandle nh_;
-  // NodeHandle instance must be created before this line. Otherwise strange error may occur.
-  actionlib::SimpleActionServer<line_til_cross_action::GocellAction> as_;
-  std::string action_name_;
-  // create messages that are used to published feedback/result
-  line_til_cross_action::GocellFeedback feedback_;
-  line_til_cross_action::GocellResult result_;
+	// Define Callback function called by the subscriber
+	void callback(const sensor_msgs::ImageConstPtr& msg)
+	{
+		// To select wheter to show or not the output image
+		bool show_image=TRUE;
 
-  ros::Publisher image_pub_;
-  ros::Publisher pid_pub_;
+		std_msgs::String str;
+		cv_bridge::CvImagePtr cv_ptr;
+		try
+		{
+			cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
+		}
+		catch (cv_bridge::Exception& e)
+		{
+			ROS_ERROR("cv_bridge exception: %s", e.what());
+			return;
+		}
 
-  ros::Subscriber image_sub_;
-  ros::Subscriber cross_sub_;
-
-
-  cv::Mat image_;
-
-
-
-   bool success_;
-  int counter_;
-
-
-public:
-
-    GocellAction(std::string name) :
-
-    // action server
-    as_(nh_, name, boost::bind(&GocellAction::executeCB, this, _1), false),
-    action_name_(name)
-  {
-        // Sibscribers and publishers
-    image_pub_ = nh_.advertise<sensor_msgs::Image>(IMAGE_PUBLISHER, 1);
-    image_sub_ = nh_.subscribe(IMAGE_SUBSCRIBER, 1, &GocellAction::callback_image, this);
-    pid_pub_=nh_.advertise<std_msgs::Bool>(PID_ENABLE_PUBLISHER,1);
-    cross_sub_ = nh_.subscribe(CROSS_DETECTED_SUBSCRIBER, 1, &GocellAction::callback_cross_detected, this);
+	   // Bar_code detection
+		// Image out is used to show the input image with the barcode with a rectangle
+		Mat imgout; 
+		if (show_image){imgout=cv_ptr->image;} 
+		// Input image hav to be in grayscale. Otherwise barcode detection does not work
+		Mat img;
+		cvtColor(cv_ptr->image,img,CV_BGR2GRAY);
+		
 
 
-    counter_=0;
-    success_=FALSE;
+		// Create detector object
+		ImageScanner scanner;
+		scanner.set_config(ZBAR_NONE, ZBAR_CFG_ENABLE, 1);
+		int width = img.cols;
+		int height = img.rows;
+		uchar *raw = (uchar *)img.data;
+		// wrap image data
+		Image image(width, height, "Y800", raw, width * height);
+		// scan the image for barcodes
+		scanner.scan(image);
 
-    as_.start();
-  }
+		// Publish all detected barcodes
+		for(Image::SymbolIterator symbol = image.symbol_begin();symbol != image.symbol_end();++symbol) 
+		{
+			// Add string with barcode data to the message
+			str.data=symbol->get_data();
+			
+			// Draw rectangles on barcodes
+			if (show_image)
+			{
+				int n = symbol->get_location_size();
+				vector<Point> vp;
+				for(int i=0;i<n;i++)
+				{
+				   	vp.push_back(Point(symbol->get_location_x(i),symbol->get_location_y(i)));
+				}
+				RotatedRect r = minAreaRect(vp);
+				Point2f pts[4];
+				r.points(pts);
+				for(int i=0;i<4;i++)
+				{
+					line(imgout,pts[i],pts[(i+1)%4],Scalar(255,0,0),3);
+				}
+			}
+		}
+		// Show result image
 
-  ~GocellAction(void)
-  {
-  }
+		if (show_image)	
+		{
+			imshow("Barcode detection output", imgout);
+			cv::waitKey(3);
+		}
 
+		// Publish the last of the barcodes detected
 
+		if(str.data!=""){
+		pub_.publish(str);
+		}
+	}
 
-
-    void callback_cross_detected(const std_msgs::BoolConstPtr& msg)
-    {
-        ROS_INFO("cross detected");
-
-        success_=msg->data;
-
-
-        // Send to PID to stop publishing
-
-        std_msgs::Bool pid_message;
-        pid_message.data=FALSE;
-
-        pid_pub_.publish(pid_message);
-
-
-    }
-
-
-
-
-
-
-    void callback_image(const sensor_msgs::ImageConstPtr& msg)
-    {
-
-            // Copy the message
-//            image_message_=msg;
-
-//            ROS_INFO("Image received");
-
-            cv_bridge::CvImagePtr cv_ptr;
-            try
-            {
-                cv_ptr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
-            }
-            catch (cv_bridge::Exception& e)
-            {
-                ROS_ERROR("cv_bridge exception: %s", e.what());
-                return;
-            }
-            image_=cv_ptr->image;
-
-          // counter_=counter_+1;
-
-    }
-
-
-
-
-
-  void executeCB(const line_til_cross_action::GocellGoalConstPtr &goal)
-  {
-    // helper variables
-
-    success_ = false;
-
-
-    // Publish the image to the line_detector
-    // Publish output image
-
-    //If the image is not empty
-
-    counter_=0;
-
-    std_msgs::Bool pid_message;
-    pid_message.data=TRUE;
-
-    pid_pub_.publish(pid_message);
-
-
-    ros::Rate r(25);
-    while (ros::ok())
-    {
-        if(counter_>100)
-        {
-            break;
-        }
-
-        if(success_)
-        {
-            break;
-        }
-
-        if(image_.data)
-        {
-                ROS_INFO("publishing image");
-                cv_bridge::CvImage cvi;
-                cvi.header.stamp = ros::Time::now();
-                cvi.header.frame_id = "image";
-                cvi.encoding = "bgr8";
-                cvi.image=image_;
-                sensor_msgs::Image im;
-                cvi.toImageMsg(im);
-                image_pub_.publish(im);
-        }
-        counter_++;
-      r.sleep();
-    }
-
-
-
-      //result_.sequence = feedback_.sequence;
-        result_.cell_final="final_robot";
-         ROS_INFO("%s: Succeeded", action_name_.c_str());
-      // set the action state to succeeded
-
-         if(success_){
-            as_.setSucceeded(result_);
-         }else{
-             as_.setAborted(result_);
-         }
-
-    }
-
-
+	private:
+	ros::NodeHandle n_; 
+	ros::Publisher pub_;
+	ros::Subscriber sub_;
 
 };
 
 
-int main(int argc, char** argv)
-{
-  ros::init(argc, argv, "Gocell");
+//End of class SubscribeAndPublish
 
-  GocellAction gocell(ros::this_node::getName());
+int main(int argc, char **argv)
+{
+  //Initiate ROS
+  ros::init(argc, argv, "rsd_barcode_detect");
+
+  //Create an object of class SubscribeAndPublish that will take care of everything
+  SubscribeAndPublish SAPObject;
+
   ros::spin();
+
   return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////// Old code///////////////////////////////////////////////////////////////////////////////////////
-
-//Execute with feedbacks
-
-//void executeCB(const line_til_cross_action::GocellGoalConstPtr &goal)
-//{
-//  // helper variables
-//  ros::Rate r(10);
-//  bool success = true;
-
-//  // publish info to the console for the user
-//  //ROS_INFO("%s: Executing, creating fibonacci sequence of order %i with seeds %i, %i", action_name_.c_str(), goal->order, feedback_.sequence[0], feedback_.sequence[1]);
-
-////  ROS_INFO("in the executeCB");
-
-
-//  // start executing the action
-//  for(int i=0; i<=2; i++)
-//  {
-//    // check that preempt has not been requested by the client
-//    if (as_.isPreemptRequested() || !ros::ok())
-//    {
-//      ROS_INFO("%s: Preempted", action_name_.c_str());
-//      // set the action state to preempted
-//      as_.setPreempted();
-//      success = false;
-//      break;
-//    }
-//    //feedback_.sequence.push_back(feedback_.sequence[i] + feedback_.sequence[i-1]);
-
-//    feedback_.cell_current="stil working";
-
-
-//    ROS_INFO("Get inside here");
-
-//    // publish the feedback
-//    as_.publishFeedback(feedback_);
-//    // this sleep is not necessary, the sequence is computed at 1 Hz for demonstration purposes
-//    r.sleep();
-//  }
-
-//  if(success)
-//  {
-
-//    //result_.sequence = feedback_.sequence;
-//      result_.cell_final="final_robot";
-//    ROS_INFO("%s: Succeeded", action_name_.c_str());
-//    // set the action state to succeeded
-//    as_.setSucceeded(result_);
-//  }
-//}
-
-
-//};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//#include <ros/ros.h>
-//#include <std_msgs/Float32.h>
-//#include <actionlib/server/simple_action_server.h>
-//#include <line_til_cross_action/GocellAction.h>
-////#include <learning_actionlib/AveragingAction.h>
-
-
-
-
-//class GocellAction
-//{
-//public:
-
-//  GocellAction(std::string name) :
-//    as_(nh_, name, false),
-//    action_name_(name)
-//  {
-//    //register the goal and feeback callbacks
-
-////   as_= server(n, "go_til_cell", boost::bind(&execute, _1, &server), false);
-
-//    as_.registerGoalCallback(boost::bind(&GocellAction::goalCB, this));
-//    as_.registerPreemptCallback(boost::bind(&GocellAction::preemptCB, this));
-//    //subscribe to the data topic of interest
-//    //sub_ = nh_.subscribe("/random_number", 1, &GocellAction::analysisCB, this);
-
-//    as_.start();
-
-//  }
-
-//  ~GocellAction(void)
-//  {
-//  }
-
-//  void goalCB()
-//  {
-
-//    ROS_INFO("In goalCB");
-//    // reset helper variables
-//    data_count_ = 0;
-//    sum_ = 0;
-//    sum_sq_ = 0;
-//    // accept the new goal
-//    goal_ = as_.acceptNewGoal()->dishwasher_id;
-
-//      ROS_INFO("In goal cb");
-
-//      // set the action state to succeeded
-//   //   result_.total_dishes_cleaned=5;
-//      result_.total_dishes_cleaned=5;
-
-//      as_.setSucceeded();
-//     goal_ = as_.acceptNewGoal()->dishwasher_id;
-
-
-//  }
-
-
-//  void preemptCB()
-//  {
-//    ROS_INFO("%s: Preempted", action_name_.c_str());
-//    // set the action state to preempted
-//    as_.setPreempted();
-//  }
-///*
-//  void analysisCB(const std_msgs::Float32::ConstPtr& msg)
-//  {
-//    // make sure that the action hasn't been canceled
-//    if (!as_.isActive())
-//      return;
-
-//    ROS_INFO("%s: Succeeded", action_name_.c_str());
-//    // set the action state to succeeded
-//    result_.total_dishes_cleaned=5;
-
-//    as_.setSucceeded();
-
-
-//  }
-//*/
-//protected:
-
-//  ros::NodeHandle nh_;
-//  actionlib::SimpleActionServer<line_til_cross_action::GocellAction> as_;
-//  std::string action_name_;
-
-//  int data_count_, goal_;
-//  float sum_, sum_sq_;
-//  line_til_cross_action::GocellFeedback feedback_;
-//  line_til_cross_action::GocellResult result_;
-//  ros::Subscriber sub_;
-//};
-
-//int main(int argc, char** argv)
-//{
-//  ros::init(argc, argv, "go_til_cell");
-//  ROS_INFO("Started server");
-//  GocellAction Gocell(ros::this_node::getName());
-//   ROS_INFO("Gocell_created");
-//  ros::spin();
-
-//  return 0;
-//}
-
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/////////////////// Old code///////////////////////////////////////////////////////////////////////////////////////
-
-/*
-#include <line_til_cross_action/GocellAction.h>
-#include <actionlib/server/simple_action_server.h>
-
-using namespace std;
-
-typedef actionlib::SimpleActionServer<line_til_cross_action::GocellAction> Server;
-
-void execute(const line_til_cross_action::GocellGoalConstPtr& goal, Server* as)
-{
-  // Do lots of awesome groundbreaking robot stuff here
-
-
-    // Subscribe to line_crosses
-
-    as->setSucceeded();
-}
-
-int main(int argc, char** argv)
-{
-  ros::init(argc, argv, "go_til_cell_server");
-  ros::NodeHandle n;
-  Server server(n, "go_til_cell", boost::bind(&execute, _1, &server), false);
-  server.start();
-  ros::spin();
-  return 0;
-}
-*/

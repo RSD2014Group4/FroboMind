@@ -21,9 +21,9 @@ using namespace zbar;
 //#define PUBLISHER "camera/image"
 //#define SUBSCRIBER "rsd_camera/image"
 //#define SUBSCRIBER "rsd_camera/bar_camera"
-#define SUBSCRIBER "/usb_cam/image_raw"
+#define SUBSCRIBER "line_action/image_raw"
 //#define SUBSCRIBER "camera/bar_camera"
-#define PUBLISHER "rsd_camera/barcode"
+#define PUBLISHER "line_node/barcode"
 
 
 class SubscribeAndPublish

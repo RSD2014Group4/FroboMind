@@ -10,7 +10,7 @@
 			<param name="covariance_y" value="0.001"/>
 			<param name="covariance_z" value="0.001"/>
 		 </node>
-	</group>
+
 
 	<group ns="fmProcessors">
 		<!-- calculate odometry based on wheel encoders and IMU yaw axis orientation -->

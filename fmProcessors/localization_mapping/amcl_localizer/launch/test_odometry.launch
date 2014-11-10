@@ -1,7 +1,0 @@
-<launch>
-	<include file="$(find TurboUlla)/launch/include/platform.launch"/>
-	<include file="$(find amcl_localizer)/launch/imu.launch"/>
-	<include file="$(find amcl_localizer)/launch/lidar.launch"/>
-	<include file="$(find amcl_localizer)/launch/mapping.launch"/>
-</launch>
-

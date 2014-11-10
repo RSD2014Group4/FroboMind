@@ -1,7 +1,7 @@
 <launch>
 
-		<!-- extract data from messages transmitted by the VectorNav VN-100 IMU -->
-		<node pkg="vectornav_vn100" name="imu_node"  type="vectornav_vn100_node" output="screen"  respawn="true">
+	<group ns="fmSensors">
+		<node pkg="vectornav_vn100" name="imu_node"  type="vectornav_vn100_node" output="screen" >
 			<param name="vectornav_vn100_sub" value="/fmData/imu_rx"/>
 			<param name="imu_pub" value="/fmInformation/imu"/>
 			<param name="frame_id" value="imu_link"/>
@@ -10,7 +10,18 @@
 			<param name="covariance_y" value="0.001"/>
 			<param name="covariance_z" value="0.001"/>
 		 </node>
+	</group>
 
+
+	<group ns="fmLib">
+		<node pkg="serial_string" name="imu_serial_string_node" type="serial_string_node" output="screen" >
+			<param name="publisher_topic" value="/fmData/imu_rx" />	 
+			<param name="subscriber_topic" value="/fmData/imu_tx" />
+			<param name="device" value="/dev/ttyUSB0" />	
+			<param name="baudrate" value="115200" />
+			<param name="termination_character" value="10"/>
+		</node> 	
+	</group>
 
 	<group ns="fmProcessors">
 		<!-- calculate odometry based on wheel encoders and IMU yaw axis orientation -->
@@ -28,8 +39,8 @@
 			<param name="yaw_angle_source" value="imu_angular_velocity" />
 			<param name="imu_angular_velocity_yaw_axis" value="z" />
 			<param name="diff_steer_wheel_distance" value="0.19"/>
-			<param name="ticks_per_meter_left" value="710"></param>  
-			<param name="ticks_per_meter_right" value="710"></param>  
+			<param name="ticks_per_meter_left" value="-710"></param>  
+			<param name="ticks_per_meter_right" value="-710"></param>  
 		</node>
 	</group>  
 </launch>

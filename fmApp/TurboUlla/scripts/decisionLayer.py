@@ -8,17 +8,23 @@ import smach_ros
 import math
 import numpy
 
-COMMAND_WAIT        = 0
-COMMAND_NAVIGATE    = 1
-COMMAND_ABORT       = 2
+from mes_mobile_status.msg import mes_mobile_status
+from mes_mobile_command.msg import mes_mobile_command
 
 
-MESCommand = COMMAND_NAVIGATE
+MESCommand = mes_mobile_command.COMMAND_WAIT
+#target position/zone
 path = 'FloorOut'
+#current position/zone
+position = 'FloorOut'
 
 #TODO: do enum type        
 OFF = 0
 ON = 1
+
+
+#TODO: Dirty code, should not be global variable...
+pub = rospy.Publisher("mes_mobile_status", mes_mobile_status, queue_size = 10)
 
         
 # define state StateFreeAtCoordinateZone
@@ -37,7 +43,13 @@ class StateFreeAtCoordinateZone(smach.State):
         #If command received from MES server, Go to NavigateInCoordinateZone
         if MESCommand == COMMAND_NAVIGATE:
             #TODO:Publish state change to OEE topic
-            #Reset MESCommand to zero         
+            status = mes_mobile_status()
+            status.state = mes_mobile_status.STATE_WORKING
+            status.position = position 
+            pub.publish()
+            #Reset MESCommand to zero
+                #whenever this state, "free", a status have been sent,
+                #and a new command will be set by the callback function
             MESCommand = COMMAND_WAIT
             return 'outcome2' #loop this state  
 
@@ -234,7 +246,8 @@ class StateNavigateInLoadZone(smach.State):
 
 def callback(data):
     rospy.loginfo(data.data)
-    
+    path = data.path
+    MESCommand = data.command
 
 # main
 def main():
@@ -243,8 +256,9 @@ def main():
     rospy.loginfo("desicionLayer started")
 
 #TODO: subscribe to and use messages from MES server
-#    #Subscribe to MES Server client topic. Receive command and path
-#    rospy.Subscriber("rsd_line_points", line_points, callback)
+    #Subscribe to MES Server client topic. Receive command and path
+    rospy.Subscriber("mes_mobile_command", mes_mobile_command, callback)
+    
 
     # spin() simply keeps python from exiting until this node is stopped
    # rospy.spin()

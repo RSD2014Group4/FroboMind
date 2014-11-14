@@ -8,6 +8,7 @@ RoboCard based frobits using 1800/700 ohm voltage dividers:
 
 -->
 <launch>
+	<arg name="sim" default="true" />
 	<!-- Static transforms -->
 	<node pkg="tf" type="static_transform_publisher" name="imuToLink" args=" 0 0 0 0 0 3.14 base_link imu_link 20" />
 	<node pkg="tf" type="static_transform_publisher" name="linkToFoot" args=" 0 0 0 0 0 0 base_footprint base_link 20" />
@@ -18,7 +19,7 @@ RoboCard based frobits using 1800/700 ohm voltage dividers:
 	<param name="ticks_per_meter_left" value="562" />
 	<param name="ticks_per_meter_right" value="562" />
 
-	<group ns="fmLib">
+	<group ns="fmLib" unless="$(arg sim)">
 		<node pkg="sdu_frobit_v2" name="frobit" type="frobit_interface_node.py" output="screen" >
 			<param name="deadman_sub" value="/fmCommand/deadman" />
 			<param name="cmd_vel_sub" value="/fmCommand/cmd_vel" />
@@ -61,5 +62,9 @@ RoboCard based frobits using 1800/700 ohm voltage dividers:
 			<param name="serial_baudrate" value="57600"/>
 			<param name="use_nmea_checksum" value="true"/>
 		</node>
+        </group>
+        <group ns="fmLib" if="$(arg sim)">
+		<node pkg="stage_ros" type="stageros" name="simulator" args="$(find TurboUlla)/stage/frobitpro_robolab_rsd.world"/>
+		<remap from="/fmKnowledge/pose" to="/odom" />
         </group>
 </launch>

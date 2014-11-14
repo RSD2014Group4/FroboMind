@@ -31,6 +31,7 @@ protected:
   // create messages that are used to published feedback/result
   line_til_cross_action::GocellFeedback feedback_;
   line_til_cross_action::GocellResult result_;
+  line_til_cross_action::GocellGoal goal_;
 
   ros::Publisher image_pub_;
   ros::Publisher pid_pub_;
@@ -84,21 +85,28 @@ public:
     void callback_cross_detected(const std_msgs::BoolConstPtr& msg)
     {
         ROS_INFO("cross detected");
+        bool stop=false;
 
-        success_=msg->data;
+
+        if(goal_.cell_name=="")
+        {
+            stop=true;
+        }
+        if(goal_.cell_name==barcode_value_)
+        {
+            stop=true;
+        }
 
 
-        // Send to PID to stop publishing
-
-        std_msgs::Bool pid_message;
-        pid_message.data=FALSE;
-
-        pid_pub_.publish(pid_message);
-
+        if(stop)
+        {
+            success_=msg->data;
+            // Send to PID to stop publishing
+            std_msgs::Bool pid_message;
+            pid_message.data=FALSE;
+            pid_pub_.publish(pid_message);
+        }
     }
-
-
-
 
 
 
@@ -134,6 +142,7 @@ public:
   {
     // helper variables
 
+    goal_.cell_name=goal->cell_name;
     success_ = false;
 
 
@@ -188,7 +197,16 @@ public:
          if(success_){
             as_.setSucceeded(result_);
          }else{
+             std_msgs::Bool pid_message;
+
+             // abort and stop publishing
+             pid_message.data=FALSE;
+             pid_pub_.publish(pid_message);
+
              as_.setAborted(result_);
+
+
+
          }
 
     }

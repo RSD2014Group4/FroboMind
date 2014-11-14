@@ -22,8 +22,8 @@ using namespace cv;
 // Define names of subscriber and publisher
 //#define SUBSCRIBER "rsd_camera/bar_camera"
 
-//#define SUBSCRIBER "/usb_cam/image_raw"
-#define SUBSCRIBER "/line_action/image_raw"
+#define SUBSCRIBER "/camera/image_raw"
+//#define SUBSCRIBER "/line_action/image_raw"
 
 
 //#define PUBLISHER "camera/angle"
@@ -129,7 +129,7 @@ class SubscribeAndPublish
         double max_difference=90;
 
 
-        cout<<"New"<<endl;
+      // cout<<"New"<<endl;
         // Find the line with less angle with the angle closser to 90 degrees
         for (uint i=0;i<lines_merged.size();i++)
         {

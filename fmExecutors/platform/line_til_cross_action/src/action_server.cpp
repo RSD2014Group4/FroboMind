@@ -80,6 +80,17 @@ public:
     {
         ROS_INFO("Barcode detected");
         barcode_value_=msg->data;
+
+        if(goal_.cell_name==barcode_value_)
+        {
+            success_=true;
+            // Send to PID to stop publishing
+            std_msgs::Bool pid_message;
+            pid_message.data=FALSE;
+            pid_pub_.publish(pid_message);
+        }
+
+
     }
 
     void callback_cross_detected(const std_msgs::BoolConstPtr& msg)

@@ -25,13 +25,13 @@ class StateFollowLineQR(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['outcome1','outcome2'])
       #  rospy.loginfo("in StateFollowLineQR.init")
-        self.p = -2.0 #The further from the goal, the more power.
-        self.i = -0.0 #If some external force is influencing the robot, I will slowly overpower this force
+        self.p = -1.5 #The further from the goal, the more power.
+        self.i = -0.5 #If some external force is influencing the robot, I will slowly overpower this force
         self.d = -0.0 #Should counter the integrated part when an error of 0 is reoptained
         self.myCenter = [0,0]#[0,0] #Robot center located at (0,0)
         self.memCTError = 0        
         self.iCTError = 0
-        self.PIDFreq =10.0
+        self.PIDFreq = 20.0
         self.PIDPeriod = 1/self.PIDFreq
         self.PIDRate = rospy.Rate(self.PIDFreq) # 10hz
         self.publisher = rospy.Publisher('/fmCommand/cmd_vel', TwistStamped)

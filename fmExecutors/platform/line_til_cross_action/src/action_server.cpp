@@ -83,7 +83,7 @@ public:
 
         if(goal_.cell_name==barcode_value_)
         {
-            success_=true;
+            success_=TRUE;
             // Send to PID to stop publishing
             std_msgs::Bool pid_message;
             pid_message.data=FALSE;
@@ -96,16 +96,16 @@ public:
     void callback_cross_detected(const std_msgs::BoolConstPtr& msg)
     {
         ROS_INFO("cross detected");
-        bool stop=false;
+        bool stop=FALSE;
 
 
         if(goal_.cell_name=="")
         {
-            stop=true;
+            stop=TRUE;
         }
         if(goal_.cell_name==barcode_value_)
         {
-            stop=true;
+            stop=TRUE;
         }
 
 
@@ -208,6 +208,9 @@ public:
 
          if(success_){
             as_.setSucceeded(result_);
+	    pid_message.data=FALSE;
+	    pid_pub_.publish(pid_message);
+	  
          }else{
              std_msgs::Bool pid_message;
 

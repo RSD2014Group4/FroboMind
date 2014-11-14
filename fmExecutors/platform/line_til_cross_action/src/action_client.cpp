@@ -26,7 +26,7 @@ int main (int argc, char **argv)
 
   //goal.dishwasher_id=20;
 
-  goal.cell_name="";
+  goal.cell_name="Robot 1";
   ac.sendGoal(goal);
 
   //wait for the action to return

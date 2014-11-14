@@ -67,7 +67,7 @@ public:
 
     counter_=0;
     success_=FALSE;
-
+    
     as_.start();
   }
 
@@ -152,6 +152,7 @@ public:
     //If the image is not empty
 
     counter_=0;
+    barcode_value_="";
 
     std_msgs::Bool pid_message;
     pid_message.data=TRUE;

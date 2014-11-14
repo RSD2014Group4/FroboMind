@@ -26,12 +26,12 @@ class StateFollowLineQR(smach.State):
         smach.State.__init__(self, outcomes=['outcome1','outcome2'])
       #  rospy.loginfo("in StateFollowLineQR.init")
         self.p = -2.0 #The further from the goal, the more power.
-        self.i = -1.0 #If some external force is influencing the robot, I will slowly overpower this force
-        self.d = -0.5 #Should counter the integrated part when an error of 0 is reoptained
+        self.i = -0.0 #If some external force is influencing the robot, I will slowly overpower this force
+        self.d = -0.0 #Should counter the integrated part when an error of 0 is reoptained
         self.myCenter = [0,0]#[0,0] #Robot center located at (0,0)
         self.memCTError = 0        
         self.iCTError = 0
-        self.PIDFreq =2.0
+        self.PIDFreq =10.0
         self.PIDPeriod = 1/self.PIDFreq
         self.PIDRate = rospy.Rate(self.PIDFreq) # 10hz
         self.publisher = rospy.Publisher('/fmCommand/cmd_vel', TwistStamped)
@@ -58,7 +58,7 @@ class StateFollowLineQR(smach.State):
     
     def lineDirection(self, linePoints):
 	#y value where checked the x sign
-	y=0.75
+	y=0.7
 	# COmpute line equation
 	a=(linePoints[1][1]-linePoints[0][1])/(linePoints[1][0]-linePoints[0][0])
 	
@@ -103,7 +103,7 @@ class StateFollowLineQR(smach.State):
 
         twist = TwistStamped()
         twist.header.stamp = rospy.Time.now()
-        twist.twist.linear.x = 0.2;                   # our forward speed
+        twist.twist.linear.x = 0.4;                   # our forward speed
         twist.twist.linear.y = 0; twist.twist.linear.z = 0;     # we can't use these!        
         twist.twist.angular.x = 0; twist.twist.angular.y = 0;   #          or these!
         twist.twist.angular.z = controlSignal;    

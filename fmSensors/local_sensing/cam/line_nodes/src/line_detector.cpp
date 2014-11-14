@@ -22,8 +22,8 @@ using namespace cv;
 // Define names of subscriber and publisher
 //#define SUBSCRIBER "rsd_camera/bar_camera"
 
-#define SUBSCRIBER "/camera/image_raw"
-//#define SUBSCRIBER "/line_action/image_raw"
+//#define SUBSCRIBER "/camera/image_raw"
+#define SUBSCRIBER "/line_action/image_raw"
 
 
 //#define PUBLISHER "camera/angle"

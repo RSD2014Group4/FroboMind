@@ -8,7 +8,9 @@ RoboCard based frobits using 1800/700 ohm voltage dividers:
 
 -->
 <launch>
+	<!-- Are we using simulation? -->
 	<arg name="sim" default="true" />
+	<param name="use_sim_time" value="true" if="$(arg sim)" />
 	<!-- Static transforms -->
 	<node pkg="tf" type="static_transform_publisher" name="imuToLink" args=" 0 0 0 0 0 3.14 base_link imu_link 20" />
 	<node pkg="tf" type="static_transform_publisher" name="linkToFoot" args=" 0 0 0 0 0 0 base_footprint base_link 20" />
@@ -63,7 +65,7 @@ RoboCard based frobits using 1800/700 ohm voltage dividers:
 			<param name="use_nmea_checksum" value="true"/>
 		</node>
         </group>
-        <group ns="fmLib" if="$(arg sim)">
+        <group if="$(arg sim)">
 		<node pkg="stage_ros" type="stageros" name="simulator" args="$(find TurboUlla)/stage/frobitpro_robolab_rsd.world"/>
 		<remap from="/fmKnowledge/pose" to="/odom" />
         </group>

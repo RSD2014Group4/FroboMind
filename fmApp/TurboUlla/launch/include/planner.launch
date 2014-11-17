@@ -1,0 +1,15 @@
+<!-- This is the launch file for the planner -->
+<launch>
+
+  <include file="$(find TurboUlla)/launch/include/platform.launch"/>
+  <include file="$(find amcl_localizer)/launch/localizer.launch"/>
+
+  <!-- <node pkg="tf" type="static_transform_publisher" name="mapToBaseFoot" args=" 0 0 0 0 0 0 map base_footprint 20" />  -->
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <rosparam file="$(find TurboUlla)/config/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find TurboUlla)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find TurboUlla)/config/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find TurboUlla)/config/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find TurboUlla)/config/base_local_planner_params.yaml" command="load" />
+  </node>
+</launch>

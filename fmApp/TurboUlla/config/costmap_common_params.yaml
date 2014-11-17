@@ -3,7 +3,7 @@ raytrace_range: 3.0 # The "raytrace_range" parameter determines the range to whi
 footprint: [[-0.20,-0.15],[-0.20,0.35],[0.20,0.35],[0.20,-0.15]]
 # 50 x 40 (center located 15cm from backside)
 #robot_radius: ir_of_robot
-inflation_radius: 0.1
+inflation_radius: 0.2
 
 observation_sources: laser_scan_sensor
 

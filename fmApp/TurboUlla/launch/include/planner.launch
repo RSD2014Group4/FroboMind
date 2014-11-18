@@ -9,7 +9,8 @@
     <rosparam file="$(find TurboUlla)/config/global_costmap_params.yaml" command="load" />
     <rosparam file="$(find TurboUlla)/config/base_local_planner_params.yaml" command="load" />
   </node>
-  <group unless="$(arg sim)">
-    <remap from="/cmd_vel" to="/fmCommand/cmd_vel"/>
-  </group>
+  <node pkg="twist_to_twist_stamped" name="cmd_vel_converter" type="cmd_vel_converter.py" >
+    <param name="cmd_vel_pub" value="/fmCommand/cmd_vel"/>
+    <param name="cmd_vel_sub" value="/cmd_vel"/>
+  </node>
 </launch>

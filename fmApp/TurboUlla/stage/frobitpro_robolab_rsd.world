@@ -46,7 +46,7 @@ obstacles
 # The position model simulates a mobile robot base
 position
 (
-   pose [ 0.0 0.0 0.0 0.0 ] # [x,y,z,heading]
+   pose [ -1.8 0.5 0.0 90 ] # [x,y,z,heading]
    #Shape of robot
    block
    (

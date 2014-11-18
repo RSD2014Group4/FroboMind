@@ -44,8 +44,8 @@ class CmdVelConverter():
 		topic_tw_stamped = rospy.get_param("~cmd_vel_pub", "/fmCommand/cmd_vel")
 		topic_tw = rospy.get_param("~cmd_vel_sub", "/cmd_vel")
 		self.frame_id = rospy.get_param("~frame_id", "base_link")
-		self.twist_pub = rospy.Publisher(topic_tw, TwistStamped, queue_size=10)
-		self.twist_sub = rospy.Subscriber(topic_tw_stamped, Twist, self.onTwist )
+		self.twist_pub = rospy.Publisher(topic_tw_stamped, TwistStamped, queue_size=10)
+		self.twist_sub = rospy.Subscriber(topic_tw, Twist, self.onTwist )
 		self.twist_zero = Twist()
 		self.twist_zero.linear.x = 0.0
 		self.twist_zero.angular.z = 0.0	
@@ -55,7 +55,7 @@ class CmdVelConverter():
 	def onTwist(self,msg):
           self.pubMsg.header.stamp = rospy.Time.now()
           self.pubMsg.twist = msg
-          self.twist_pub.publish(self.msg)
+          self.twist_pub.publish(self.pubMsg)
 
 if __name__ == '__main__':
 	rospy.init_node('cmd_vel_converter')

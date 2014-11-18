@@ -1,0 +1,5 @@
+<launch>
+  <include file="$(find TurboUlla)/launch/include/platform.launch"/>
+  <include file="$(find amcl_localizer)/launch/localizer.launch"/>
+  <include file="$(find TurboUlla)/launch/include/planner.launch"/>
+</launch>

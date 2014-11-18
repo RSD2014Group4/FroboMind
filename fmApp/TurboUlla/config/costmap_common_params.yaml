@@ -3,7 +3,9 @@ raytrace_range: 3.0 # The "raytrace_range" parameter determines the range to whi
 footprint: [[-0.20,-0.15],[-0.20,0.35],[0.20,0.35],[0.20,-0.15]]
 # 50 x 40 (center located 15cm from backside)
 #robot_radius: ir_of_robot
-inflation_radius: 0.2
+inflation_radius: 0.1
+# The inflation radius should be set to the maximum distance from obstacles at which a cost should be incurred. For example, setting the inflation radius at 0.55 meters means that the robot will treat all paths that stay 0.55 meters or more away from obstacles as having equal obstacle cost. 
+
 
 observation_sources: laser_scan_sensor
 

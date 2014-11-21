@@ -17,11 +17,6 @@ RoboCard based frobits using 1800/700 ohm voltage dividers:
 	<node pkg="tf" type="static_transform_publisher" name="linkToFoot" args=" 0 0 0 0 0 0 base_footprint base_link 20" />
 	<node pkg="tf" type="static_transform_publisher" name="laserToLink" args="0.265 0 0 0 0 0 base_link laser_mount_link 20" />
 
-	<!-- frobit parameters --> 
-	<param name="diff_steer_wheel_distance" value="0.23"/>
-	<param name="ticks_per_meter_left" value="562" />
-	<param name="ticks_per_meter_right" value="562" />
-
 	<group ns="fmLib" unless="$(arg sim)">
 		<node pkg="sdu_frobit_v2" name="frobit" type="frobit_interface_node.py" output="screen" >
 			<param name="deadman_sub" value="/fmCommand/deadman" />

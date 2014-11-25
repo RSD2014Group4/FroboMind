@@ -10,6 +10,7 @@ RoboCard based frobits using 1800/700 ohm voltage dividers:
 
 <launch>
 
+ 	<arg name="sim" default="false" />
 
 	<node pkg="usb_cam" name="usb_cam" type="usb_cam_node" />  
 	
@@ -25,7 +26,9 @@ RoboCard based frobits using 1800/700 ohm voltage dividers:
 
 	<include file="$(find TurboUlla)/launch/include/imu.launch"/>
 
-	<include file="$(find TurboUlla)/launch/include/platform.launch"/>
+  	<include file="$(find TurboUlla)/launch/include/planner.launch">
+	    <arg name="sim" value="$(arg sim)"/>
+	  </include>
 
 
 </launch>

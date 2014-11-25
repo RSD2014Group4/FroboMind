@@ -80,7 +80,7 @@ public:
          tf::Matrix3x3(quat).getRPY(roll, pitch, yaw);
 
 
-         std::cout<<"Y= "<<rad2dec*yaw<<std::endl;
+        // std::cout<<"Y= "<<rad2dec*yaw<<std::endl;
 
          if(initial_)
          {

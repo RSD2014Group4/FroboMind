@@ -72,7 +72,7 @@ public:
     void imu_callback(const sensor_msgs::ImuPtr& msg)
     {
         const double rad2dec=180/3.14;
-        const double angle=80/rad2dec;
+        const double angle=70/rad2dec;
         // Transform to RPY rotation
          tf::Quaternion quat(msg->orientation.x,msg->orientation.y,msg->orientation.z,msg->orientation.w);
 
@@ -149,9 +149,9 @@ public:
 
     if(goal->direction=="left")
     {
-        vel_cmd.twist.angular.z=0.5;
+        vel_cmd.twist.angular.z=0.4;
     }else{
-        vel_cmd.twist.angular.z=-0.5;
+        vel_cmd.twist.angular.z=-0.4;
     }
 
     // Publish the image to the line_detector
@@ -176,7 +176,7 @@ public:
             break;
         }
 
-      cmd_vel_pub_.publish(vel_cmd);
+	 cmd_vel_pub_.publish(vel_cmd);
       r.sleep();
     }
 

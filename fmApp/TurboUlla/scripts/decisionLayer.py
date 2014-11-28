@@ -33,9 +33,11 @@ doneNavigating = False
 global MESCommand
 MESCommand = mes_mobile_command.COMMAND_WAIT
 #target position/zone
-path = 'FloorOut'
+#path = 'FloorOut'
+path = 'Line'
 #current position/zone
-position = 'FloorOut'
+#position = 'FloorOut'
+position = 'Line'
 
 #TODO: do enum type        
 ON = 1
@@ -366,10 +368,16 @@ class StateNavigateInLineZone(smach.State):
 
     def navigateToQR(self,QRId):
         self.followLineToCross()
+	rospy.sleep(2)
+
         self.turn90DegRight()
+	rospy.sleep(2)
         self.followLineToCross()
+	rospy.sleep(2)
         self.turn90DegRight()
+	rospy.sleep(2)
         self.followLineToQR(QRId)
+	rospy.sleep(2)
         return 0
         
     def navigateToFloorIn(self):

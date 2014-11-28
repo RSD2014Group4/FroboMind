@@ -2,13 +2,13 @@
 #include <math.h>
 
 #include <actionlib/server/simple_action_server.h>
-#include <spin_90_degrees/spin_degreesAction.h>.h>
+#include <spin_90_degrees/spin_degreesAction.h>
 #include <std_msgs/Bool.h>
 #include <std_msgs/String.h>
 #include <sensor_msgs/Imu.h>
 
 #include <tf/transform_datatypes.h>
-#include <geometry_msgs/Twist.h>
+#include <geometry_msgs/TwistStamped.h>
 
 
 #define cmd_vel_PUBLISHER "/fmCommand/cmd_vel"
@@ -53,7 +53,7 @@ public:
         // Subscribers and publishers
 
     imu_sub_ = nh_.subscribe(IMU_SUBSCRIBER, 1, &spin_degreesAction::imu_callback, this);
-    cmd_vel_pub_=nh_.advertise<geometry_msgs::Twist>(cmd_vel_PUBLISHER,1);
+    cmd_vel_pub_=nh_.advertise<geometry_msgs::TwistStamped>(cmd_vel_PUBLISHER,1);
 
 
 
@@ -72,7 +72,7 @@ public:
     void imu_callback(const sensor_msgs::ImuPtr& msg)
     {
         const double rad2dec=180/3.14;
-        const double angle=80/rad2dec;
+        const double angle=70/rad2dec;
         // Transform to RPY rotation
          tf::Quaternion quat(msg->orientation.x,msg->orientation.y,msg->orientation.z,msg->orientation.w);
 
@@ -135,20 +135,23 @@ public:
     initial_= true;
 
 
-    geometry_msgs::Twist vel_cmd;
+    geometry_msgs::TwistStamped vel_cmd;
 
-    vel_cmd.linear.x=0;
-    vel_cmd.linear.y=0;
-    vel_cmd.linear.z=0;
-    vel_cmd.angular.x=0;
-    vel_cmd.angular.y=0;
+
+    vel_cmd.header.stamp=ros::Time::now();
+
+    vel_cmd.twist.linear.x=0.0;
+    vel_cmd.twist.linear.y=0.0;
+    vel_cmd.twist.linear.z=0.0;
+    vel_cmd.twist.angular.x=0.0;
+    vel_cmd.twist.angular.y=0.0;
 
 
     if(goal->direction=="left")
     {
-        vel_cmd.angular.z=-0.5;
+        vel_cmd.twist.angular.z=0.4;
     }else{
-        vel_cmd.angular.z=+0.5;
+        vel_cmd.twist.angular.z=-0.4;
     }
 
     // Publish the image to the line_detector
@@ -173,7 +176,7 @@ public:
             break;
         }
 
-
+	 cmd_vel_pub_.publish(vel_cmd);
       r.sleep();
     }
 
@@ -183,7 +186,7 @@ public:
          ROS_INFO("%s: Succeeded", action_name_.c_str());
       // set the action state to succeeded
 
-         vel_cmd.angular.z=0;
+         vel_cmd.twist.angular.z=0;
          cmd_vel_pub_.publish(vel_cmd);
 
 

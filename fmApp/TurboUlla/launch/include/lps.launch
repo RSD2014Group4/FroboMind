@@ -1,11 +1,13 @@
+<!-- Look mom, I'm an XML file.. -->
 <launch>
-
-	<group ns="fmLib">
-		<node pkg="socket_tranmerc" type="tcp_client.py" name="marker_locator_tcp_client">
-			<param name="order" value="5" />
-		</node>
-
-	</group>
-
+  <arg name="sim" default="true"/>
+  <group ns="fmLib" unless="$(arg sim)">
+    <node pkg="socket_tranmerc" type="tcp_client.py" name="marker_locator_tcp_client">
+      <param name="order" value="5" />
+    </node>
+  </group>
+  <group if="$(arg sim)">
+    <!-- moved to platform -->
+  </group>
 
 </launch>

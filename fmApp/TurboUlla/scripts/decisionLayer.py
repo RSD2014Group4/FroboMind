@@ -12,7 +12,10 @@ import std_msgs
 
 import actionlib
 
+
 from line_til_cross_action.msg import *
+from spin_90_degrees.msg import *
+
 
 from std_msgs.msg import Bool
 #from std_msgs.msg import String
@@ -39,8 +42,9 @@ ON = 1
 OFF = 0
 
 global goCellClient
+global spin90Client
 goCellClient = actionlib.SimpleActionClient('Gocell', GocellAction)
-#hi
+spin90Client = actionlib.SimpleActionClient('spin_degrees', spin_degreesAction)
 
 #TODO: Dirty code, should not be global variable...
 pubStatus = rospy.Publisher("mes_mobile_status", mes_mobile_status, queue_size = 10)
@@ -376,39 +380,62 @@ class StateNavigateInLineZone(smach.State):
         self.followLineToEnd()        
         
     def followLineToCross(self):
+        global goCellClient
             
-        goal = GocellAction()
+        goal = GocellGoal()
         goal.cell_name = ''#'LoanOn1'
         
         # Fill in the goal here
-        client.send_goal(goal)
-        client.wait_for_result(rospy.Duration.from_sec(5.0))
+        goCellClient.send_goal(goal)
+        goCellClient.wait_for_result(rospy.Duration.from_sec(5.0))
 
     def followLineToQR(self,QRId):
             
-        goal = GocellAction()
-        goal.cell_name = ''#'LoanOn1'
+        global goCellClient
+        
+        
+        goal = GocellGoal()
+        goal.cell_name = QRId#'Robot 1'#'LoanOn1'
         
         # Fill in the goal here
-        client.send_goal(goal)
-        client.wait_for_result(rospy.Duration.from_sec(5.0))
+        goCellClient.send_goal(goal)
+        goCellClient.wait_for_result(rospy.Duration.from_sec(5.0))
 
     def followLineToEnd(self):
+        global goCellClient
+        
         #TODO: Determine end signal...
-        goal = GocellAction()
+        goal = GocellGoal()
         goal.cell_name = ''#'LoanOn1'
         
         # Fill in the goal here
-        client.send_goal(goal)
-        client.wait_for_result(rospy.Duration.from_sec(5.0))
+        goCellClient.send_goal(goal)
+        goCellClient.wait_for_result(rospy.Duration.from_sec(5.0))
 
     def turn90DegRight(self):
-                
+        global goCellClient
+        
+        goal = spin_degreesGoal()
+        goal.direction = 'right'
+        
+        # Fill in the goal here
+        spin90Client.send_goal(goal)
+        spin90Client.wait_for_result(rospy.Duration.from_sec(5.0))
         return 0
         
     def turn90DegLeft(self):
+        global goCellClient
+        
+        goal = spin_degreesGoal()
+        goal.direction = 'left'
+        
+        # Fill in the goal here
+        spin90Client.send_goal(goal)
+        spin90Client.wait_for_result(rospy.Duration.from_sec(5.0))        
+        
+        
             
-            return 0
+        return 0
 # define state StateNavigateInLoadZone
 # Dependent on destination zone, back up different amounts, or move forward to line. Only tip in LoadOn scenario 
 class StateNavigateInLoadZone(smach.State):

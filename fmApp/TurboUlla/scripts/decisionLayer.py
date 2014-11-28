@@ -14,6 +14,7 @@ import actionlib
 
 from line_til_cross_action.msg import *
 
+from std_msgs.msg import Bool
 #from std_msgs.msg import String
 from TurboUlla.msg import mes_mobile_status, mes_mobile_command
 from geometry_msgs.msg import Pose, Point, Quaternion 
@@ -187,6 +188,7 @@ class StateNavigateInCoordinateZone(smach.State):
         #goal assumed reached when navigateToGoal Returns.         
         
         while doneNavigating == False:
+            rospy.loginfo('still navigating')            
             rospy.sleep(5)
         
         #if goal is lineZone, change state to StateFreeAtLineZone           
@@ -405,7 +407,7 @@ class StateNavigateInLineZone(smach.State):
         
     def turn90DegLeft(self):
             
-    return 0
+            return 0
 # define state StateNavigateInLoadZone
 # Dependent on destination zone, back up different amounts, or move forward to line. Only tip in LoadOn scenario 
 class StateNavigateInLoadZone(smach.State):
@@ -416,14 +418,14 @@ class StateNavigateInLoadZone(smach.State):
             #TODO: Is it really Independent of whether in LoadOn or LoadOff zone?
             self.driveForwardToLine()
         else:
-            goal = self.LoadOnOrOff()
+            goal = self.loadOnOrOff()
             if goal == 'LoadOn':
                 self.driveBackwardsToLoadOn()
                 #change to StateFreeAtLoadZone                
 #                return 'outcome2' 
             else:
-                self.driveBackwardsTOLoadOff()
-                tip();                
+                self.driveBackwardsToLoadOff()
+                self.tip();                
                 #change to StateFreeAtLoadZone
 #                return 'outcome2'
                 
@@ -456,7 +458,7 @@ class StateNavigateInLoadZone(smach.State):
             return 'outcome2'
     
     def loadOnOrOff(self):
-        if path == 'LoadOn1' or path == 'LoadOn1' or path == 'LoadOn1':
+        if(path == 'LoadOn1' or path == 'LoadOn2' or path == 'LoadOn3'):
             return 'LoadOn'
         else:
             return 'LoadOff'
@@ -498,12 +500,19 @@ class StateNavigateInLoadZone(smach.State):
         
 
 
-def callback(data):
+def mes_mobile_command_callback(data):
+    rospy.loginfo('In mes_mobile_command_callback()')    
     rospy.loginfo(data)
     global path    
     path = data.path
     global MESCommand    
     MESCommand = data.command
+
+def done_navigating_callback(data):
+    rospy.loginfo('In done_navigating_callback()')    
+    rospy.loginfo(data)
+    global doneNavigating    
+    doneNavigating = data
 
 # main
 def main():
@@ -516,8 +525,8 @@ def main():
 
 #TODO: subscribe to and use messages from MES server
     #Subscribe to MES Server client topic. Receive command and path
-    rospy.Subscriber("mes_mobile_command", mes_mobile_command, callback)
-    
+    rospy.Subscriber("mes_mobile_command", mes_mobile_command, mes_mobile_command_callback)
+    rospy.Subscriber("done_navigating",Bool,done_navigating_callback)
 
    
 
@@ -556,22 +565,22 @@ def main():
         
         sm_line_navigation = smach.StateMachine(outcomes=['outcome5'])
 
-        with sm_line_navigation:
-            ###########################################################            
-            #TODO: Line navigation is only a problem of turning at appripriate times, with known map of line.
-            # this is not a state machine, but more a 
-            ############################################################3
-            smach.StateMachine.add('STATE_NAVIGATE_TO_CROSS', StateNavigateToCross(), 
-                                   transitions={'outcome1':'BAR', 
-                                                'outcome2':'outcome4'})
-            smach.StateMachine.add('STATE_FOLLOW_LINE', StateFollowLine(), 
-                                   transitions={'outcome1':'BAR', 
-                                                'outcome2':'outcome4'})
-            smach.StateMachine.add('STATE_NAVIGATE_TO_CROSS', StateNavigateToCross(), 
-                                   transitions={'outcome1':'BAR', 
-                                                'outcome2':'outcome4'})
+#        with sm_line_navigation:
+#            ###########################################################            
+#            #TODO: Line navigation is only a problem of turning at appripriate times, with known map of line.
+#            # this is not a state machine, but more a 
+#            ############################################################3
+#            smach.StateMachine.add('STATE_NAVIGATE_TO_CROSS', StateNavigateToCross(), 
+#                                   transitions={'outcome1':'BAR', 
+#                                                'outcome2':'outcome4'})
+#            smach.StateMachine.add('STATE_FOLLOW_LINE', StateFollowLine(), 
+#                                   transitions={'outcome1':'BAR', 
+#                                                'outcome2':'outcome4'})
+#            smach.StateMachine.add('STATE_NAVIGATE_TO_CROSS', StateNavigateToCross(), 
+#                                   transitions={'outcome1':'BAR', 
+#                                                'outcome2':'outcome4'})
     # Execute SMACH plan
-    outcome = sm.execute()  
+    outcome = sm_top.execute()  
 
 
 if __name__ == '__main__':

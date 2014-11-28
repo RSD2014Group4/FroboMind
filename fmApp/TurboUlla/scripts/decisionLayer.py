@@ -40,6 +40,7 @@ OFF = 0
 
 global goCellClient
 goCellClient = actionlib.SimpleActionClient('Gocell', GocellAction)
+#hi
 
 #TODO: Dirty code, should not be global variable...
 pubStatus = rospy.Publisher("mes_mobile_status", mes_mobile_status, queue_size = 10)

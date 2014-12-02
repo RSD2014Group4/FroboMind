@@ -4,7 +4,7 @@ project(TurboUlla)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs genmsg tf geometry_msgs amcl gmapping message_generation )
+find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs move_base_msgs genmsg tf geometry_msgs amcl gmapping message_generation  )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)

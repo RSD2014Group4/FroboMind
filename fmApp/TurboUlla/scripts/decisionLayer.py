@@ -12,6 +12,7 @@ import std_msgs
 
 import actionlib
 
+from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 
 from line_til_cross_action.msg import *
 from spin_90_degrees.msg import *
@@ -29,15 +30,18 @@ global doneNavigating
 doneNavigating = False
 
 
+global debugWait
+debugWait = 5
+
 #set from callback function from MES_command topic
 global MESCommand
 MESCommand = mes_mobile_command.COMMAND_WAIT
 #target position/zone
 #path = 'FloorOut'
-path = 'Line'
+path = 'Station1'
 #current position/zone
 #position = 'FloorOut'
-position = 'Line'
+position = 'Station1'
 
 #TODO: do enum type        
 ON = 1
@@ -47,6 +51,11 @@ global goCellClient
 global spin90Client
 goCellClient = actionlib.SimpleActionClient('Gocell', GocellAction)
 spin90Client = actionlib.SimpleActionClient('spin_degrees', spin_degreesAction)
+
+global coordNavClient 
+coordNavClient = actionlib.SimpleActionClient('move_base', MoveBaseAction)#Pose)
+
+
 
 #TODO: Dirty code, should not be global variable...
 pubStatus = rospy.Publisher("mes_mobile_status", mes_mobile_status, queue_size = 10)
@@ -66,16 +75,19 @@ class StateFreeAtCoordinateZone(smach.State):
         global MESCommand
         global position
         global r
+        global debugWait
 #        r.sleep()
         
         #If nothing new received from MES, stay free
         while MESCommand == mes_mobile_command.COMMAND_WAIT:
             #sleep for 5 seconds
+            rospy.loginfo('command was wait. 5 sec')
             status = mes_mobile_status()
+            status.header.stamp = rospy.Time.now()
             status.state = mes_mobile_status.STATE_FREE
             status.position = position 
             pubStatus.publish(status)
-            rospy.sleep(5)
+            rospy.sleep(debugWait)
  
 
         
@@ -83,6 +95,7 @@ class StateFreeAtCoordinateZone(smach.State):
         if MESCommand == mes_mobile_command.COMMAND_NAVIGATE:
             #TODO:Publish state change to OEE topic
             status = mes_mobile_status()
+            status.header.stamp = rospy.Time.now()
             status.state = mes_mobile_status.STATE_WORKING
             status.position = position 
             pubStatus.publish(status)
@@ -103,16 +116,18 @@ class StateFreeAtLineZone(smach.State):
         global MESCommand
         global position
         global r
+        global debugWait
 #        r.sleep()
         
         #If nothing new received from MES, stay free
         while MESCommand == mes_mobile_command.COMMAND_WAIT:
             #sleep for 5 seconds
             status = mes_mobile_status()
+            status.header.stamp = rospy.Time.now()
             status.state = mes_mobile_status.STATE_FREE
             status.position = position 
             pubStatus.publish(status)
-            rospy.sleep(5)
+            rospy.sleep(debugWait)
  
 
         
@@ -120,6 +135,7 @@ class StateFreeAtLineZone(smach.State):
         if MESCommand == mes_mobile_command.COMMAND_NAVIGATE:
             #TODO:Publish state change to OEE topic
             status = mes_mobile_status()
+            status.header.stamp = rospy.Time.now()
             status.state = mes_mobile_status.STATE_WORKING
             status.position = position 
             pubStatus.publish(status)
@@ -142,22 +158,39 @@ class StateFreeAtLoadZone(smach.State):
         global position
         global r
 #        r.sleep()
+        global debugWait
         
         #If nothing new received from MES, stay free
         while MESCommand == mes_mobile_command.COMMAND_WAIT:
             #sleep for 5 seconds
             status = mes_mobile_status()
+            status.header.stamp = rospy.Time.now()
             status.state = mes_mobile_status.STATE_FREE
             status.position = position 
             pubStatus.publish(status)
-            rospy.sleep(5)
+            rospy.sleep(debugWait)
  
 
+        
+        if MESCommand == mes_mobile_command.COMMAND_TIP:
+            #TODO:Publish state change to OEE topic
+            self.tip() #TODO: CALL ACTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            rospy.sleep(debugWait)
+            status = mes_mobile_status()
+            status.header.stamp = rospy.Time.now()
+            status.state = mes_mobile_status.STATE_WORKING
+            status.position = position 
+            pubStatus.publish(status)
+            
+            MESCommand = mes_mobile_command.COMMAND_WAIT
+            
+            return 'outcome1'
         
         #If command received from MES server, Go to NavigateInLoadZone
         if MESCommand == mes_mobile_command.COMMAND_NAVIGATE:
             #TODO:Publish state change to OEE topic
             status = mes_mobile_status()
+            status.header.stamp = rospy.Time.now()
             status.state = mes_mobile_status.STATE_WORKING
             status.position = position 
             pubStatus.publish(status)
@@ -178,29 +211,33 @@ class StateNavigateInCoordinateZone(smach.State):
     def __init__(self): 
         smach.State.__init__(self, outcomes=['outcome1', 'outcome2', 'outcome3'])
         #for now, only a single point is sent as goal. Maybe a list is necesary.
+        
+
+    def execute(self, userdata):
+        global position
+        global r
+        global doneNavigating
+        global debugWait
+#        r.sleep()
+
+        
+        #goal assumed reached when navigateToGoal Returns.         
+        
         wayPoints = self.getWayPointListFromStringCommand(path)
         
         #Call Rudis Functions with list for coordinates, called wayPoints. 
         #TODO: Should this function be a ROS action?        
             #simply sends coordinates to other node. This wakes up 
         self.navigateToGoal(wayPoints)
-
-    def execute(self, userdata):
-        global position
-        global r
-        global doneNavigating
-#        r.sleep()
-
         
-        #goal assumed reached when navigateToGoal Returns.         
-        
-        while doneNavigating == False:
-            rospy.loginfo('still navigating')            
-            rospy.sleep(5)
+#        while doneNavigating == False:
+#            rospy.loginfo('still navigating')            
+#            rospy.sleep(5)
         
         #if goal is lineZone, change state to StateFreeAtLineZone           
         position = path
         status = mes_mobile_status()
+        status.header.stamp = rospy.Time.now()
         status.state = mes_mobile_status.STATE_FREE
         status.position = position 
         pubStatus.publish(status)        
@@ -209,7 +246,25 @@ class StateNavigateInCoordinateZone(smach.State):
         #else, change to StateFreeAtCoordinateZone
         else:
             return 'outcome2'
- 
+
+
+    def navigateToGoal(self,waypoints):
+        global path        
+        global coordNavClient
+        global debugWait
+            
+        goal = MoveBaseGoal()        #self.getWayPointListFromStringCommand(path)
+        goal.target_pose.header.stamp = rospy.Time.now()
+        goal.target_pose.pose = waypoints
+        
+        # Fill in the goal here
+        coordNavClient.send_goal(goal)
+        #wait 30 secs for robot to navigate to goal.
+        coordNavClient.wait_for_result(rospy.Duration.from_sec(5.0))
+        
+        #add communication delay for everything to sync.        
+        rospy.sleep(2)      
+
     def getWayPointListFromStringCommand(self,path):
         #It might be necessary to know the current position and which zone,
         #to know what waypoints to use. But firstly, it will be a single waypoint goal.
@@ -303,11 +358,7 @@ class StateNavigateInCoordinateZone(smach.State):
         return name2coord[path]
 
         
-    def navigateToGoal(self,waypoints):
-        #publish pose to navigation node
-        pubNavPose.publish(waypoints)
-#        callRabbit()        
-        return 0
+
         
 # define state StateNavigateInLineZone
 # Call Isaacs Line following action, that automatically finds and stops at a 
@@ -315,7 +366,7 @@ class StateNavigateInCoordinateZone(smach.State):
 class StateNavigateInLineZone(smach.State):
     def __init__(self): 
         smach.State.__init__(self, outcomes=['outcome1', 'outcome2'])
-        
+        self.atStartOfLine = True
         
 
     def execute(self, userdata):
@@ -323,12 +374,25 @@ class StateNavigateInLineZone(smach.State):
 
         global r
         global doneNavigating
+        global debugWait
 #        r.sleep()
 
-        QRId = self.getQRId()        
+        if self.atStartOfLine == True:
+            self.navigateToLongStretch()
+            self.atStartOfLine = False
+
+        if path == 'FloorIn':
+            self.navigateToFloorIn()
+            self.atStartOfLine = True
+        else:
+            QRId = self.getQRId()        
+            #TODO: QRId for endOfLine = 0!!! Maybe???
+            self.navigateToQR(QRId)
+            self.turn90DegRight()
+
         
-        #TODO: QRId for endOfLine = 0!!! Maybe???
-        self.navigateToQR(QRId)        
+            
+        
         #TODO: What if QR not found? Try again or error?
         
 #        while doneNavigating == False:
@@ -336,6 +400,7 @@ class StateNavigateInLineZone(smach.State):
             
         position = path
         status = mes_mobile_status()
+        status.header.stamp = rospy.Time.now()
         status.state = mes_mobile_status.STATE_WORKING
         status.position = position 
         pubStatus.publish(status)
@@ -351,7 +416,8 @@ class StateNavigateInLineZone(smach.State):
             return 'outcome1'
 
         else:
-            self.turn90DegRight()
+            #in order to back up to LoadOff
+            #TODO: should be left() when LoadOn!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             #Change to StateNavigateInLoadZone              
             return 'outcome2'
 
@@ -366,21 +432,20 @@ class StateNavigateInLineZone(smach.State):
 #       
         return path
 
-    def navigateToQR(self,QRId):
+    def navigateToLongStretch(self):
         self.followLineToCross()
-	rospy.sleep(2)
+        self.turn90DegRight()
+        self.followLineToCross()
+        self.turn90DegRight()
+      
 
-        self.turn90DegRight()
-	rospy.sleep(2)
-        self.followLineToCross()
-	rospy.sleep(2)
-        self.turn90DegRight()
-	rospy.sleep(2)
+    def navigateToQR(self,QRId):
         self.followLineToQR(QRId)
-	rospy.sleep(2)
         return 0
         
     def navigateToFloorIn(self):
+        QRId = 'LoadOn1'        
+        self.followLineToQR(QRId)
         self.followLineToCross()
         self.turn90DegRight()
         self.followLineToCross()        
@@ -396,11 +461,11 @@ class StateNavigateInLineZone(smach.State):
         # Fill in the goal here
         goCellClient.send_goal(goal)
         goCellClient.wait_for_result(rospy.Duration.from_sec(5.0))
+        rospy.sleep(2)
+
 
     def followLineToQR(self,QRId):
-            
         global goCellClient
-        
         
         goal = GocellGoal()
         goal.cell_name = QRId#'Robot 1'#'LoanOn1'
@@ -408,6 +473,7 @@ class StateNavigateInLineZone(smach.State):
         # Fill in the goal here
         goCellClient.send_goal(goal)
         goCellClient.wait_for_result(rospy.Duration.from_sec(5.0))
+        rospy.sleep(2)
 
     def followLineToEnd(self):
         global goCellClient
@@ -419,6 +485,7 @@ class StateNavigateInLineZone(smach.State):
         # Fill in the goal here
         goCellClient.send_goal(goal)
         goCellClient.wait_for_result(rospy.Duration.from_sec(5.0))
+        rospy.sleep(2)
 
     def turn90DegRight(self):
         global goCellClient
@@ -429,7 +496,8 @@ class StateNavigateInLineZone(smach.State):
         # Fill in the goal here
         spin90Client.send_goal(goal)
         spin90Client.wait_for_result(rospy.Duration.from_sec(5.0))
-        return 0
+        rospy.sleep(2)
+        
         
     def turn90DegLeft(self):
         global goCellClient
@@ -439,7 +507,8 @@ class StateNavigateInLineZone(smach.State):
         
         # Fill in the goal here
         spin90Client.send_goal(goal)
-        spin90Client.wait_for_result(rospy.Duration.from_sec(5.0))        
+        spin90Client.wait_for_result(rospy.Duration.from_sec(5.0))
+        rospy.sleep(2)
         
         
             
@@ -450,6 +519,17 @@ class StateNavigateInLoadZone(smach.State):
     def __init__(self): 
         smach.State.__init__(self, outcomes=['outcome1', 'outcome2'])
         #if already loaded, navigate out of cell and 
+       
+                
+    def execute(self, userdata):
+        global position
+        global doneNavigating
+        global r
+        global debugWait
+#        r.sleep()
+        
+       
+       
         if path == 'Line':
             #TODO: Is it really Independent of whether in LoadOn or LoadOff zone?
             self.driveForwardToLine()
@@ -461,19 +541,14 @@ class StateNavigateInLoadZone(smach.State):
 #                return 'outcome2' 
             else:
                 self.driveBackwardsToLoadOff()
-                self.tip();                
                 #change to StateFreeAtLoadZone
 #                return 'outcome2'
-                
-    def execute(self, userdata):
-        global position
-        global doneNavigating0
-        global r
-#        r.sleep()
-        
-        
-        while doneNavigating == False:
-            rospy.sleep(5)
+           
+           
+        rospy.sleep(debugWait)  
+#        while doneNavigating == False:
+#            rospy.sleep(1)
+#        doneNavigating = False
             ###############################################
             #TODO: Handle how to wait for tip. 
                 #Maybe don't wait at all...            
@@ -483,7 +558,8 @@ class StateNavigateInLoadZone(smach.State):
         #TODO: OBS: Normally, StateFreeAtLineZone assumes that the robot is
         # at the start of the line zone....
         position = path #here it is "Line"
-        status = mes_mobile_status()             
+        status = mes_mobile_status()  
+        status.header.stamp = rospy.Time.now()           
         status.state = mes_mobile_status.STATE_FREE
         status.position = position 
         pubStatus.publish(status)            
@@ -599,8 +675,8 @@ def main():
                                transitions={'outcome1':'STATE_FREE_AT_LINE_ZONE', 
                                             'outcome2':'STATE_FREE_AT_LOAD_ZONE'})                                            
         
-        sm_line_navigation = smach.StateMachine(outcomes=['outcome5'])
-
+#        sm_line_navigation = smach.StateMachine(outcomes=['outcome5'])
+#
 #        with sm_line_navigation:
 #            ###########################################################            
 #            #TODO: Line navigation is only a problem of turning at appripriate times, with known map of line.
@@ -616,6 +692,10 @@ def main():
 #                                   transitions={'outcome1':'BAR', 
 #                                                'outcome2':'outcome4'})
     # Execute SMACH plan
+    sis = smach_ros.IntrospectionServer('decisionLayerIntrospectionServer', sm_top, '/SM_ROOT')
+    sis.start()
+    
+        
     outcome = sm_top.execute()  
 
 

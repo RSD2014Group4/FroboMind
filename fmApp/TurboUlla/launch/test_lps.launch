@@ -16,7 +16,7 @@
   </include>
   <node pkg="tf" type="static_transform_publisher" name="mapToOdom" args="0.0 -0.2 0 0 0 0 map odom 20" />
   
-  <!-- include file="$(find TurboUlla)/launch/include/kalman.launch"/ -->
+  <include file="$(find TurboUlla)/launch/include/kalman.launch" />
   <!-- Map server -->
   	<arg name="map_file" default="$(find TurboUlla)/maps/dispenser.yaml"/>
   	<node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />

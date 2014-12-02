@@ -5,7 +5,7 @@
     <param name="odom_sub" value="/fmKnowledge/odometry" />
     <param name="imu_sub" value="/fmInformation/imu" />
     <param name="gga_sub" value="/fmInformation/gpgga_tranmerc" />
-    <param name="pose_pub" value="/fmKnowledge/pose" />
+    <param name="pose_pub" value="/fmKnowledge/kalmanpose" />
     <param name="pose_status_pub" value="/fmKnowledge/pose_status" />
     <param name="odometry_timeout" value="0.5" />
     <param name="gnss_timeout" value="2.0" />

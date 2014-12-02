@@ -27,6 +27,7 @@
 
 #include <boost/bind.hpp>
 #include <boost/thread/mutex.hpp>
+#include <boost/smart_ptr.hpp>
 
 #include "map/map.h"
 #include "pf/pf.h"
@@ -244,10 +245,23 @@ std::vector<std::pair<int,int> > AmclNode::free_space_indices;
 #define USAGE "USAGE: amcl"
 
 int amclToggle = 1;
+typedef boost::shared_ptr<AmclNode> AmclPtr;
+AmclPtr anPtr;
 
 void amclToggleCallback(const std_msgs::Int8::ConstPtr& msg)
 { 
+    std::cout << "ToggleCallback!!" << std::endl;
     amclToggle = msg->data;
+    if (msg->data == 1)
+    {
+        std::cout << "Starting AMCL" << std::endl;
+        anPtr = AmclPtr(new AmclNode());
+    }
+    else
+    {
+        std::cout << "Killing AMCL" << std::endl;
+        anPtr.reset();
+    }
 }
 
 int
@@ -257,7 +271,8 @@ main(int argc, char** argv)
   ros::NodeHandle nh;
   ros::Subscriber sub = nh.subscribe("amclToggle", 1000, amclToggleCallback);
 
-  AmclNode an;
+
+  //AmclNode an;
 
   ros::spin();
 
@@ -611,6 +626,7 @@ AmclNode::requestMap()
     ROS_WARN("Request for map failed; trying again...");
     ros::Duration d(0.5);
     d.sleep();
+    ros::spinOnce();
   }
   handleMapMessage( resp.map );
 }

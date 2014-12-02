@@ -31,10 +31,10 @@ using namespace std;
 // Camera focal length
 float f=320;
 // Distance from camera axis to the plane cm
-float dist=0.35;
-float y_offset=0.300;
+float dist=0.40;
+float y_offset=0.350;
 // Angle of rotation of x to put z pointing down
-float alpha=30 * 3.141592654/180;
+float alpha=25 * 3.141592654/180;
 
 float alpha_rot=alpha-3.141592654;
 

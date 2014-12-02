@@ -25,9 +25,9 @@ class StateFollowLineQR(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['outcome1','outcome2'])
       #  rospy.loginfo("in StateFollowLineQR.init")
-        self.p = -0.25 #The further from the goal, the more power.
+        self.p = -0.4 #The further from the goal, the more power.
         self.i = -0.0 #If some external force is influencing the robot, I will slowly overpower this force
-        self.d = -0.10 #Should counter the integrated part when an error of 0 is reoptained
+        self.d = -0.1 #Should counter the integrated part when an error of 0 is reoptained
         self.myCenter = [0,0]#[0,0] #Robot center located at (0,0)
         self.memCTError = 0        
         self.iCTError = 0
@@ -58,7 +58,7 @@ class StateFollowLineQR(smach.State):
     
     def lineDirection(self, linePoints):
 	#y value where checked the x sign
-	y=0.7
+	y=0.5
 	# COmpute line equation
 	a=(linePoints[1][1]-linePoints[0][1])/(linePoints[1][0]-linePoints[0][0])
 	

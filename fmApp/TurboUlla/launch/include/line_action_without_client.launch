@@ -24,12 +24,6 @@ RoboCard based frobits using 1800/700 ohm voltage dividers:
 
 	<node pkg="spin_90_degrees" name="spin_degrees" type="spin_server" output="screen" /> 
 
-	<include file="$(find TurboUlla)/launch/include/imu.launch"/>
-
-  	<include file="$(find TurboUlla)/launch/include/platform.launch">
-	    <arg name="sim" value="$(arg sim)"/>
-	  </include>
-
 
 </launch>
 

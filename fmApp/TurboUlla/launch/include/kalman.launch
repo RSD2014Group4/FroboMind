@@ -1,10 +1,11 @@
 <!-- Look mom, I'm an XML file.. -->
 <launch>
   <!-- differential_odometry is run from IMU launch file -->
-  <node pkg="odometry_gnss_pose_estimator" name="pose_estimator" type="pose_estimator_node.py" output="screen" >
-    <param name="odom_sub" value="/fmKnowledge/odometry" />
+  <node pkg="pose_estimator" name="pose_estimator" type="pose_estimator_node.py" output="screen" >
+    <param name="odom_sub" value="/fmKnowledge/pose" />
     <param name="imu_sub" value="/fmInformation/imu" />
     <param name="gga_sub" value="/fmInformation/gpgga_tranmerc" />
+    <param name="marker_pose_sub" value="/fmInformation/marker_pose" />
     <param name="pose_pub" value="/fmKnowledge/kalmanpose" />
     <param name="pose_status_pub" value="/fmKnowledge/pose_status" />
     <param name="odometry_timeout" value="0.5" />
@@ -16,6 +17,6 @@
     <param name="gnss_angular_variance" value="0.0001" />
     <param name="solution_required" value="4" />
     <param name="frame_id" value="base_link" />
-    <param name="child_frame_id" value="odom" />
+    <param name="child_frame_id" value="map" />
   </node>
 </launch>

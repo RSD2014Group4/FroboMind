@@ -66,7 +66,7 @@ class StateFollowLineQR(smach.State):
 	
 	xval=(y-b)/a - 0.1
 
-	if (xval < -2) or (xval > 2):
+	if (xval < -0.3) or (xval > 0.3):
 	    xval=0
 
 
@@ -115,7 +115,7 @@ class StateFollowLineQR(smach.State):
 
         if pid_enabled :
 
-	    if controlSignal<1 :	
+	   # if controlSignal<1 :	
                 self.publisher.publish(twist)        
 
         return controlSignalTwist

@@ -204,7 +204,7 @@ class GocellAction
                     if(encoder_val_<init_encoder)
                     {
                         ROS_ERROR("Overflow on the encoder");
-                        std::cout<<"Last value of encoder_val= "<<encoder_val_<<std::endl;
+                        std::cout<<"Last value of encoder_val= "<<init_encoder<<std::endl;
 			break;
                     }
 

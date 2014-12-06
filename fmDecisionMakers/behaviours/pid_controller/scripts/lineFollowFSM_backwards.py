@@ -164,10 +164,25 @@ def callback_pid_enable(data):
     #rospy.loginfo(data.data)
     #rospy.loginfo("%f y: %f" % (data.x1, data.y1))
    
-    rospy.loginfo("Received from subscriber")  
+   # rospy.loginfo("Received from subscriber")  
    # rospy.loginfo(data.data)   
     
     global pid_enabled
+
+
+    if (pid_enabled and not data.data):
+        #publish 0 velocity comand
+        publisher = rospy.Publisher('/fmCommand/cmd_vel', TwistStamped)        
+        twist = TwistStamped()
+        twist.header.stamp = rospy.Time.now()
+        twist.twist.linear.x = 0;                   # our forward speed
+        twist.twist.linear.y = 0; twist.twist.linear.z = 0;     # we can't use these!        
+        twist.twist.angular.x = 0; twist.twist.angular.y = 0;   #          or these!
+        twist.twist.angular.z = 0;    
+        publisher.publish(twist)   
+
+
+
     pid_enabled=data.data
 
     # Dirty trick!!!

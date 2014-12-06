@@ -275,48 +275,48 @@ class StateNavigateInCoordinateZone(smach.State):
         
         name2coord = {}
         
-        pos = Point(1,2,0)
-        ori = Quaternion(3,4,5,6)
+        pos = Point(5.200,-0.650,0.000)
+        ori = Quaternion(0.000,0.000,1.000,0.000)
         pose = Pose(pos,ori)
         name2coord['Dispenser'] = pose
 
-        pos = Point(1,2,0)
-        ori = Quaternion(3,4,5,6)
+        pos = Point(4.428,0.100,0.000)
+        ori = Quaternion(0.000,0.000,0.000,1.000)
         pose = Pose(pos,ori)
         name2coord['InBox'] = pose
         
-        pos = Point(1,2,0)
-        ori = Quaternion(3,4,5,6)
+        pos = Point(4.428,0.700,0.000)
+        ori = Quaternion(0.000,0.000,0.707,0.707)
         pose = Pose(pos,ori)
         name2coord['Station1'] = pose
         
-        pos = Point(1,2,0)
-        ori = Quaternion(3,4,5,6)
+        pos = Point(4.928,0.700,0.000)
+        ori = Quaternion(0.000,0.000,0.707,0.707)
         pose = Pose(pos,ori)
         name2coord['Station2'] = pose
         
-        pos = Point(1,2,0)
-        ori = Quaternion(3,4,5,6)
+        pos = Point(5.428,0.700,0.000)
+        ori = Quaternion(0.000,0.000,0.707,0.707)
         pose = Pose(pos,ori)        
         name2coord['Station3'] = pose
 
-        pos = Point(1,2,0)
-        ori = Quaternion(3,4,5,6)
+        pos = Point(1.920,-0.450,0.000)
+        ori = Quaternion(0.000,0.000,1.000,0.000)
         pose = Pose(pos,ori)                
         name2coord['RampOut'] = pose
 
-        pos = Point(1,2,0)
-        ori = Quaternion(3,4,5,6)
+        pos = Point(1.920,0.100,0.000)
+        ori = Quaternion(0.000,0.000,0.000,1.000)
         pose = Pose(pos,ori)        
         name2coord['RampIn'] = pose
 
-        pos = Point(1,2,0)
-        ori = Quaternion(3,4,5,6)
+        pos = Point(0.000,-1.000,0.000)
+        ori = Quaternion(0.000,0.000,1.000,0.000)
         pose = Pose(pos,ori)        
         name2coord['FloorOut'] = pose
 
-        pos = Point(1,2,0)
-        ori = Quaternion(3,4,5,6)
+        pos = Point(0.000,1.000,0.000)
+        ori = Quaternion(0.000,0.000,0.000,1.000)
         pose = Pose(pos,ori)        
         name2coord['FloorIn'] = pose
 

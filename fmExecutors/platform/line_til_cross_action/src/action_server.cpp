@@ -183,7 +183,7 @@ class GocellAction
                 while (ros::ok())
                 {
                     //Continue navigating unless advanced all the desired distance
-                    if(encoder_val_>(init_encoder+ 50))
+                    if(encoder_val_>(init_encoder+ 370))
                     {
                         break;
                     }
@@ -191,6 +191,7 @@ class GocellAction
                     {
                         ROS_ERROR("Overflow on the encoder");
                         std::cout<<"Last value of encoder_val= "<<encoder_val_<<std::endl;
+			break;
                     }
 
                     s.sleep();

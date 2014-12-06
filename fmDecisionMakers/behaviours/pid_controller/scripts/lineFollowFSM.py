@@ -66,6 +66,10 @@ class StateFollowLineQR(smach.State):
 	
 	xval=(y-b)/a - 0.1
 
+	if (xval < -2) or (xval > 2):
+	    xval=0
+
+
 	return xval
 	  
 	if xval > 0:
@@ -110,7 +114,9 @@ class StateFollowLineQR(smach.State):
 
 
         if pid_enabled :
-            self.publisher.publish(twist)        
+
+	    if controlSignal<1 :	
+                self.publisher.publish(twist)        
 
         return controlSignalTwist
     
@@ -175,14 +181,14 @@ def callback_pid_enable(data):
 
     if (pid_enabled and not data.data):
         #publish 0 velocity comand
-        publisher = rospy.Publisher('/fmCommand/cmd_vel', TwistStamped)        
-        twist = TwistStamped()
-        twist.header.stamp = rospy.Time.now()
-        twist.twist.linear.x = 0;                   # our forward speed
-        twist.twist.linear.y = 0; twist.twist.linear.z = 0;     # we can't use these!        
-        twist.twist.angular.x = 0; twist.twist.angular.y = 0;   #          or these!
-        twist.twist.angular.z = 0;    
-        publisher.publish(twist)        
+         publisher = rospy.Publisher('/fmCommand/cmd_vel', TwistStamped)        
+         twist = TwistStamped()
+         twist.header.stamp = rospy.Time.now()
+         twist.twist.linear.x = 0;                   # our forward speed
+         twist.twist.linear.y = 0; twist.twist.linear.z = 0;     # we can't use these!        
+         twist.twist.angular.x = 0; twist.twist.angular.y = 0;   #          or these!
+         twist.twist.angular.z = 0;    
+         publisher.publish(twist)        
         
 
     pid_enabled=data.data

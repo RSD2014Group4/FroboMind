@@ -16,7 +16,7 @@
     <param name="odometry_angular_variance" value="0.000001" />
     <param name="gnss_angular_variance" value="0.0001" />
     <param name="solution_required" value="4" />
-    <param name="frame_id" value="base_link" />
+    <param name="frame_id" value="base_footprint" />
     <param name="child_frame_id" value="map" />
   </node>
 </launch>

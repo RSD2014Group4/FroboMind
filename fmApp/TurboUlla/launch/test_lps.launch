@@ -14,7 +14,7 @@
   <include file="$(find TurboUlla)/launch/include/planner.launch">
     <arg name="sim" value="$(arg sim)"/>
   </include>
-  <node pkg="tf" type="static_transform_publisher" name="mapToOdom" args="0.0 -0.2 0 0 0 0 map odom 20" />
+  <!-- node pkg="tf" type="static_transform_publisher" name="mapToOdom" args="0.0 -0.2 0 0 0 0 map odom 20" -->
   
   <include file="$(find TurboUlla)/launch/include/kalman.launch" />
   <!-- Map server -->

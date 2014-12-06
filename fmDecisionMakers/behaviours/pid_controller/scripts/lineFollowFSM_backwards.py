@@ -13,7 +13,7 @@ from geometry_msgs.msg import TwistStamped
 from std_msgs.msg import Bool
 
 
-lineData = [[3.0,2.0],[1.0,1.0]]
+lineData = [[0.1,2.0],[0.11,1.0]]
 
 #class BehaviourFollowLine():
 pid_enabled=False
@@ -64,7 +64,7 @@ class StateFollowLineQR(smach.State):
 	
 	b=linePoints[0][1]-a*linePoints[0][0]
 	
-	xval=(y-b)/a 
+	xval=(y-b)/a-0.02
 
 	return xval
 

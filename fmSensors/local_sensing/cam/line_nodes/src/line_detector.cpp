@@ -7,7 +7,7 @@
 
 
 // ojo!!!
-#include <opencv/highgui.h>
+//#include <opencv/highgui.h>
 #include <cv_bridge/cv_bridge.h>
 #include <math.h>
 
@@ -104,11 +104,11 @@ class SubscribeAndPublish
 		image_lines=display_lines(image,lines_merged,"Lines merged");
 
 
-        if (show_image)
-        {
-            imshow("lines_detected",image_lines);
-            cv::waitKey(3);
-        }
+//        if (show_image)
+//        {
+//            imshow("lines_detected",image_lines);
+//            cv::waitKey(3);
+//        }
 
 
         if(lines_merged.size()>1)

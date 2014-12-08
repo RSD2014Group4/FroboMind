@@ -4,7 +4,10 @@
 #include <sensor_msgs/Image.h>
 //#include <opencv/cvwimage.h>
 #include <opencv/cv.h>
-//#include <opencv/highgui.h>
+
+
+// ojo!!!
+#include <opencv/highgui.h>
 #include <cv_bridge/cv_bridge.h>
 #include <math.h>
 
@@ -22,8 +25,8 @@ using namespace cv;
 // Define names of subscriber and publisher
 //#define SUBSCRIBER "rsd_camera/bar_camera"
 
-//#define SUBSCRIBER "/camera/image_raw"
-#define SUBSCRIBER "/line_action/image_raw"
+#define SUBSCRIBER "/usb_cam/image_raw"
+//#define SUBSCRIBER "/line_action/image_raw"
 
 
 //#define PUBLISHER "camera/angle"
@@ -95,23 +98,17 @@ class SubscribeAndPublish
 
 		// Show result image
 
-		/*
-		if (show_image)	
-		{
-			//imshow("Color segmented",mask);
-			//imshow("Opened mask",mask2);
-			display_lines(image,lines_merged,"Lines merged");
-			//display_lines(image,lines,"Lines");	
-		}
-		*/
+
 
 		Mat image_lines;
 		image_lines=display_lines(image,lines_merged,"Lines merged");
 
-		cv::waitKey(3);
-	
 
-
+        if (show_image)
+        {
+            imshow("lines_detected",image_lines);
+            cv::waitKey(3);
+        }
 
 
         if(lines_merged.size()>1)
@@ -133,7 +130,15 @@ class SubscribeAndPublish
         // Find the line with less angle with the angle closser to 90 degrees
         for (uint i=0;i<lines_merged.size();i++)
         {
-            double difference=abs(lines_merged[i][1]);
+            double difference;
+
+            if(lines_merged[i][1]>1.57)
+            {
+                difference=abs(lines_merged[i][1]-3.14);
+
+            }else{
+                difference=abs(lines_merged[i][1]);
+            }
 
             cout<<"angle_line: "<<lines_merged[i][1]<<" difference "<<difference<<endl;
 

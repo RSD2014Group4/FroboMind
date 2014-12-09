@@ -3,7 +3,7 @@
   <!-- differential_odometry is run from IMU launch file -->
   <node pkg="tf" type="static_transform_publisher" name="mapToLPS" args=" 0 0 0 1.57 0 0 map lps 20" />
   <node pkg="kalman_convention_fix" type="kalman_convention_fix_node" name="kalman_convention_fix_node">
-    <param name="pubtimer_duration_sec" value="0.1" />
+    <param name="pubtimer_duration_sec" value="0.01" />
     <param name="frame_lps" value="/lps" />
     <param name="frame_link_kalman" value="/base_kalman" />
     <param name="frame_odom" value="/odom" />

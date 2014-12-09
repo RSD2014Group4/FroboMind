@@ -10,6 +10,9 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+catkin_package(
+)
+
 
 add_executable(kalman_convention_fix_node src/kalman_convention_fix_node.cpp)
 

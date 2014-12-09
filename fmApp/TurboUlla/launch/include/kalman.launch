@@ -2,6 +2,13 @@
 <launch>
   <!-- differential_odometry is run from IMU launch file -->
   <node pkg="tf" type="static_transform_publisher" name="mapToLPS" args=" 0 0 0 1.57 0 0 map lps 20" />
+  <node pkg="kalman_convention_fix" type="kalman_convention_fix_node" name="kalman_convention_fix_node">
+    <param name="pubtimer_duration_sec" value="0.1" />
+    <param name="frame_lps" value="/lps" />
+    <param name="frame_link_kalman" value="/base_kalman" />
+    <param name="frame_odom" value="/odom" />
+    <param name="frame_link_odom" value="/base_link" />
+  </node>
   <node pkg="pose_estimator" name="pose_estimator" type="pose_estimator_node.py" output="screen" >
     <param name="odom_sub" value="/fmKnowledge/pose" />
     <param name="imu_sub" value="/fmInformation/imu" />
@@ -17,7 +24,7 @@
     <param name="odometry_angular_variance" value="0.000001" />
     <param name="gnss_angular_variance" value="0.0001" />
     <param name="solution_required" value="4" />
-    <param name="frame_id" value="base_footprint" />
+    <param name="frame_id" value="base_kalman" />
     <param name="child_frame_id" value="lps" />
   </node>
 </launch>

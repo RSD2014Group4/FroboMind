@@ -37,6 +37,9 @@ class GocellAction
 		int counter_;
         int encoder_val_;
 
+        int cross_counter_;
+        bool prev_cross_;
+        int prev_cross_counter_;
 
 	public:
 		GocellAction(std::string name) :
@@ -72,13 +75,23 @@ class GocellAction
 
 
 		
-
-
 		void callback_cross_detected(const std_msgs::BoolConstPtr& msg)
 		{
 			ROS_INFO("cross detected");
-			
-			success_=msg->data;
+
+
+            if(!prev_cross_)
+            {
+                if(cross_counter_==0)
+                {    // this is the cross to stop
+                    success_=msg->data;
+                }else{
+                    cross_counter_--;
+                }
+            }
+            prev_cross_=true;
+            prev_cross_counter_=0;
+
 
 		}
 		void callback_image(const sensor_msgs::ImageConstPtr& msg)
@@ -108,13 +121,38 @@ class GocellAction
 			// Publish output image
 			//If the image is not empty
 			counter_=0;
+
+            // counter of crosses left
+            cross_counter_=1;
+            prev_cross_= false;
+
 			//barcode_value_="";
 			std_msgs::Bool pid_message;
 			pid_message.data=TRUE;
 			pid_pub_.publish(pid_message);
 			ros::Rate r(25);
+
+
+            prev_cross_counter_=0;
+
 			while (ros::ok())
 			{
+
+
+                if(prev_cross_)
+                {
+                    prev_cross_counter_++;
+
+                    if(prev_cross_counter_>30)
+                    {
+                        prev_cross_=false;
+                        prev_cross_counter_=0;
+                    }
+
+                }
+
+
+
                 if(counter_>1000)
 				{
 					break;

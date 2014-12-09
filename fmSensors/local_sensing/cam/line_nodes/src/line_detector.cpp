@@ -103,13 +103,13 @@ class SubscribeAndPublish
 		Mat image_lines;
 		image_lines=display_lines(image,lines_merged,"Lines merged");
 
-
-//        if (show_image)
-//        {
-//            imshow("lines_detected",image_lines);
-//            cv::waitKey(3);
-//        }
-
+/*
+        if (show_image)
+        {
+            imshow("lines_detected",image_lines);
+            cv::waitKey(3);
+        }
+*/
 
         if(lines_merged.size()>1)
         {

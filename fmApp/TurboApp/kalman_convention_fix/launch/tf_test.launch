@@ -1,0 +1,9 @@
+<!-- Look mom, I'm an XML file.. -->
+<launch>
+  <node pkg="tf" type="static_transform_publisher" name="KalmanFilter" args="2 -1 0 1 1 0 lps base_kalman 20" />
+  <node pkg="tf" type="static_transform_publisher" name="Odom" args="1 0 0 0 0 0 odom base_link 20" />
+  
+  <!-- node pkg="tf" type="static_transform_publisher" name="Test" args="1 -1 0 0 0 0 map odom 20" / -->
+  <node pkg="kalman_convention_fix" type="kalman_convention_fix_node" name="kalman_convention_fix_node" />
+  
+</launch>

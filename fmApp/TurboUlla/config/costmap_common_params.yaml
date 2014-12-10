@@ -4,8 +4,8 @@ obstacle_range: 2.5
 raytrace_range: 3.0
 # The "raytrace_range" parameter determines the range to which we will raytrace freespace given a sensor reading.
 
-footprint: [[-0.20,-0.30],[-0.20,0.35],[0.20,0.35],[0.20,-0.30]]
-# footprint: [[-0.30,-0.20],[0.35,-0.20],[0.35,0.20],[-0.30,0.20]] # this is wrong!!
+#footprint: [[-0.20,-0.30],[-0.20,0.35],[0.20,0.35],[0.20,-0.30]] # this is wrong!!
+footprint: [[-0.30,-0.20],[0.35,-0.20],[0.35,0.20],[-0.30,0.20]]
 # 50 x 40 (center located 15cm from backside)
 # The tipper on top of the robot extends 15cm backwards
 

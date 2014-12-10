@@ -26,13 +26,13 @@ protected:
         tf::Transform transform;
         tf::StampedTransform tf_odom, tf_kalman;
         try{
-          tflistener_.waitForTransform(frame_link_kalman_, frame_lps_, ros::Time(0), ros::Duration(1.0) );
+          // tflistener_.waitForTransform(frame_link_kalman_, frame_lps_, ros::Time(0), ros::Duration(1.0) );
           // listener.lookupTransform(destination_frame, original_frame, ros::Time(0), transform);
-          tflistener_.lookupTransform(frame_link_kalman_, frame_lps_,ros::Time(0), tf_odom);
-          tflistener_.lookupTransform(frame_link_odom_, frame_odom_,ros::Time(0), tf_kalman);
+          tflistener_.lookupTransform(frame_link_kalman_, frame_lps_, ros::Time(0), tf_odom);
+          tflistener_.lookupTransform(frame_link_odom_, frame_odom_, ros::Time(0), tf_kalman);
         }
         catch (tf::TransformException ex){
-          ROS_ERROR("%s",ex.what());
+          ROS_ERROR("%s: %s", ros::this_node::getName() , ex.what());
         }
         transform = tf_odom.inverseTimes(tf_kalman);
         tfbroadcast_.sendTransform(tf::StampedTransform(transform, ros::Time::now(), frame_lps_, frame_odom_));

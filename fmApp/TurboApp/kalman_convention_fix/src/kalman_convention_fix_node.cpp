@@ -32,7 +32,7 @@ protected:
           tflistener_.lookupTransform(frame_link_odom_, frame_odom_, ros::Time(0), tf_kalman);
         }
         catch (tf::TransformException ex){
-          ROS_ERROR("%s: %s", ros::this_node::getName() , ex.what());
+          ROS_ERROR("Kalman konvention fix: %s" , ex.what());
         }
         transform = tf_odom.inverseTimes(tf_kalman);
         tfbroadcast_.sendTransform(tf::StampedTransform(transform, ros::Time::now(), frame_lps_, frame_odom_));

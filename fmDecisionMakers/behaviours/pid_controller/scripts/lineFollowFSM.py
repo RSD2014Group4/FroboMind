@@ -224,6 +224,9 @@ def main():
         smach.StateMachine.add('STATE_WAIT_AT_QR', StateWaitAtQR(), 
                                transitions={'outcome2':'STATE_WAIT_AT_QR'})
 
+    sis = smach_ros.IntrospectionServer("msTest", sm, "/SM_ROOT")
+    sis.start()
+
     # Execute SMACH plan
     outcome = sm.execute()  
 

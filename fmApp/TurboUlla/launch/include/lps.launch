@@ -1,0 +1,13 @@
+<!-- Look mom, I'm an XML file.. -->
+<launch>
+  <arg name="sim" default="true"/>
+  <group ns="fmLib" unless="$(arg sim)">
+    <node pkg="socket_pose" type="tcp_client.py" name="marker_locator_tcp_client" output="screen">
+      <param name="order" value="5" />
+      <param name="odom_pub" value="/fmInformation/marker_pose" />
+    </node>
+  </group>
+  <group if="$(arg sim)">
+    <!-- moved to platform -->
+  </group>
+</launch>

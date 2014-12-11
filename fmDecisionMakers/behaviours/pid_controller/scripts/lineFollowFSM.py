@@ -25,13 +25,13 @@ class StateFollowLineQR(smach.State):
     def __init__(self):
         smach.State.__init__(self, outcomes=['outcome1','outcome2'])
       #  rospy.loginfo("in StateFollowLineQR.init")
-        self.p = -0.6 #The further from the goal, the more power.
-        self.i = 0.0 #If some external force is influencing the robot, I will slowly overpower this force
-        self.d = 0.0 #Should counter the integrated part when an error of 0 is reoptained
+        self.p = -0.5 #The further from the goal, the more power.
+        self.i = -0.00 #If some external force is influencing the robot, I will slowly overpower this force
+        self.d = -0.3 #Should counter the integrated part when an error of 0 is reoptained
         self.myCenter = [0,0]#[0,0] #Robot center located at (0,0)
         self.memCTError = 0        
         self.iCTError = 0
-        self.PIDFreq =2.0
+        self.PIDFreq = 20.0
         self.PIDPeriod = 1/self.PIDFreq
         self.PIDRate = rospy.Rate(self.PIDFreq) # 10hz
         self.publisher = rospy.Publisher('/fmCommand/cmd_vel', TwistStamped)
@@ -58,13 +58,17 @@ class StateFollowLineQR(smach.State):
     
     def lineDirection(self, linePoints):
 	#y value where checked the x sign
-	y=0.75
+	y=0.5
 	# COmpute line equation
 	a=(linePoints[1][1]-linePoints[0][1])/(linePoints[1][0]-linePoints[0][0])
 	
 	b=linePoints[0][1]-a*linePoints[0][0]
 	
-	xval=(y-b)/a
+	xval=(y-b)/a - 0.1
+
+	if (xval < -0.3) or (xval > 0.3):
+	    xval=0
+
 
 	return xval
 	  
@@ -103,14 +107,16 @@ class StateFollowLineQR(smach.State):
 
         twist = TwistStamped()
         twist.header.stamp = rospy.Time.now()
-        twist.twist.linear.x = 0.2;                   # our forward speed
+        twist.twist.linear.x = 0.25;                   # our forward speed
         twist.twist.linear.y = 0; twist.twist.linear.z = 0;     # we can't use these!        
         twist.twist.angular.x = 0; twist.twist.angular.y = 0;   #          or these!
         twist.twist.angular.z = controlSignal;    
 
 
         if pid_enabled :
-            self.publisher.publish(twist)        
+
+	   # if controlSignal<1 :	
+                self.publisher.publish(twist)        
 
         return controlSignalTwist
     
@@ -168,10 +174,23 @@ def callback_pid_enable(data):
     #rospy.loginfo(data.data)
     #rospy.loginfo("%f y: %f" % (data.x1, data.y1))
    
-    rospy.loginfo("Received from subscriber")  
+   # rospy.loginfo("Received from subscriber")  
    # rospy.loginfo(data.data)   
     
     global pid_enabled
+
+    if (pid_enabled and not data.data):
+        #publish 0 velocity comand
+         publisher = rospy.Publisher('/fmCommand/cmd_vel', TwistStamped)        
+         twist = TwistStamped()
+         twist.header.stamp = rospy.Time.now()
+         twist.twist.linear.x = 0;                   # our forward speed
+         twist.twist.linear.y = 0; twist.twist.linear.z = 0;     # we can't use these!        
+         twist.twist.angular.x = 0; twist.twist.angular.y = 0;   #          or these!
+         twist.twist.angular.z = 0;    
+         publisher.publish(twist)        
+        
+
     pid_enabled=data.data
 
     # Dirty trick!!!

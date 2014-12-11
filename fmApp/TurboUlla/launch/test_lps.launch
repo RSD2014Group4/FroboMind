@@ -1,0 +1,23 @@
+<!-- Look mom, I'm an XML file.. -->
+<launch>
+  <arg name="sim" default="false" />
+  <group unless="$(arg sim)">
+    <include file="$(find TurboUlla)/launch/include/lidar.launch" />
+    <include file="$(find TurboUlla)/launch/include/imu.launch" />
+  </group>
+  <include file="$(find TurboUlla)/launch/include/lps.launch">
+    <arg name="sim" value="$(arg sim)"/>
+  </include>
+  <include file="$(find TurboUlla)/launch/include/platform.launch">
+    <arg name="sim" value="$(arg sim)"/>
+  </include>
+  <include file="$(find TurboUlla)/launch/include/planner.launch">
+    <arg name="sim" value="$(arg sim)"/>
+  </include>
+  <node pkg="tf" type="static_transform_publisher" name="mapToOdom" args="0.0 -0.2 0 0 0 0 map odom 20" />
+  
+  <include file="$(find TurboUlla)/launch/include/kalman.launch" />
+  <!-- Map server -->
+  	<arg name="map_file" default="$(find TurboUlla)/maps/dispenser.yaml"/>
+  	<node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" />
+</launch>

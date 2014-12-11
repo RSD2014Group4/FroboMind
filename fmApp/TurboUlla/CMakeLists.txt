@@ -4,7 +4,8 @@ project(TurboUlla)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS msgs rospy)
+
+find_package(catkin REQUIRED COMPONENTS msgs roscpp rospy std_msgs move_base_msgs genmsg tf geometry_msgs amcl gmapping message_generation  )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -40,11 +41,15 @@ find_package(catkin REQUIRED COMPONENTS msgs rospy)
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+add_message_files(
+   FILES
+   mes_mobile_command.msg
+   mes_mobile_status.msg
+   mes_sorting_command.msg
+   mes_sorting_status.msg
+   mes_order.msg
+   lego_brick.msg
+)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -60,11 +65,12 @@ find_package(catkin REQUIRED COMPONENTS msgs rospy)
 #   Action2.action
 # )
 
-## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs  # Or other packages containing msgs
-# )
+# Generate added messages and services with any dependencies listed here
+ generate_messages(
+   DEPENDENCIES
+   std_msgs# Or other packages containing msgs
+   geometry_msgs
+ )
 
 ###################################
 ## catkin specific configuration ##

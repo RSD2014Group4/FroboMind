@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by Qt Creator 2.4.1, 2014-11-04T10:52:47. -->
+<!-- Written by Qt Creator 2.4.1, 2014-12-05T10:39:15. -->
 <qtcreator>
  <data>
   <variable>ProjectExplorer.Project.ActiveTarget</variable>
@@ -56,7 +56,7 @@
    <value type="int" key="ProjectExplorer.Target.ActiveDeployConfiguration">0</value>
    <value type="int" key="ProjectExplorer.Target.ActiveRunConfiguration">1</value>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.0">
-    <value type="QString" key="CMakeProjectManager.CMakeBuildConfiguration.BuildDirectory">/home/maik/Qt_ros_builds/ros_new</value>
+    <value type="QString" key="CMakeProjectManager.CMakeBuildConfiguration.BuildDirectory">/home/maik/Qt_ros_builds/line_til_cross_action</value>
     <value type="QString" key="CMakeProjectManager.CMakeBuildConfiguration.ToolChain">ProjectExplorer.ToolChain.Gcc:/usr/bin/g++.x86-linux-generic-elf-64bit./usr/bin/gdb</value>
     <value type="QString" key="ProjectExplorer.BuildCOnfiguration.ToolChain">ProjectExplorer.ToolChain.Gcc:/usr/bin/g++.x86-linux-generic-elf-64bit./usr/bin/gdb</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
@@ -326,12 +326,12 @@
      <value type="int">14</value>
     </valuelist>
     <value type="int" key="CMakeProjectManager.BaseEnvironmentBase">2</value>
-    <value type="QString" key="CMakeProjectManager.CMakeRunConfiguation.Title">line_detection</value>
+    <value type="QString" key="CMakeProjectManager.CMakeRunConfiguation.Title">line_client_robot_1</value>
     <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.Arguments"></value>
     <value type="bool" key="CMakeProjectManager.CMakeRunConfiguration.UseTerminal">false</value>
     <valuelist type="QVariantList" key="CMakeProjectManager.CMakeRunConfiguration.UserEnvironmentChanges"/>
     <value type="QString" key="CMakeProjectManager.CMakeRunConfiguration.UserWorkingDirectory"></value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">line_detection (disabled)</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">line_client_robot_1</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">CMakeProjectManager.CMakeRunConfiguration.</value>
     <value type="uint" key="RunConfiguration.QmlDebugServerPort">3768</value>

@@ -1,0 +1,16 @@
+<launch>
+  <arg name="sim" default="false" />
+  
+  <group unless="$(arg sim)">
+    <include file="$(find TurboUlla)/launch/include/lidar.launch" />
+    <include file="$(find TurboUlla)/launch/include/imu.launch" />
+  </group>
+  
+  <include file="$(find TurboUlla)/launch/include/platform.launch">
+    <arg name="sim" value="$(arg sim)"/>
+  </include>
+  <include file="$(find TurboUlla)/launch/include/localizer.launch" />
+  <include file="$(find TurboUlla)/launch/include/planner.launch">
+    <arg name="sim" value="$(arg sim)"/>
+  </include>
+</launch>

@@ -30,15 +30,19 @@ include_directories(
 
 ## Declare a cpp executable
 add_executable(line_client src/action_client.cpp)
+add_executable(line_client_robot_1 src/action_client_robot_1.cpp)
+
 add_executable(line_server  src/action_server.cpp)
 
 
 target_link_libraries(line_client ${catkin_LIBRARIES})
+target_link_libraries(line_client_robot_1 ${catkin_LIBRARIES})
 target_link_libraries(line_server ${catkin_LIBRARIES})
 
 add_dependencies(
   line_server ${learning_actionlib_EXPORTED_TARGETS}
   line_client ${learning_actionlib_EXPORTED_TARGETS}
+  line_client_robot_1 ${learning_actionlib_EXPORTED_TARGETS}
 
 )
 

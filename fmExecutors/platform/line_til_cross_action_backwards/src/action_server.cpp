@@ -138,7 +138,7 @@ class GocellAction
             if(goal->cell_name=="Robot 3")
             {
                 cross_counter_=0;
-                encoder_offset_=100;
+                encoder_offset_=220;
             }
 
 

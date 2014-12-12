@@ -42,6 +42,13 @@ class GocellAction
 		int counter_;
         int encoder_val_;
 
+        int cross_counter_;
+        bool prev_cross_;
+        int prev_cross_counter_;
+        int encoder_offset_;
+
+        bool finished_;
+
 
 	public:
 		GocellAction(std::string name) :
@@ -79,39 +86,35 @@ class GocellAction
 
 		void callback_barcode_detected(const std_msgs::StringPtr& msg)
 		{
-			ROS_INFO("Barcode detected");
-			barcode_value_=msg->data;
-			if(goal_.cell_name==barcode_value_)
-			{
-				success_=TRUE;
-				// Send to PID to stop publishing
-				std_msgs::Bool pid_message;
-				pid_message.data=FALSE;
-				pid_pub_.publish(pid_message);
-			}
+            ROS_INFO("Barcode detected");
+            barcode_value_=msg->data;
+//			if(goal_.cell_name==barcode_value_)
+//			{
+//				success_=TRUE;
+//				// Send to PID to stop publishing
+//				std_msgs::Bool pid_message;
+//				pid_message.data=FALSE;
+//				pid_pub_.publish(pid_message);
+//			}
 		}
 
 
 		void callback_cross_detected(const std_msgs::BoolConstPtr& msg)
 		{
 			ROS_INFO("cross detected");
-			bool stop=FALSE;
-			if(goal_.cell_name=="")
-			{
-				stop=TRUE;
-			}
-			if(goal_.cell_name==barcode_value_)
-			{
-				stop=TRUE;
-			}
-			if(stop)
-			{
-				success_=msg->data;
-				// Send to PID to stop publishing
-//				std_msgs::Bool pid_message;
-//				pid_message.data=FALSE;
-//				pid_pub_.publish(pid_message);
-			}
+
+            if(!prev_cross_)
+            {
+                if(cross_counter_==0)
+                {    // this is the cross to stop
+                    success_=msg->data;
+                }else{
+                    cross_counter_--;
+                }
+            }
+            prev_cross_=true;
+            prev_cross_counter_=0;
+
 		}
 		void callback_image(const sensor_msgs::ImageConstPtr& msg)
 		{
@@ -134,94 +137,172 @@ class GocellAction
 		void executeCB(const line_til_cross_action::GocellGoalConstPtr &goal)
 		{
 			// helper variables
-			goal_.cell_name=goal->cell_name;
-			success_ = false;
-			// Publish the image to the line_detector
-			// Publish output image
-			//If the image is not empty
-			counter_=0;
-			barcode_value_="";
-			std_msgs::Bool pid_message;
-			pid_message.data=TRUE;
-			pid_pub_.publish(pid_message);
-			ros::Rate r(25);
-			while (ros::ok())
-			{
-                if(counter_>1000)
-				{
-					break;
-				}
-				if(success_)
-				{
-					break;
-				}
-				if(image_.data)
-				{
-					// ROS_INFO("publishing image");
-					cv_bridge::CvImage cvi;
-					cvi.header.stamp = ros::Time::now();
-					cvi.header.frame_id = "image";
-					cvi.encoding = "bgr8";
-					cvi.image=image_;
-					sensor_msgs::Image im;
-					cvi.toImageMsg(im);
-					image_pub_.publish(im);
-				}
-				counter_++;
-				r.sleep();
-			}
-			//result_.sequence = feedback_.sequence;
-			result_.cell_final="final_robot";
-			ROS_INFO("%s: Succeeded", action_name_.c_str());
-			// set the action state to succeeded
+           goal_.cell_name=goal->cell_name;
 
-			if(success_){
 
-                // Continue till the cross
-                int init_encoder=encoder_val_;
-                ros::Rate s(25);
+           cross_counter_=0;
+           encoder_offset_=370;
+
+           if(goal->cell_name=="")
+           {
+               cross_counter_=0;
+           }
+
+           if(goal->cell_name=="out")
+           {
+               cross_counter_=1;
+           }
+
+           if(goal->cell_name=="Robot 1")
+           {
+               cross_counter_=2;
+           }
+           if(goal->cell_name=="Robot 2")
+           {
+               cross_counter_=1;
+           }
+           if(goal->cell_name=="Robot 3")
+           {
+               cross_counter_=0;
+           }
+
+
+           while(true)
+           {
+               success_ = false;
+               // Publish the image to the line_detector
+               // Publish output image
+               //If the image is not empty
+               counter_=0;
+               barcode_value_="";
+
+
+
+
+                prev_cross_= false;
+
+                std_msgs::Bool pid_message;
+                pid_message.data=TRUE;
+                pid_pub_.publish(pid_message);
+                ros::Rate r(25);
+
+                prev_cross_counter_=0;
+
                 while (ros::ok())
                 {
-		    	if(image_.data)
-			{
-				// ROS_INFO("publishing image");
-				cv_bridge::CvImage cvi;
-				cvi.header.stamp = ros::Time::now();
-				cvi.header.frame_id = "image";
-				cvi.encoding = "bgr8";
-				cvi.image=image_;
-				sensor_msgs::Image im;
-				cvi.toImageMsg(im);
-				image_pub_.publish(im);
-			}	
+                    if(prev_cross_)
+                    {
+                       prev_cross_counter_++;
+
+                       if(prev_cross_counter_>30)
+                       {
+                           prev_cross_=false;
+                           prev_cross_counter_=0;
+                       }
+
+                    }
 
 
-                    //Continue navigating unless advanced all the desired distance
-                    if(encoder_val_>(init_encoder+ 370))
+                    if(counter_>1000)
                     {
                         break;
                     }
-                    if(encoder_val_<init_encoder)
+                    if(success_)
                     {
-                        ROS_ERROR("Overflow on the encoder");
-                        std::cout<<"Last value of encoder_val= "<<init_encoder<<std::endl;
-			break;
+                        break;
+                    }
+                    if(image_.data)
+                    {
+                        // ROS_INFO("publishing image");
+                        cv_bridge::CvImage cvi;
+                        cvi.header.stamp = ros::Time::now();
+                        cvi.header.frame_id = "image";
+                        cvi.encoding = "bgr8";
+                        cvi.image=image_;
+                        sensor_msgs::Image im;
+                        cvi.toImageMsg(im);
+                        image_pub_.publish(im);
+                    }
+                    counter_++;
+                    r.sleep();
+                }
+                //result_.sequence = feedback_.sequence;
+                result_.cell_final="final_robot";
+                ROS_INFO("%s: Succeeded", action_name_.c_str());
+                // set the action state to succeeded
+
+                if(success_)
+                {
+
+                    // Continue till the cross
+                    int init_encoder=encoder_val_;
+                    ros::Rate s(25);
+                    while (ros::ok())
+                    {
+                        if(image_.data)
+                        {
+                            // ROS_INFO("publishing image");
+                            cv_bridge::CvImage cvi;
+                            cvi.header.stamp = ros::Time::now();
+                            cvi.header.frame_id = "image";
+                            cvi.encoding = "bgr8";
+                            cvi.image=image_;
+                            sensor_msgs::Image im;
+                            cvi.toImageMsg(im);
+                            image_pub_.publish(im);
+                        }
+
+                        //Continue navigating unless advanced all the desired distance
+                        if(encoder_val_>(init_encoder+ encoder_offset_))
+                        {
+                            break;
+                        }
+                        if(encoder_val_<init_encoder)
+                        {
+                            ROS_ERROR("Overflow on the encoder");
+                            std::cout<<"Last value of encoder_val= "<<init_encoder<<std::endl;
+                            break;
+                        }
+
+                        s.sleep();
                     }
 
-                    s.sleep();
+    //				as_.setSucceeded(result_);
+                    pid_message.data=FALSE;
+                    pid_pub_.publish(pid_message);
+
+
+                    // New part!!
+
+
+                    if(goal->cell_name=="" || goal->cell_name=="out" )
+                    {
+                        as_.setSucceeded(result_);
+                        break;
+                    }else{
+                        // sleep so barcode is detected
+                         ros::Duration(0.5).sleep();
+
+                         if(barcode_value_==goal->cell_name)
+                         {
+
+                             std::cout<<"!!!!!! Barcode succedded!! value= "<<barcode_value_<<std::endl;
+                            as_.setSucceeded(result_);
+                            break;
+                         }
+
+                    }
+
+                }else
+                {
+                    std_msgs::Bool pid_message;
+                    // abort and stop publishing
+                    pid_message.data=FALSE;
+                    pid_pub_.publish(pid_message);
+                    as_.setAborted(result_);
                 }
+            }
 
-				as_.setSucceeded(result_);
-				pid_message.data=FALSE;
-				pid_pub_.publish(pid_message);
-
-            }else{
-				std_msgs::Bool pid_message;
-				// abort and stop publishing
-				pid_message.data=FALSE;
-				pid_pub_.publish(pid_message);
-				as_.setAborted(result_);
-			}
 		}
 };
 	int main(int argc, char** argv)

@@ -22,12 +22,8 @@ int main (int argc, char **argv)
   //learning_actionlib::FibonacciGoal goal;
   line_til_cross_action::GocellGoal goal;
 
-//  goal.order = 20;
 
-  //goal.dishwasher_id=20;
-
-  goal.cell_name="Robot 1"; 
- // goal.cell_name="";
+  ros::param::get("Robot_goal",goal.cell_name);
   ac.sendGoal(goal);
 
   //wait for the action to return

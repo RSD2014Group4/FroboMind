@@ -6,12 +6,25 @@ import datetime
 import os.path
 from smach_msgs.msg import SmachContainerStatus
 
+#	STATE_FREE_AT_LINE_ZONE
+#	STATE_NAVIGATE_IN_LINE_ZONE
+
+#	STATE_FREE_AT_LOAD_ZONE
+
+#	STATE_NAVIGATE_IN_COORDINATE_ZONE
+#	STATE_FREE_AT_COORDINATE_ZONE
+
+#	STATE_NAVIGATE_IN_LOAD_ZONE
+#	STATE_IN_MANUAL_MODE
+
+
 class oeeNode():
 	def __init__(self):
 
 	#defines
 		# Time in different catagories
-		self.stateTimes = {"totalTimePeriod": datetime.timedelta(0), "shutDownTime": datetime.timedelta(0), "manual": datetime.timedelta(0), "charging": datetime.timedelta(0), "linefollowing": datetime.timedelta(0), "dispenserZone": datetime.timedelta(0), "robotUnload": datetime.timedelta(0), "robotLoad": datetime.timedelta(0)} # " tid mellem "totalTimePeriod" og summen af de andre er spild
+		self.stateTimes = {"totalTimePeriod": datetime.timedelta(0), "shutDownTime": datetime.timedelta(0), "manual": datetime.timedelta(0), "production": datetime.timedelta(0), "waiting": datetime.timedelta(0)} 
+
 		self.currentState = "manual"
 		self.currentTimeStamp = datetime.datetime.now()
 		self.nxtTimeStamp = datetime.datetime.now()
@@ -31,14 +44,12 @@ class oeeNode():
 		self.setupListener()
 
 		# Go to infinity loop
-		rospy.loginfo(rospy.get_name() + " Enter while infinity: %s"%datetime.datetime.now())
-#		self.updater()
 		rospy.spin()
 
 	def setupOeeUpdateTimer(self):
 		rospy.Timer(rospy.Duration(self.updateInterval), self._callbackOeeUpdate)
 
-	def _callbackOeeUpdate(self):
+	def _callbackOeeUpdate(self, x):
 		#send parameters via msg 
 		rospy.loginfo(rospy.get_name() + ": Update oee para! ")
 	
@@ -58,43 +69,35 @@ class oeeNode():
 		self._file.close()		
 
 	def setupListener(self):
-		rospy.Subscriber("/msTest/smach/container_status", SmachContainerStatus, self.updateSubriberPar)
+		rospy.Subscriber("/msTest/smach/container_status", SmachContainerStatus, self.updateSubPar)
 
-	def updateSubriberPar(self, x):
+	def updateSubPar(self, x):
 		rospy.loginfo(rospy.get_name() + " Update oee!")
 		self.nxtTimeStamp = datetime.datetime.now()
 		self.updateStateTimes()
-		print x
+		self._container = x.active_states
+	
+		rospy.loginfo(rospy.get_name() + ": Update subPar! ")
 
 		# manual
-		if ('STATE_FOLLOW_LINE_QR') in x.active_states:
+		if ('STATE_IN_MANUAL_MODE') in self._container:
 			self.currentState = "manual"
-			rospy.loginfo(rospy.get_name() + " Hurra vi ramte plet")
-			#rospy.loginfo(rospy.get_name() + " Time manual: %s"%self.stateTimes["manual"])
-		# charging
-#		elif (noget or nogetAndet) in _container:
-#			self.currentState = "charging"
-		# linefollowing
-#		elif (noget or nogetAndet) in _container:
-#			self.currentState = "linefollowing"
-		# dispensorZone
-#		elif (noget or nogetAndet) in _container:
-#			self.currentState = "dispenserZone"
-		# robotUnload
-#		elif (noget or nogetAndet) in _container:
-#			self.currentState = "robotUnload"
-		# robotLoad
-#		elif (noget or nogetAndet) in _container:
-#			self.currentState = "robotLoad"
+		# production
+		elif ('STATE_NAVIGATE_IN_LINE_ZONE' in self._container or 'STATE_NAVIGATE_IN_COORDINATE_ZONE' in self._container or 'STATE_NAVIGATE_IN_LOAD_ZONE' in self._container) :
+			self.currentState = "production"
+		# wait
+		elif ('STATE_FREE_AT_LINE_ZONE' in self._container or 'STATE_FREE_AT_LOAD_ZONE' in self._container or 'STATE_FREE_AT_COORDINATE_ZONE' in self._container) :
+			self.currentState = "waiting"
 
 		self.currentTimeStamp = self.nxtTimeStamp
 
 	def updateStateTimes(self):
 		if self.currentState == "manual":
 			self.stateTimes["manual"] = self.stateTimes["manual"] + (self.nxtTimeStamp - self.currentTimeStamp)
-		elif self.currentState == "charging":
-			self.stateTimes["charging"] = self.stateTimes["charging"] + (self.nxtTimeStamp - self.currentTimeStamp)
-		#osv (Skal skrives faerdig naar state kendes)
+		elif self.currentState == "production":
+			self.stateTimes["production"] = self.stateTimes["production"] + (self.nxtTimeStamp - self.currentTimeStamp)
+		elif self.currentState == "waiting":
+			self.stateTimes["waiting"] = self.stateTimes["waiting"] + (self.nxtTimeStamp - self.currentTimeStamp)
 
 	# Before deleting -save time to file date.txt
 	def __del__(self):

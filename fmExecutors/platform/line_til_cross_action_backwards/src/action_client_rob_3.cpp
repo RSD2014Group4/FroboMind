@@ -30,8 +30,6 @@ int main (int argc, char **argv)
 
   //goal.cell_name="Robot 3";
 
-
-
   ac.sendGoal(goal);
 
   //wait for the action to return

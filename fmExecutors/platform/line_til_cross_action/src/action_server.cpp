@@ -153,6 +153,7 @@ class GocellAction
                cross_counter_=1;
            }
 
+ //// Remember to change it again!!!!
            if(goal->cell_name=="Robot 1")
            {
                cross_counter_=0;
@@ -272,7 +273,12 @@ class GocellAction
                     pid_pub_.publish(pid_message);
 
 
-                    // New part!!
+                    // New part!! Continue pusblishing the image
+
+
+
+
+
 
 
                     if(goal->cell_name=="" || goal->cell_name=="out" )
@@ -280,8 +286,33 @@ class GocellAction
                         as_.setSucceeded(result_);
                         break;
                     }else{
-                        // sleep so barcode is detected
-                         ros::Duration(0.5).sleep();
+
+                        counter_=0;
+
+                        while (ros::ok())
+                        {
+                            // send like 25 images
+                            if(counter_>25 || barcode_value_!="")
+                            {
+                                break;
+                            }
+
+                            if(image_.data)
+                            {
+                                // ROS_INFO("publishing image");
+                                cv_bridge::CvImage cvi;
+                                cvi.header.stamp = ros::Time::now();
+                                cvi.header.frame_id = "image";
+                                cvi.encoding = "bgr8";
+                                cvi.image=image_;
+                                sensor_msgs::Image im;
+                                cvi.toImageMsg(im);
+                                image_pub_.publish(im);
+                            }
+                            counter_++;
+                            s.sleep();
+                        }
+
 
                          if(barcode_value_==goal->cell_name)
                          {

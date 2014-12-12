@@ -18,8 +18,8 @@ class ManWidget(QWidget):
 
         self.pushButtonAuto.clicked.connect(self._handle_auto_clicked)
         self.pushButtonMan.clicked.connect(self._handle_man_clicked)
-        self.pushButtonTpDown.clicked.connect(self._handle_tp_down_clicked)
-        self.pushButtonTpUp.clicked.connect(self._handle_tp_up_clicked)
+#        self.pushButtonTpDown.clicked.connect(self._handle_tp_down_clicked)
+        self.pushButtonTpRS.clicked.connect(self._handle_tp_R_S_clicked)
 
 #	self.tableOee.setRowCount(3)
 #	self.tableOee.setColumnCount(2)
@@ -34,10 +34,7 @@ class ManWidget(QWidget):
     def _handle_man_clicked(self):
         pass
 
-    def _handle_tp_down_clicked(self):
-        pass
-
-    def _handle_tp_up_clicked(self):
+    def _handle_tp_R_S_clicked(self):
         pass
 
     def save_settings(self, settings):

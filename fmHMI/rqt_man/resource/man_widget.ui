@@ -84,6 +84,13 @@
       <layout class="QVBoxLayout" name="verticalLayout_2"/>
      </item>
      <item>
+      <widget class="QCheckBox" name="checkBox">
+       <property name="text">
+        <string>Deadman</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -127,16 +134,9 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_1">
      <item>
-      <widget class="QPushButton" name="pushButtonTpUp">
+      <widget class="QPushButton" name="pushButtonTpRS">
        <property name="text">
-        <string>Tipper up</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButtonTpDown">
-       <property name="text">
-        <string>Tipper down</string>
+        <string>Run sequence</string>
        </property>
       </widget>
      </item>

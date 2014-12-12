@@ -14,7 +14,7 @@ import nav_msgs.msg
 import numpy as np
 
 class TCPBridgeClient(asyncore.dispatcher):
-	def __init__(self,host,port=9090, order=7):
+	def __init__(self,host,port=9090, order=5):
 		print self.__class__,"__INIT__"
 		asyncore.dispatcher.__init__(self)
 		self.order = order

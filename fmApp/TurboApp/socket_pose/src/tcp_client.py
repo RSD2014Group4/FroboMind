@@ -5,8 +5,6 @@ from signal import signal, SIGINT, SIG_DFL
 
 import asyncore, socket, sys, time, rospy
 
-
-
 #import nav_msgs
 import tf
 
@@ -20,13 +18,19 @@ class TCPBridgeClient(asyncore.dispatcher):
 		print self.__class__,"__INIT__"
 		asyncore.dispatcher.__init__(self)
 		self.order = order
-
 		self.host, self.port = host, int(port)
 		self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
 		self.connect( (self.host, self.port) )
 		self.buffer=""
 		self.odom_topic = rospy.get_param("~odom_pub",'/fmInformation/marker_locator_pose')
 		self.odom_pub = rospy.Publisher(self.odom_topic, nav_msgs.msg.Odometry, queue_size=10)
+
+                self.xMax = rospy.get_param("xMax", 2.0)
+                self.yMax = rospy.get_param("yMax", 2.0)
+                self.xMin = rospy.get_param("xMin", -2.0)
+                self.yMin = rospy.get_param("yMin", -2.0)
+                self.allowPublish=true
+                self.tf_sub = tf.TransformListener()
 	
 	def handle_connect(self):
 		print 'Connected to {}:{}.'.format(self.host,str(self.port))
@@ -76,8 +80,14 @@ class TCPBridgeClient(asyncore.dispatcher):
               odom.twist.twist.linear.x = 0;
               odom.twist.twist.linear.y = 0;
               odom.twist.twist.angular.z = 0;
-            
-              self.odom_pub.publish(odom);
+
+              try:
+                (trans,rot) = tf_sub.lookupTransform('/base_link', '/map', rospy.Time(0))
+              except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+                continue
+
+              if(self.allowPublish==true):
+                self.odom_pub.publish(odom);
 
 #         except:
 #            print "error "

@@ -24,6 +24,7 @@ int main (int argc, char **argv)
 
 
   ros::param::get("Robot_goal",goal.cell_name);
+
   ac.sendGoal(goal);
 
   //wait for the action to return

@@ -14,8 +14,8 @@ RoboCard based frobits using 1800/700 ohm voltage dividers:
 	
 	<!-- Static transforms -->
 	<node pkg="tf" type="static_transform_publisher" name="imuToLink" args=" 0 0 0 0 0 3.14 base_link imu_link 20" />
-	<node pkg="tf" type="static_transform_publisher" name="linkToFoot" args=" 0 0 0 0 0 0 base_footprint base_link 20" />
 	<node pkg="tf" type="static_transform_publisher" name="laserToLink" args="0.265 0 0 0 0 0 base_link laser_mount_link 20" />
+	<node pkg="tf" type="static_transform_publisher" name="linkToFoot" args=" 0 0 0 0 0 0 base_footprint base_link 20" />
 
 	<group ns="fmLib" unless="$(arg sim)">
 		<node pkg="sdu_frobit_v2" name="frobit" type="frobit_interface_node.py" output="screen" >
@@ -61,6 +61,28 @@ RoboCard based frobits using 1800/700 ohm voltage dividers:
 			<param name="use_nmea_checksum" value="true"/>
 		</node>
         </group>
+
+	<group ns="fmProcessors">
+		<!-- calculate odometry based on wheel encoders and IMU yaw axis orientation -->
+		<node pkg="differential_odometry" name="differential_odometry" type="differential_odometry_node" output="screen" >
+		<param name="enc_left_sub" value="/fmInformation/encoder_left" />
+		<param name="enc_right_sub" value="/fmInformation/encoder_right" />
+		<param name="imu_sub" value="/fmInformation/imu" />
+		<param name="odom_reset_sub" value="/fmInformation/odom_reset" />
+		<!--param name="odom_pub" value="/fmKnowledge/odom" /-->
+		<param name="odom_pub" value="/fmKnowledge/pose" />
+		<param name="odom_estimate_frame" value="/odom" />
+		<param name="vehicle_frame" value="base_footprint" />
+		<param name="encoder_output" value="absolute" />
+		<param name="max_ticks_per_update" value="200" />
+		<param name="yaw_angle_source" value="imu_angular_velocity" />
+		<param name="imu_angular_velocity_yaw_axis" value="z" />
+		<param name="diff_steer_wheel_distance" value="0.37"/>
+		<param name="ticks_per_meter_left" value="710"></param>
+		<param name="ticks_per_meter_right" value="710"></param>
+		</node>
+	</group> 
+
         <group if="$(arg sim)">
 		<node pkg="stage_ros" type="stageros" name="simulator" args="$(find TurboUlla)/stage/frobitpro_robolab_rsd.world"/>
 		<remap from="/fmKnowledge/pose" to="/odom" />

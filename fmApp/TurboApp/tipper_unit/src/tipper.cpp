@@ -28,9 +28,17 @@ Tipper::Tipper()
     tipperStart_sub = n.subscribe<std_msgs::Bool>(parameters.tipper_start_sub, 5, &Tipper::tipStart, this);
 
     //Global variables
-    tip_command = false;
-    moving_up = false;
-    moving_down = false;
+
+	tip_command = false;
+     end_button = false;
+     top_button = false;
+
+     moving_up = false;
+     moving_down = false;
+
+     tipper_initialized = false;
+
+
 
     //Move down the tipper to initial state in the bottom.
     tipInit();

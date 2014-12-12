@@ -39,6 +39,7 @@ MESCommand = mes_mobile_command.COMMAND_WAIT
 #target position/zone
 #path = 'FloorOut'
 path = 'Station1'
+nextPath = 'Station1'
 #current position/zone
 #position = 'FloorOut'
 position = 'Station1'
@@ -76,6 +77,8 @@ class StateFreeAtCoordinateZone(smach.State):
         global position
         global r
         global debugWait
+        global path
+        global nextPath
 #        r.sleep()
         
         #If nothing new received from MES, stay free
@@ -90,7 +93,8 @@ class StateFreeAtCoordinateZone(smach.State):
             rospy.sleep(debugWait)
  
 
-        
+        rospy.sleep(debugWait)
+
         #If command received from MES server, Go to NavigateInCoordinateZone
         if MESCommand == mes_mobile_command.COMMAND_NAVIGATE:
             #TODO:Publish state change to OEE topic
@@ -99,6 +103,8 @@ class StateFreeAtCoordinateZone(smach.State):
             status.state = mes_mobile_status.STATE_WORKING
             status.position = position 
             pubStatus.publish(status)
+            
+            path = nextPath
             #Reset MESCommand to zero
                 #whenever this state, "free", a status have been sent,
                 #and a new command will be set by the callback function
@@ -117,7 +123,10 @@ class StateFreeAtLineZone(smach.State):
         global position
         global r
         global debugWait
+        global path
+        global nextPath
 #        r.sleep()
+        
         
         #If nothing new received from MES, stay free
         while MESCommand == mes_mobile_command.COMMAND_WAIT:
@@ -129,6 +138,8 @@ class StateFreeAtLineZone(smach.State):
             pubStatus.publish(status)
             rospy.sleep(debugWait)
  
+        rospy.sleep(debugWait)
+
 
         
         #If command received from MES server, Go to NavigateInLineZone
@@ -139,6 +150,7 @@ class StateFreeAtLineZone(smach.State):
             status.state = mes_mobile_status.STATE_WORKING
             status.position = position 
             pubStatus.publish(status)
+            path = nextPath
             #Reset MESCommand to zero
                 #whenever this state, "free", a status have been sent,
                 #and a new command will be set by the callback function
@@ -159,6 +171,8 @@ class StateFreeAtLoadZone(smach.State):
         global r
 #        r.sleep()
         global debugWait
+        global path
+        global nextPath
         
         #If nothing new received from MES, stay free
         while MESCommand == mes_mobile_command.COMMAND_WAIT:
@@ -174,13 +188,20 @@ class StateFreeAtLoadZone(smach.State):
         
         if MESCommand == mes_mobile_command.COMMAND_TIP:
             #TODO:Publish state change to OEE topic
-            self.tip() #TODO: CALL ACTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            rospy.sleep(debugWait)
             status = mes_mobile_status()
             status.header.stamp = rospy.Time.now()
             status.state = mes_mobile_status.STATE_WORKING
             status.position = position 
             pubStatus.publish(status)
+            
+            self.tip() #TODO: CALL ACTION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+            status = mes_mobile_status()
+            status.header.stamp = rospy.Time.now()
+            status.state = mes_mobile_status.STATE_FREE
+            status.position = position 
+            pubStatus.publish(status)
+            
             
             MESCommand = mes_mobile_command.COMMAND_WAIT
             
@@ -194,6 +215,8 @@ class StateFreeAtLoadZone(smach.State):
             status.state = mes_mobile_status.STATE_WORKING
             status.position = position 
             pubStatus.publish(status)
+            
+            path = nextPath
             #Reset MESCommand to zero
                 #whenever this state, "free", a status have been sent,
                 #and a new command will be set by the callback function
@@ -202,7 +225,11 @@ class StateFreeAtLoadZone(smach.State):
 #        else:
             #ERROR  
 
-
+    def tip(self):
+#        activateTipper()
+        rospy.sleep(debugWait)
+        rospy.loginfo("\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!TIPPING!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n")
+        return 0
 
 # define state StateNavigateInCoordinateZone
 # Uses rabbit line following to navigate a list of internally defined waypoints,
@@ -218,6 +245,8 @@ class StateNavigateInCoordinateZone(smach.State):
         global r
         global doneNavigating
         global debugWait
+        global path
+        global nextPath
 #        r.sleep()
 
         
@@ -239,12 +268,15 @@ class StateNavigateInCoordinateZone(smach.State):
         status = mes_mobile_status()
         status.header.stamp = rospy.Time.now()
         status.state = mes_mobile_status.STATE_FREE
-        status.position = position 
-        pubStatus.publish(status)        
+        status.position = position
+        pubStatus.publish(status)
+       
         if path == 'Line':
+            path = nextPath
             return 'outcome1'            
         #else, change to StateFreeAtCoordinateZone
         else:
+            path = nextPath
             return 'outcome2'
 
 
@@ -371,20 +403,26 @@ class StateNavigateInLineZone(smach.State):
 
     def execute(self, userdata):
         global position
-
+        global path
+        global nextPath
         global r
         global doneNavigating
         global debugWait
 #        r.sleep()
 
         if self.atStartOfLine == True:
+            rospy.loginfo("navigateToLongStretch")
             self.navigateToLongStretch()
             self.atStartOfLine = False
 
         if path == 'FloorIn':
+            rospy.loginfo("navigateToFloorIn")
+
             self.navigateToFloorIn()
             self.atStartOfLine = True
         else:
+            rospy.loginfo("navigateToQR")
+
             QRId = self.getQRId()        
             #TODO: QRId for endOfLine = 0!!! Maybe???
             self.navigateToQR(QRId)
@@ -404,6 +442,7 @@ class StateNavigateInLineZone(smach.State):
         status.state = mes_mobile_status.STATE_WORKING
         status.position = position 
         pubStatus.publish(status)
+       
         ##################################################################
         #TODO: Handle that navigation should continue in coordinate or load zone.
         #even without coming from a free state
@@ -412,10 +451,12 @@ class StateNavigateInLineZone(smach.State):
         
         #if at end of line, go to state StateNavigateInCoordinateZone, with way point = centerOfFloorInZone
         if path == 'FloorIn':
+            
             #change to StateNavigateInCoordinateZone
             return 'outcome1'
 
         else:
+            
             #in order to back up to LoadOff
             #TODO: should be left() when LoadOn!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             #Change to StateNavigateInLoadZone              
@@ -526,6 +567,8 @@ class StateNavigateInLoadZone(smach.State):
         global doneNavigating
         global r
         global debugWait
+        global path
+        global nextPath
 #        r.sleep()
         
        
@@ -562,11 +605,14 @@ class StateNavigateInLoadZone(smach.State):
         status.header.stamp = rospy.Time.now()           
         status.state = mes_mobile_status.STATE_FREE
         status.position = position 
-        pubStatus.publish(status)            
+        pubStatus.publish(status)     
+        
         if path == 'Line':
+            path = nextPath
             return 'outcome1'
         #else, determine if in LoadOn or LoadOff zone
         else:
+            path = nextPath
             return 'outcome2'
     
     def loadOnOrOff(self):
@@ -615,8 +661,9 @@ class StateNavigateInLoadZone(smach.State):
 def mes_mobile_command_callback(data):
     rospy.loginfo('In mes_mobile_command_callback()')    
     rospy.loginfo(data)
-    global path    
-    path = data.path
+    global path
+    global nextPath    
+    nextPath = data.path
     global MESCommand    
     MESCommand = data.command
 
@@ -651,6 +698,14 @@ def main():
     sm_top = smach.StateMachine(outcomes=['outcome4', 'outcome5'])
 
     # Open the container
+
+#STATE_FREE_AT_COORDINATE_ZONE
+#STATE_FREE_AT_LINE_ZONE
+#STATE_FREE_AT_LOAD_ZONE
+#STATE_NAVIGATE_IN_COORDINATE_ZONE
+#STATE_NAVIGATE_IN_LINE_ZONE
+#STATE_NAVIGATE_IN_LOAD_ZONE
+
 
     with sm_top:
         # Add states to the container

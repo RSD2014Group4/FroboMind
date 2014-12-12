@@ -54,7 +54,7 @@ class GocellAction
 			image_sub_ = nh_.subscribe(IMAGE_SUBSCRIBER, 1, &GocellAction::callback_image, this);
 			pid_pub_=nh_.advertise<std_msgs::Bool>(PID_ENABLE_PUBLISHER,1);
 			cross_sub_ = nh_.subscribe(CROSS_DETECTED_SUBSCRIBER, 1, &GocellAction::callback_cross_detected, this);
-            		//encoder_left_sub_ = nh_.subscribe(ENCODER_LEFT_SUBSCRIBER, 1, &GocellAction::callback_encoder, this);
+            		encoder_left_sub_ = nh_.subscribe(ENCODER_LEFT_SUBSCRIBER, 1, &GocellAction::callback_encoder, this);
 
 
 			counter_=0;
@@ -137,7 +137,7 @@ class GocellAction
             if(goal->cell_name=="Robot 3")
             {
                 cross_counter_=0;
-                encoder_offset_=150;
+                encoder_offset_=100;
             }
 
 

@@ -9,7 +9,7 @@ RoboCard based frobits using 1800/700 ohm voltage dividers:
 -->
 
 <launch>
-	<param name="Robot_goal" value="Robot 3" />
+	<param name="Robot_goal" value="Robot 1" />
 
 	<node pkg="pid_controller" name="lineFollowFSM_backwards" type="lineFollowFSM_backwards.py" /> 
 

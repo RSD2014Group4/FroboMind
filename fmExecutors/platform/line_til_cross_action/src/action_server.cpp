@@ -153,10 +153,10 @@ class GocellAction
                cross_counter_=1;
            }
 
- //// Remember to change it again!!!!
+ 
            if(goal->cell_name=="Robot 1")
            {
-               cross_counter_=0;
+               cross_counter_=2;
            }
            if(goal->cell_name=="Robot 2")
            {

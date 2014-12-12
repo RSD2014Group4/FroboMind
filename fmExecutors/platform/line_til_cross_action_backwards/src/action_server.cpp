@@ -148,8 +148,8 @@ class GocellAction
                 nh_.getParam("Robot_3_offset",encoder_offset_);
             }
 
-
-
+//            std::cout<<"Encoder_offset= "<<encoder_offset_<<std::endl;
+		
 			std_msgs::Bool pid_message;
 			pid_message.data=TRUE;
 			pid_pub_.publish(pid_message);

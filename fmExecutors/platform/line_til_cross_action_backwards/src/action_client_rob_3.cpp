@@ -28,6 +28,8 @@ int main (int argc, char **argv)
 
   ros::param::get("Robot_goal",goal.cell_name);
 
+//  std::cout<<goal.cell_name<<std::endl;
+
   //goal.cell_name="Robot 3";
 
   ac.sendGoal(goal);

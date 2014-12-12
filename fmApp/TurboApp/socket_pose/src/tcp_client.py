@@ -29,7 +29,7 @@ class TCPBridgeClient(asyncore.dispatcher):
                 self.yMax = rospy.get_param("yMax", 2.0)
                 self.xMin = rospy.get_param("xMin", -2.0)
                 self.yMin = rospy.get_param("yMin", -2.0)
-                self.allowPublish=true
+                self.allowPublish=True
                 self.tf_sub = tf.TransformListener()
 	
 	def handle_connect(self):
@@ -84,10 +84,10 @@ class TCPBridgeClient(asyncore.dispatcher):
               try:
                 (trans,rot) = tf_sub.lookupTransform('/base_link', '/map', rospy.Time(0))
               except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
-                continue
+                pass
 
-              if(self.allowPublish==true):
-                self.odom_pub.publish(odom);
+              #if(self.allowPublish==True):
+              self.odom_pub.publish(odom);
 
 #         except:
 #            print "error "

@@ -40,6 +40,8 @@ class GocellAction
         int cross_counter_;
         bool prev_cross_;
         int prev_cross_counter_;
+        int encoder_offset_;
+
 
 	public:
 		GocellAction(std::string name) :
@@ -123,10 +125,23 @@ class GocellAction
 			counter_=0;
 
             // counter of crosses left
-            cross_counter_=1;
-            prev_cross_= false;
 
-			//barcode_value_="";
+            prev_cross_= false;
+            cross_counter_=0;
+            encoder_offset_=0;
+            if(goal->cell_name=="")
+            {
+                cross_counter_=1;
+                encoder_offset_=0;
+            }
+            if(goal->cell_name=="Robot 3")
+            {
+                cross_counter_=0;
+                encoder_offset_=150;
+            }
+
+
+
 			std_msgs::Bool pid_message;
 			pid_message.data=TRUE;
 			pid_pub_.publish(pid_message);
@@ -178,12 +193,48 @@ class GocellAction
 			}
 			//result_.sequence = feedback_.sequence;
 			result_.cell_final="final_robot";
-			ROS_INFO("%s: Succeeded", action_name_.c_str());
+
 			// set the action state to succeeded
 
-			if(success_){
+            if(success_)
+            {
+                // Continue navigating the offset distance
 
-               
+                // Continue till the cross
+                int init_encoder=encoder_val_;
+                ros::Rate s(25);
+                while (ros::ok())
+                {
+                    if(image_.data)
+                    {
+                        // ROS_INFO("publishing image");
+                        cv_bridge::CvImage cvi;
+                        cvi.header.stamp = ros::Time::now();
+                        cvi.header.frame_id = "image";
+                        cvi.encoding = "bgr8";
+                        cvi.image=image_;
+                        sensor_msgs::Image im;
+                        cvi.toImageMsg(im);
+                        image_pub_.publish(im);
+                    }
+
+
+                    //Continue navigating unless advanced all the desired distance
+                    if(encoder_val_<(init_encoder-encoder_offset_))
+                    {
+                      break;
+                    }
+                    if(encoder_val_>init_encoder)
+                    {
+                        ROS_ERROR("Overflow on the encoder");
+                        std::cout<<"Last value of encoder_val= "<<init_encoder<<std::endl;
+                        break;
+                    }
+
+                    s.sleep();
+                }
+
+
 				as_.setSucceeded(result_);
 				pid_message.data=FALSE;
 				pid_pub_.publish(pid_message);

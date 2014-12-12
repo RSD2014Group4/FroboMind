@@ -81,13 +81,13 @@ class TCPBridgeClient(asyncore.dispatcher):
               odom.twist.twist.linear.y = 0;
               odom.twist.twist.angular.z = 0;
 
-              try:
-                (trans,rot) = tf_sub.lookupTransform('/base_link', '/map', rospy.Time(0))
-                self.allowPublish=(trans.x<xMax and trans.x>xMin and trans.y<yMax and trans.y>yMin)
-                if(self.allowPublish==True):
-                  self.odom_pub.publish(odom);
-              except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
-                pass
+#              try:
+#                (trans,rot) = tf_sub.lookupTransform('/base_link', '/map', rospy.Time(0))
+#                self.allowPublish=(trans.x<xMax and trans.x>xMin and trans.y<yMax and trans.y>yMin)
+#                if(self.allowPublish==True):
+              self.odom_pub.publish(odom);
+#              except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+#                pass
 
 #         except:
 #            print "error "

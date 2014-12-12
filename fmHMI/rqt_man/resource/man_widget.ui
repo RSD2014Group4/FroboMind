@@ -84,9 +84,21 @@
       <layout class="QVBoxLayout" name="verticalLayout_2"/>
      </item>
      <item>
-      <widget class="QCheckBox" name="checkBox">
+      <widget class="QPushButton" name="pushButtonDeadman">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
        <property name="text">
-        <string>Deadman</string>
+        <string>Deadman inactive</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+       <property name="default">
+        <bool>false</bool>
+       </property>
+       <property name="flat">
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -443,7 +455,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Oee</string>
+          <string>Oee                               </string>
          </property>
         </widget>
        </item>

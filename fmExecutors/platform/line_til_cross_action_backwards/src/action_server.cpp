@@ -130,15 +130,22 @@ class GocellAction
             prev_cross_= false;
             cross_counter_=0;
             encoder_offset_=0;
+
             if(goal->cell_name=="")
             {
                 cross_counter_=1;
-                encoder_offset_=0;
+            }
+            if(goal->cell_name=="Robot 1")
+            {
+                nh_.getParam("Robot_1_offset",encoder_offset_);
+            }
+            if(goal->cell_name=="Robot 2")
+            {
+                nh_.getParam("Robot_2_offset",encoder_offset_);
             }
             if(goal->cell_name=="Robot 3")
             {
-                cross_counter_=0;
-                encoder_offset_=220;
+                nh_.getParam("Robot_3_offset",encoder_offset_);
             }
 
 

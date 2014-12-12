@@ -15,7 +15,7 @@
 #define IMAGE_PUBLISHER "line_action/image_raw"
 #define PID_ENABLE_PUBLISHER "line_action/pid_enable_back"
 #define CROSS_DETECTED_SUBSCRIBER "line_node/cross_detected"
-
+#define ENCODER_LEFT_SUBSCRIBER "fmInformation/encoder_left"
 
 class GocellAction
 {
@@ -32,6 +32,7 @@ class GocellAction
 		ros::Publisher pid_pub_;
 		ros::Subscriber image_sub_;
 		ros::Subscriber cross_sub_;
+        ros::Subscriber encoder_left_sub_;
 		cv::Mat image_;
 		bool success_;
 		int counter_;
@@ -54,7 +55,7 @@ class GocellAction
 			image_sub_ = nh_.subscribe(IMAGE_SUBSCRIBER, 1, &GocellAction::callback_image, this);
 			pid_pub_=nh_.advertise<std_msgs::Bool>(PID_ENABLE_PUBLISHER,1);
 			cross_sub_ = nh_.subscribe(CROSS_DETECTED_SUBSCRIBER, 1, &GocellAction::callback_cross_detected, this);
-            		encoder_left_sub_ = nh_.subscribe(ENCODER_LEFT_SUBSCRIBER, 1, &GocellAction::callback_encoder, this);
+            encoder_left_sub_ = nh_.subscribe(ENCODER_LEFT_SUBSCRIBER, 1, &GocellAction::callback_encoder, this);
 
 
 			counter_=0;

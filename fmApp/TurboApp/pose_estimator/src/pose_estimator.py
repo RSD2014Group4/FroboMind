@@ -171,6 +171,49 @@ class odometry_gnss_pose_preprocessor():
 			self.gnss = []
 			self.gnss_latest_invalid = time_stamp
 		return valid
+  
+  	def vec2d_rot (self, v1, v2, theta): # return the vector [v1,v2]^T rotated by theta
+		rot_v1 = v1*cos(theta) - v2*sin(theta)
+		rot_v2 = v1*sin(theta) + v2*cos(theta)
+		return (rot_v1, rot_v2)
+
+	def marker_locator_new_data (self, time_stamp, processing_delay, e, n, orientation, variance):
+		valid = False
+		solution = 4 # bogus value to make the gnss buffer happy
+		sat = 6 # bogus value to make the gnss buffer happy
+		hdop = 1.0 # bogus value to make the gnss buffer happy
+		if self.gnss_validate_new_position (time_stamp, e, n): 
+			valid = True
+		
+			# compensate for the marker locator processing delay
+			if processing_delay > 0.01: # if significant delay (at v=1m/s this would be 1cm)
+				origin_time = time_stamp - processing_delay
+				i = len(self.odo)-1
+				while i > 0 && self.odo[i][0] > origin_time: # rewind to first odometry update after origin time
+					i -= 1
+				if i > 0: # make sure the odometry buffer is complete
+					while i <= len(self.odo): # loop through all odo updates since origin time
+						dDist = self.odo[i][1]
+						dTheta = self.odo[i][2]
+						orientation += dTheta/2.0
+						(e, n) = self.vec2d_rot (e, n, orientation)
+						orientation += dTheta/2.0
+						orientation = self.angle_limit(orientation)
+						i += 1
+
+			self.gnss.append([time_stamp, e, n, solution, sat, hdop]) # add measurement to sliding window
+
+			if self.gnss_interval_valid == False and len(self.gnss) == self.buf_init_size: # if time to calc update interval
+				self.gnss_interval_valid = True
+				self.gnss_interval = (self.gnss[-1][0] - self.gnss[0][0])/(self.buf_init_size - 1.0)
+				print "  Estimated GNSS measurement interval: %.3fs" % (self.gnss_interval)
+				self.gnss_buf_size = int(self.buffer_period / self.gnss_interval)
+			while len(self.gnss) > self.gnss_buf_size: # trim buffer length to size
+				self.gnss.pop(0)	
+		if valid == False: # dischard the entire buffer
+			self.gnss = []
+			self.gnss_latest_invalid = time_stamp
+		return (valid, e, n, orientation)
 
 	def imu_new_data(self, time_stamp, yaw_rate):
 		self.imu.append([time_stamp, yaw_rate])

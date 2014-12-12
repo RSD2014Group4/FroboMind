@@ -27,10 +27,12 @@ include_directories(
 
 ## Declare a cpp executable
 add_executable(spin_client src/client.cpp)
+add_executable(spin_client_left src/client_left.cpp)
 add_executable(spin_server  src/server.cpp)
 
 
 target_link_libraries(spin_client ${catkin_LIBRARIES})
+target_link_libraries(spin_client_left ${catkin_LIBRARIES})
 target_link_libraries(spin_server ${catkin_LIBRARIES})
 
 #add_dependencies(

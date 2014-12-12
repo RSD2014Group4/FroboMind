@@ -1,11 +1,12 @@
+#!/usr/bin/env python
+
 import os
 import rospkg
 
 from python_qt_binding import loadUi
 from python_qt_binding.QtCore import Qt, QUrl
-from python_qt_binding.QtGui import QCompleter, QIcon, QWidget
+from python_qt_binding.QtGui import QCompleter, QIcon, QWidget, QTableWidgetItem
 from python_qt_binding.QtWebKit import QWebPage, QWebView
-
 
 class ManWidget(QWidget):
     def __init__(self):
@@ -17,9 +18,15 @@ class ManWidget(QWidget):
 
         self.pushButtonAuto.clicked.connect(self._handle_auto_clicked)
         self.pushButtonMan.clicked.connect(self._handle_man_clicked)
-        self.pushButtonMoveRobot.clicked.connect(self._handle_move_robot_clicked)
-        self.pushButtonTpDown.clicked.connect(self._handle_tp_down_clicked)
-        self.pushButtonTpUp.clicked.connect(self._handle_tp_up_clicked)
+#        self.pushButtonTpDown.clicked.connect(self._handle_tp_down_clicked)
+        self.pushButtonTpRS.clicked.connect(self._handle_tp_R_S_clicked)
+
+#	self.tableOee.setRowCount(3)
+#	self.tableOee.setColumnCount(2)
+#	self.tableOee.setHorizontalHeaderLabels(("Item", "Data"))
+#	self.tableOee.setItem(2, 1, QTableWidgetItem("Cubes"))
+
+
 
     def _handle_auto_clicked(self):
         pass
@@ -27,13 +34,7 @@ class ManWidget(QWidget):
     def _handle_man_clicked(self):
         pass
 
-    def _handle_move_robot_clicked(self):
-        pass
-
-    def _handle_tp_down_clicked(self):
-        pass
-
-    def _handle_tp_up_clicked(self):
+    def _handle_tp_R_S_clicked(self):
         pass
 
     def save_settings(self, settings):

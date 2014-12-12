@@ -10,11 +10,8 @@
 #include <tf/transform_datatypes.h>
 #include <geometry_msgs/TwistStamped.h>
 
-
 #define cmd_vel_PUBLISHER "/fmCommand/cmd_vel"
 #define IMU_SUBSCRIBER "/fmInformation/imu"
-
-
 
 class spin_degreesAction
 {

@@ -1,5 +1,0 @@
-<launch>
-  <include file="$(find TurboUlla)/launch/include/platform.launch"/>
-  <include file="$(find TurboUlla)/launch/include/camera_line_barcode.launch"/>
-  <include file="$(find TurboUlla)/launch/include/line_following.launch"/>
-</launch>

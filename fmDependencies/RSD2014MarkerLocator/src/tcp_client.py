@@ -39,10 +39,10 @@ class TCPBridgeClient(asyncore.dispatcher):
 
               datalist = data.split(',')
               timestamp = datalist[2]
-              for i in range( (len(datalist) - 3 )/3):
-                  if str(self.order) == datalist[ 3 + i*3]:
-                      x = np.double(datalist[4 + i*3])
-                      y = np.double(datalist[5 + i*3])
+              for i in range( (len(datalist) - 3 )/4):
+                  if str(self.order) == datalist[ 3 + i*4]:
+                      x = np.double(datalist[4 + i*4])
+                      y = np.double(datalist[5 + i*4])
                       
                       
               """ create and pubish tranmerc """

@@ -67,7 +67,7 @@ class PoseEstimatorNode():
 		self.pose_msg.header.frame_id = rospy.get_param("~frame_id", "base_link")
 		self.pose_msg.child_frame_id = rospy.get_param("~child_frame_id", "odom")
 		robot_max_velocity = float(rospy.get_param("~/robot_max_velocity", 1.0)) # Robot maximum velocity [m/s]
-		self.marker_processing_delay = rospy.get_param("~marker_processing_delay", 0)
+		self.marker_processing_delay = rospy.get_param("~marker_processing_delay", 0.0)
 
 		self.odometry_var_dist = rospy.get_param("~odometry_distance_variance", 0.000001)
 		self.odometry_var_yaw = rospy.get_param("~odometry_angular_variance", 0.000001)
@@ -166,7 +166,8 @@ class PoseEstimatorNode():
 		n = msg.pose.pose.position.y
 		orientation = yaw
 		time_stamp = msg.header.stamp
-		self.pose = marker_locator_new_data (time_stamp, self.marker_processing_delay, e, n, orientation, pos_variance)
+		processing_delay = rospy.Duration.from_sec(self.marker_processing_delay)
+		self.pose = marker_locator_new_data (time_stamp,processing_delay, e, n, orientation, pos_variance)
 
 		# publish the estimated pose	
 		self.publish_pose()

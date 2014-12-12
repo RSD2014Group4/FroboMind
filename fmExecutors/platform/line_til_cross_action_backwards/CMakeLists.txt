@@ -30,7 +30,7 @@ include_directories(
 
 ## Declare a cpp executable
 add_executable(line_client_back src/action_client.cpp)
-add_executable(line_client_back_rob_3 src/action_client_rob_3.cpp)
+add_executable(line_client_back_rob_x src/action_client_rob_3.cpp)
 
 add_executable(line_server_back  src/action_server.cpp)
 
@@ -38,13 +38,13 @@ add_executable(line_server_back  src/action_server.cpp)
 
 
 target_link_libraries(line_client_back ${catkin_LIBRARIES})
-target_link_libraries(line_client_back_rob_3 ${catkin_LIBRARIES})
+target_link_libraries(line_client_back_rob_x ${catkin_LIBRARIES})
 target_link_libraries(line_server_back ${catkin_LIBRARIES})
 
 add_dependencies(
   line_server_back ${learning_actionlib_EXPORTED_TARGETS}
   line_client_back ${learning_actionlib_EXPORTED_TARGETS}
-  line_client_back_rob_3 ${learning_actionlib_EXPORTED_TARGETS}
+  line_client_back_rob_x ${learning_actionlib_EXPORTED_TARGETS}
 
 
 )

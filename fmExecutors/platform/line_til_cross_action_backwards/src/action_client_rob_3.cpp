@@ -26,8 +26,11 @@ int main (int argc, char **argv)
 
   //goal.dishwasher_id=20;
 
+  ros::param::get("Robot_goal",goal.cell_name);
 
-  goal.cell_name="Robot 3";
+  //std::cout<<goal.cell_name<<std::endl;
+
+  //goal.cell_name="Robot 3";
   ac.sendGoal(goal);
 
   //wait for the action to return

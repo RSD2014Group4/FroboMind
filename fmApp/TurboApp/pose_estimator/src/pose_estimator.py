@@ -189,7 +189,7 @@ class odometry_gnss_pose_preprocessor():
 			if processing_delay > 0.01: # if significant delay (at v=1m/s this would be 1cm)
 				origin_time = time_stamp - processing_delay
 				i = len(self.odo)-1
-				while i > 0 && self.odo[i][0] > origin_time: # rewind to first odometry update after origin time
+				while (i > 0) and (self.odo[i][0] > origin_time): # rewind to first odometry update after origin time
 					i -= 1
 				if i > 0: # make sure the odometry buffer is complete
 					while i <= len(self.odo): # loop through all odo updates since origin time

@@ -26,5 +26,6 @@
     <param name="solution_required" value="4" />
     <param name="frame_id" value="base_kalman" />
     <param name="child_frame_id" value="lps" />
+    <param name="marker_processing_delay" value="0.5" />
   </node>
 </launch>

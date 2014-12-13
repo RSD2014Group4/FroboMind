@@ -187,7 +187,7 @@ class odometry_gnss_pose_preprocessor():
 			valid = True
 		
 			# compensate for the marker locator processing delay
-			if processing_delay > rospy.Duration.from_sec(0.01): # if significant delay (at v=1m/s this would be 1cm)
+			if processing_delay > 0.01: # if significant delay (at v=1m/s this would be 1cm)
 				origin_time = time_stamp - processing_delay
 				i = len(self.odo)-1
 				while (i > 0) and (self.odo[i][0] > origin_time): # rewind to first odometry update after origin time

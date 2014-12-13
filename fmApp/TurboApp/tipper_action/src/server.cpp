@@ -79,7 +79,7 @@ public:
         ros::Rate r(10);
         while (ros::ok())
         {
-            if(counter>50)
+            if(counter>100)
             {
                 break;
             }

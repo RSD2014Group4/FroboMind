@@ -27,16 +27,16 @@ include_directories(
 
 ## Declare a cpp executable
 add_executable(tipper_client src/client.cpp)
-add_executable(tipper_server  src/server.cpp)
+add_executable(tipper_service  src/server.cpp)
 
 
 target_link_libraries(tipper_client ${catkin_LIBRARIES})
-target_link_libraries(tipper_server ${catkin_LIBRARIES})
+target_link_libraries(tipper_service ${catkin_LIBRARIES})
 
-add_dependencies(
-  tipper_client ${learning_actionlib_EXPORTED_TARGETS}
-  tipper_server ${learning_actionlib_EXPORTED_TARGETS}
+#add_dependencies(
+#  tipper_client ${learning_actionlib_EXPORTED_TARGETS}
+ # tipper_server ${learning_actionlib_EXPORTED_TARGETS}
 
-)
+#)
 
 

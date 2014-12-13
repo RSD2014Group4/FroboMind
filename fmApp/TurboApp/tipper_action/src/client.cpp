@@ -10,7 +10,7 @@ int main (int argc, char **argv)
 
   // create the action client
   // true causes the client to spin its own thread
-  actionlib::SimpleActionClient<lift_tipper::tipperAction> ac("tipper", true);
+  actionlib::SimpleActionClient<lift_tipper::tipperAction> ac("tipper_action", true);
 
   std::cout<<"Client started"<<std::endl;
   ROS_INFO("Waiting for action server to start.");

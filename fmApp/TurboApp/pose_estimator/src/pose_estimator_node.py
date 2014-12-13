@@ -192,7 +192,7 @@ class PoseEstimatorNode():
 		self.pose_msg.pose.pose.position.z = 0
 		q = quaternion_from_euler (self.acc_roll, self.acc_pitch, self.pose[2])
 		self.pose_msg.pose.pose.orientation = Quaternion(q[0], q[1], q[2], q[3])
-		self.pose_pub.publish(self.pose_msg); # publish the pose message
+		# self.pose_pub.publish(self.pose_msg); # publish the pose message
 		self.br.sendTransform((self.pose[0],self.pose[1],0), q, rospy.Time.now(), \
 			self.pose_msg.header.frame_id, self.pose_msg.child_frame_id) # publish the transform message
 

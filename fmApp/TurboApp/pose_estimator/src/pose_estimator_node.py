@@ -67,6 +67,7 @@ class PoseEstimatorNode():
 		self.pose_msg.header.frame_id = rospy.get_param("~frame_id", "base_link")
 		self.pose_msg.child_frame_id = rospy.get_param("~child_frame_id", "odom")
 		robot_max_velocity = float(rospy.get_param("~/robot_max_velocity", 1.0)) # Robot maximum velocity [m/s]
+		self.marker_processing_delay = rospy.get_param("~marker_processing_delay", 0.0)
 
 		self.odometry_var_dist = rospy.get_param("~odometry_distance_variance", 0.000001)
 		self.odometry_var_yaw = rospy.get_param("~odometry_angular_variance", 0.000001)
@@ -123,6 +124,9 @@ class PoseEstimatorNode():
 		if self.first_odom_topic_received == True: # if we have received a first odom message
 			# EKF system update (odometry)
 			delta_dist =  sqrt((x-self.odometry_x_prev)**2 + (y-self.odometry_y_prev)**2)
+			if not forward :
+				delta_dist *= -1
+				
 			delta_angle = self.angle_diff (yaw, self.odometry_yaw_prev)
 			self.pp.odometry_new_data (self.latest_odo_update, delta_dist, delta_angle, forward)
 			self.pose = self.ekf.system_update (delta_dist, self.odometry_var_dist, delta_angle, self.odometry_var_yaw)
@@ -153,8 +157,17 @@ class PoseEstimatorNode():
 			
 		if yaw_variance == 0.0 :
 			yaw_variance = 0.000001
+
+            # marker_locator_new_data (self, time_stamp, processing_delay, e, n, orientation, variance):
+            # gnss_new_data (self, time_stamp, easting, northing, solution, sat, hdop):
 			
-		self.pose = self.ekf.measurement_update ([msg.pose.pose.position.x, msg.pose.pose.position.y, yaw], pos_variance, yaw_variance)
+		#self.pose = self.ekf.measurement_update ([msg.pose.pose.position.x, msg.pose.pose.position.y, yaw], pos_variance, yaw_variance)
+		e = msg.pose.pose.position.x
+		n = msg.pose.pose.position.y
+		orientation = yaw
+		time_stamp = msg.header.stamp
+		processing_delay = rospy.Duration.from_sec(self.marker_processing_delay)
+		self.pose = marker_locator_new_data (time_stamp,processing_delay, e, n, orientation, pos_variance)
 
 		# publish the estimated pose	
 		self.publish_pose()

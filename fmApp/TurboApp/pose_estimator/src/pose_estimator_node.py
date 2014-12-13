@@ -167,7 +167,7 @@ class PoseEstimatorNode():
 		orientation = yaw
 		time_stamp = msg.header.stamp
 		processing_delay = rospy.Duration.from_sec(self.marker_processing_delay)
-		self.pose = marker_locator_new_data (time_stamp,processing_delay, e, n, orientation, pos_variance)
+		self.pose = self.ekf.marker_locator_new_data (time_stamp,processing_delay, e, n, orientation, pos_variance)
 
 		# publish the estimated pose	
 		self.publish_pose()

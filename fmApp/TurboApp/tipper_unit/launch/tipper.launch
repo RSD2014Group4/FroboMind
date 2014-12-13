@@ -8,7 +8,6 @@
 		<param name="use_nmea_checksum" value="true"/>
          </node>
  
-
 	<node pkg="tipper_unit" type="sdu_rsd_tipper_node" name="tipper" output="screen">
 		<param name="tipper_nmea_sub" value="/fmData/nmea_from_tipper" />
 		<param name="tipper_nmea_pub" value="/fmData/nmea_to_tipper" />

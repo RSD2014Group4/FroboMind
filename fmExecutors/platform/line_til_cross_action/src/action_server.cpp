@@ -143,29 +143,56 @@ class GocellAction
            cross_counter_=0;
            encoder_offset_=370;
 
+           std::string goal_barcode;
+
+            // Go to next cross
            if(goal->cell_name=="")
            {
+               goal_barcode=goal->cell_name;
                cross_counter_=0;
            }
-
+            // Get out of workcell (ignore one cross)
            if(goal->cell_name=="out")
            {
+               goal_barcode=goal->cell_name;
                cross_counter_=1;
            }
-
- 
+           // Go to robot x
            if(goal->cell_name=="Robot 1")
            {
+               goal_barcode=goal->cell_name;
                cross_counter_=2;
            }
            if(goal->cell_name=="Robot 2")
            {
+               goal_barcode=goal->cell_name;
                cross_counter_=1;
            }
            if(goal->cell_name=="Robot 3")
            {
+               goal_barcode=goal->cell_name;
                cross_counter_=0;
            }
+
+          // From robot x till the end
+           if(goal->cell_name=="End Robot 1")
+           {
+               goal_barcode="End";
+               cross_counter_=0;
+           }
+           if(goal->cell_name=="End Robot 2")
+           {
+               goal_barcode="End";
+               // increase this one when extending the line
+               cross_counter_=0;
+           }
+           if(goal->cell_name=="End Robot 3")
+           {
+               goal_barcode="End";
+               // increase this one when extending the line
+               cross_counter_=1;
+           }
+
 
 
            while(true)
@@ -314,7 +341,7 @@ class GocellAction
                         }
 
 
-                         if(barcode_value_==goal->cell_name)
+                        if(barcode_value_==goal_barcode)
                          {
 
                              std::cout<<"!!!!!! Barcode succedded!! value= "<<barcode_value_<<std::endl;

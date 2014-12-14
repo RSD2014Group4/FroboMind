@@ -1,5 +1,6 @@
-from qt_gui.plugin import Plugin
 
+
+from qt_gui.plugin import Plugin
 from man_widget import ManWidget
 
 

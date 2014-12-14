@@ -10,13 +10,14 @@ from python_qt_binding.QtCore import Qt, QUrl
 from python_qt_binding.QtGui import QCompleter, QIcon, QWidget, QTableWidgetItem
 from python_qt_binding.QtWebKit import QWebPage, QWebView
 from TurboUlla.msg import oee_data
-#from rqt_man.msg import gui_command
+from rqt_man.msg import gui_command
 from lift_tipper.msg import tipperAction, tipperGoal
 
 
 class ManWidget(QWidget):
     def __init__(self):
         super(ManWidget, self).__init__()
+	rospy.init_node('gui_TurboUlla', anonymous=True)
         rp = rospkg.RosPack()
         ui_file = os.path.join(rp.get_path('rqt_man'), 'resource', 'man_widget.ui')
         loadUi(ui_file, self)
@@ -24,7 +25,7 @@ class ManWidget(QWidget):
 
         self.pushButtonAuto.clicked.connect(self._handle_auto_clicked)
         self.pushButtonMan.clicked.connect(self._handle_man_clicked)
-	self.manualMode = 'true'
+	self.manualMode = True
 	self.pushButtonMan.setStyleSheet("background-color: green")
 
 
@@ -64,7 +65,7 @@ class ManWidget(QWidget):
     def _handle_auto_clicked(self):
         self.pushButtonMan.setStyleSheet("background-color: light grey")
 	self.pushButtonAuto.setStyleSheet("background-color: green")
-	self.manualMode = 'false'
+	self.manualMode = False
 
 	self.msg = gui_command()
 	self.msg.command = self.msg.COMMAND_AUTO
@@ -77,16 +78,16 @@ class ManWidget(QWidget):
 	self.msg = gui_command()
 	self.msg.command = self.msg.COMMAND_MAN	
 	self.pub.publish(self.msg)
-	self.manualMode = 'true'
+	self.manualMode = True
 
 
     def _handle_tp_R_S_clicked(self):
-	if self.manualMode == 'true':
+	if self.manualMode == True:
 		rospy.loginfo("Tipping")
         	goal = tipperGoal()
 		goal.lift = True;
 	        self.tipperClient.send_goal(goal)
-        	self.tipperClient.wait_for_result(rospy.Duration.from_sec(SERVER_WAIT_TIME))
+        	self.tipperClient.wait_for_result(rospy.Duration.from_sec(10))
         
     def save_settings(self, settings):
         pass

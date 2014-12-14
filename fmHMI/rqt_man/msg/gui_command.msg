@@ -1,8 +1,4 @@
-uint8 COMMAND_MAN = 0
-uint8 COMMAND_AUTO = 1
-uint8 command
-
-uint8 DEADMAN_ACTIVATED = 0
-uint8 DEADMAN_DEACTIVATED = 1
-uint8 DEADMAN
+bool COMMAND_MAN = 0
+bool COMMAND_AUTO = 1
+bool command
 

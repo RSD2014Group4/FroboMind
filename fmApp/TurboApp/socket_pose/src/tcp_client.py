@@ -25,11 +25,13 @@ class TCPBridgeClient(asyncore.dispatcher):
 		self.odom_topic = rospy.get_param("~odom_pub",'/fmInformation/marker_locator_pose')
 		self.odom_pub = rospy.Publisher(self.odom_topic, nav_msgs.msg.Odometry, queue_size=10)
 
-                self.xMax = rospy.get_param("xMax", 2.0)
-                self.yMax = rospy.get_param("yMax", 2.0)
+                self.xMax = rospy.get_param("xMax", 3.0)
+                self.yMax = rospy.get_param("yMax", 3.0)
                 self.xMin = rospy.get_param("xMin", -2.0)
                 self.yMin = rospy.get_param("yMin", -2.0)
-                self.allowPublish=True
+		self.position=(0,0,0,0);
+		self.quarternion=(0,0,0,0);
+                self.allowPublish=False
                 self.tf_sub = tf.TransformListener()
 	
 	def handle_connect(self):
@@ -81,13 +83,12 @@ class TCPBridgeClient(asyncore.dispatcher):
               odom.twist.twist.linear.y = 0;
               odom.twist.twist.angular.z = 0;
 
-              try:
-                (trans,rot) = tf_sub.lookupTransform('/base_link', '/map', rospy.Time(0))
-                self.allowPublish=(trans.x<xMax and trans.x>xMin and trans.y<yMax and trans.y>yMin)
-                if(self.allowPublish==True):
-                  self.odom_pub.publish(odom);
-              except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
-                pass
+              if self.tf_sub.frameExists("/base_link") and self.tf_sub.frameExists("/map"):
+                self.position, self.quaternion = self.tf.lookupTransform("/base_link", "/map", rospy.Time(0))
+
+	      self.allowPublish=(self.position[0]>self.xMin and self.position[0]<self.xMax and self.position[1]>self.yMin and self.position[1]<self.yMax);
+              if(self.allowPublish==True):
+              	self.odom_pub.publish(odom);
 
 #         except:
 #            print "error "

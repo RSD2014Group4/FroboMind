@@ -1,6 +1,9 @@
 <!-- calculate oee -->
 
 <launch>
-  <include file="$(find TurboUlla)/launch/include/platform.launch"/>
+  <arg name="sim" default="false" />
+   <include file="$(find TurboUlla)/launch/include/platform.launch">
+    <arg name="sim" value="$(arg sim)"/>
+  </include>
   <include file="$(find TurboUlla)/launch/include/manual_control.launch"/>
 </launch>

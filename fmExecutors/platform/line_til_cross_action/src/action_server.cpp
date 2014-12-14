@@ -141,30 +141,58 @@ class GocellAction
 
 
            cross_counter_=0;
-           encoder_offset_=370;
+           encoder_offset_=390;
 
+           std::string goal_barcode;
+
+            // Go to next cross
            if(goal->cell_name=="")
            {
+               goal_barcode=goal->cell_name;
                cross_counter_=0;
            }
-
+            // Get out of workcell (ignore one cross)
            if(goal->cell_name=="out")
            {
+               goal_barcode=goal->cell_name;
                cross_counter_=1;
            }
-
+           // Go to robot x
            if(goal->cell_name=="Robot 1")
            {
+               goal_barcode=goal->cell_name;
                cross_counter_=2;
            }
            if(goal->cell_name=="Robot 2")
            {
+               goal_barcode=goal->cell_name;
                cross_counter_=1;
            }
            if(goal->cell_name=="Robot 3")
            {
+               goal_barcode=goal->cell_name;
                cross_counter_=0;
            }
+
+          // From robot x till the end
+           if(goal->cell_name=="End Robot 1")
+           {
+               goal_barcode="End";
+               cross_counter_=0;
+           }
+           if(goal->cell_name=="End Robot 2")
+           {
+               goal_barcode="End";
+               // increase this one when extending the line
+               cross_counter_=0;
+           }
+           if(goal->cell_name=="End Robot 3")
+           {
+               goal_barcode="End";
+               // increase this one when extending the line
+               cross_counter_=1;
+           }
+
 
 
            while(true)
@@ -272,7 +300,12 @@ class GocellAction
                     pid_pub_.publish(pid_message);
 
 
-                    // New part!!
+                    // New part!! Continue pusblishing the image
+
+
+
+
+
 
 
                     if(goal->cell_name=="" || goal->cell_name=="out" )
@@ -280,10 +313,35 @@ class GocellAction
                         as_.setSucceeded(result_);
                         break;
                     }else{
-                        // sleep so barcode is detected
-                         ros::Duration(0.5).sleep();
 
-                         if(barcode_value_==goal->cell_name)
+                        counter_=0;
+
+                        while (ros::ok())
+                        {
+                            // send like 25 images
+                            if(counter_>25 || barcode_value_!="")
+                            {
+                                break;
+                            }
+
+                            if(image_.data)
+                            {
+                                // ROS_INFO("publishing image");
+                                cv_bridge::CvImage cvi;
+                                cvi.header.stamp = ros::Time::now();
+                                cvi.header.frame_id = "image";
+                                cvi.encoding = "bgr8";
+                                cvi.image=image_;
+                                sensor_msgs::Image im;
+                                cvi.toImageMsg(im);
+                                image_pub_.publish(im);
+                            }
+                            counter_++;
+                            s.sleep();
+                        }
+
+
+                        if(barcode_value_==goal_barcode)
                          {
 
                              std::cout<<"!!!!!! Barcode succedded!! value= "<<barcode_value_<<std::endl;

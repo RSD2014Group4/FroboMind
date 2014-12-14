@@ -18,21 +18,35 @@ class ManWidget(QWidget):
 
         self.pushButtonAuto.clicked.connect(self._handle_auto_clicked)
         self.pushButtonMan.clicked.connect(self._handle_man_clicked)
-#        self.pushButtonTpDown.clicked.connect(self._handle_tp_down_clicked)
+	self.manualMode = 'true'
+	self.pushButtonMan.setStyleSheet("background-color: green")
+
+
         self.pushButtonTpRS.clicked.connect(self._handle_tp_R_S_clicked)
+	
+	self.pushButtonDeadman.clicked.connect(self._handle_deadman_clicked)
+	self.pushButtonDeadman.setStyleSheet("color: black; background-color: red")
+	self.deadmanActive = 'false'
 
-#	self.tableOee.setRowCount(3)
-#	self.tableOee.setColumnCount(2)
-#	self.tableOee.setHorizontalHeaderLabels(("Item", "Data"))
-#	self.tableOee.setItem(2, 1, QTableWidgetItem("Cubes"))
-
-
-
+    def _handle_deadman_clicked(self):
+	if self.deadmanActive == 'false':
+		self.deadmanActive = 'true'
+	        self.pushButtonDeadman.setStyleSheet("color: black; background-color: green")
+		self.pushButtonDeadman.setText('Deadman active')
+	else:
+		self.deadmanActive = 'false'
+	        self.pushButtonDeadman.setStyleSheet("color: black; background-color: red")
+		self.pushButtonDeadman.setText('Deadman inactive')
+	
     def _handle_auto_clicked(self):
-        pass
+        self.pushButtonMan.setStyleSheet("background-color: light grey")
+	self.pushButtonAuto.setStyleSheet("background-color: green")
+	self.manualMode = 'false'
 
     def _handle_man_clicked(self):
-        pass
+        self.pushButtonAuto.setStyleSheet("background-color: light grey")
+	self.pushButtonMan.setStyleSheet("background-color: green")
+	self.manualMode = 'true'
 
     def _handle_tp_R_S_clicked(self):
         pass

@@ -312,8 +312,8 @@ class StateNavigateInCoordinateZone(smach.State):
         
         name2coord = {}
         
-        pos = Point(5.200,-0.650,0.000)
-        ori = Quaternion(0.000,0.000,1.000,0.000)
+        pos = Point(4.971,-0.712,0.000)
+        ori = Quaternion(0.000,0.000,0.705,0.709)
         pose = Pose(pos,ori)
         name2coord['Dispenser'] = pose
 

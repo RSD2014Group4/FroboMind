@@ -14,4 +14,8 @@
 		<param name="tipper_done" value="/tip_done" />
 		<param name="tipper_start" value="/tip_start" />
 	</node>
+
+	<node pkg="lift_tipper" type="tipper_service" name="tipper_action" output="screen" />
+
+
 </launch>

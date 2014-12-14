@@ -851,8 +851,8 @@ class StateNavigateInLoadZone(smach.State):
 
 
 def mes_mobile_command_callback(data):
-    rospy.loginfo('In mes_mobile_command_callback()')    
-    rospy.loginfo(data)
+    #rospy.loginfo('In mes_mobile_command_callback()')    
+    #rospy.loginfo(data)
     global path
     global nextPath    
     nextPath = data.path

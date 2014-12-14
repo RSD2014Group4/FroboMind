@@ -49,6 +49,8 @@ add_message_files(
    mes_sorting_status.msg
    mes_order.msg
    lego_brick.msg
+   oee_data.msg
+#   gui_command.msg
 )
 
 ## Generate services in the 'srv' folder

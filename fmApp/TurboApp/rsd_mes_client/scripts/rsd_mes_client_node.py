@@ -100,7 +100,7 @@ class RSDMesClientNode():
     def update(self, event):
         if (self.online and self.status_valid):
             self.serverInfoExchange()
-        self.publishCommand()
+            self.publishCommand()
         
 
 if __name__ == '__main__':

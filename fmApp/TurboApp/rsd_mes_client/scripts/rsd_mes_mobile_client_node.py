@@ -64,7 +64,7 @@ class RSDMesMobileClientNode(RSDMesClientNode):
     
     def fillDummyData(self):
         self.ros_msg_command.command = self.ros_msg_command.COMMAND_NAVIGATE
-        self.ros_msg_command.path = ["path1","path2","destination_cell"]
+        self.ros_msg_command.path = "path1"
     
     def fillDefaultData(self):
         self.ros_msg_command.command = self.ros_msg_command.COMMAND_WAIT

@@ -37,10 +37,10 @@ global debugWait
 debugWait = 2.0
 
 global SERVER_WAIT_TIME
-SERVER_WAIT_TIME = 2.0
+SERVER_WAIT_TIME = 30.0
 
 global SERVER_WAIT_TIME_COORD
-SERVER_WAIT_TIME_COORD
+SERVER_WAIT_TIME_COORD = 2.0
 
 #set from callback function from MES_command topic
 global MESCommand

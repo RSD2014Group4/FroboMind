@@ -208,7 +208,7 @@ class StateFreeAtLoadZone(smach.State):
         global path
         global nextPath
         
-        rospy.sleep(debugWait)
+        #rospy.sleep(debugWait) need to be fast 
         
         rospy.loginfo("BEFORE COMMAND_WAIT while loop")
         rospy.loginfo("currCommand: " + str(MESCommand))
@@ -878,6 +878,7 @@ class StateNavigateInLoadZone(smach.State):
 #        rospy.loginfo('Executing state BAR')
 #        return 'outcome2'
         
+        
 
 
 def mes_mobile_command_callback(data):
@@ -902,6 +903,8 @@ def done_navigating_callback(data):
 # main
 def main():
     global r
+    
+    rospy.sleep(2)
     
     rospy.init_node('decisionLayer')
     r = rospy.Rate(0.5)

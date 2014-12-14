@@ -43,7 +43,7 @@ global SERVER_WAIT_TIME
 SERVER_WAIT_TIME = 2.0
 
 global SERVER_WAIT_TIME_COORD
-SERVER_WAIT_TIME_COORD = 180.0
+SERVER_WAIT_TIME_COORD = 2.0#180.0
 
 #set from callback function from MES_command topic
 global MESCommand
@@ -161,6 +161,10 @@ class StateFreeAtLineZone(smach.State):
         #If nothing new received from MES, stay free
         while MESCommand == mes_mobile_command.COMMAND_WAIT:
             #sleep for 5 seconds
+            rospy.loginfo("in COMMAND_WAIT while loop")
+            rospy.loginfo("currCommand: " + str(MESCommand))
+            rospy.loginfo("currPath: " + str(path))    
+            rospy.loginfo("currNextPath: " + str(nextPath))
             status = mes_mobile_status()
             status.header.stamp = rospy.Time.now()
             status.state = mes_mobile_status.STATE_FREE
@@ -206,9 +210,18 @@ class StateFreeAtLoadZone(smach.State):
         
         rospy.sleep(debugWait)
         
+        rospy.loginfo("BEFORE COMMAND_WAIT while loop")
+        rospy.loginfo("currCommand: " + str(MESCommand))
+        rospy.loginfo("currPath: " + str(path))    
+        rospy.loginfo("currNextPath: " + str(nextPath))
+        
         #If nothing new received from MES, stay free
         while MESCommand == mes_mobile_command.COMMAND_WAIT:
             #sleep for 5 seconds
+            rospy.loginfo("in COMMAND_WAIT while loop")
+            rospy.loginfo("currCommand: " + str(MESCommand))
+            rospy.loginfo("currPath: " + str(path))    
+            rospy.loginfo("currNextPath: " + str(nextPath))
             status = mes_mobile_status()
             status.header.stamp = rospy.Time.now()
             status.state = mes_mobile_status.STATE_FREE
@@ -219,6 +232,7 @@ class StateFreeAtLoadZone(smach.State):
 
         
         if MESCommand == mes_mobile_command.COMMAND_TIP:
+            rospy.loginfo("in tip")
             #TODO:Publish state change to OEE topic
             status = mes_mobile_status()
             status.header.stamp = rospy.Time.now()
@@ -898,8 +912,10 @@ def main():
     #Subscribe to MES Server client topic. Receive command and path
     rospy.Subscriber("mes_mobile_command", mes_mobile_command, mes_mobile_command_callback)
     rospy.Subscriber("done_navigating",Bool,done_navigating_callback)
+#    rospy.Subscriber("done_navigating", Bool, gui_callback)
 
    
+    rospy.sleep(2.0);
 
 
     # spin() simply keeps python from exiting until this node is stopped

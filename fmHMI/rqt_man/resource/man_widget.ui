@@ -231,7 +231,7 @@
         </spacer>
        </item>
        <item row="0" column="1">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="labelName1">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -250,7 +250,7 @@
         </widget>
        </item>
        <item row="0" column="2">
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel" name="labelValue1">
          <property name="frameShape">
           <enum>QFrame::Box</enum>
          </property>
@@ -266,7 +266,7 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="labelName2">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -285,7 +285,7 @@
         </widget>
        </item>
        <item row="1" column="2">
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel" name="labelValue2">
          <property name="frameShape">
           <enum>QFrame::Box</enum>
          </property>
@@ -301,7 +301,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="labelName3">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -320,7 +320,7 @@
         </widget>
        </item>
        <item row="2" column="2">
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel" name="labelValue3">
          <property name="frameShape">
           <enum>QFrame::Box</enum>
          </property>
@@ -355,7 +355,7 @@
         </widget>
        </item>
        <item row="3" column="2">
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel" name="labelValue4">
          <property name="frameShape">
           <enum>QFrame::Box</enum>
          </property>
@@ -600,7 +600,7 @@
         </widget>
        </item>
        <item row="10" column="2">
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel" name="label_1">
          <property name="frameShape">
           <enum>QFrame::Box</enum>
          </property>

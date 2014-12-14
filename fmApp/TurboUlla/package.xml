@@ -54,6 +54,10 @@
   <run_depend>line_til_cross_action_backwards</run_depend>
   <build_depend>spin_90_degrees</build_depend>
   <run_depend>spin_90_degrees</run_depend>
+  <build_depend>tipper_action</build_depend>
+  <run_depend>tipper_action</run_depend>
+  <build_depend>tipper_unit</build_depend>
+  <run_depend>tipper_unit</run_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

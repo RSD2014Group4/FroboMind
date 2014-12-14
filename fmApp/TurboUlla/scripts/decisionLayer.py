@@ -18,6 +18,9 @@ from line_til_cross_action.msg import GocellAction, GocellGoal
 from line_til_cross_action_backwards.msg import GocellAction as GocellActionBackwards
 from line_til_cross_action_backwards.msg import GocellGoal as GocellGoalBackwards
 
+from lift_tipper.msg import tipperAction, tipperGoal
+
+
 from spin_90_degrees.msg import *
 
 
@@ -37,7 +40,7 @@ global debugWait
 debugWait = 2.0
 
 global SERVER_WAIT_TIME
-SERVER_WAIT_TIME = 30.0
+SERVER_WAIT_TIME = 2.0
 
 global SERVER_WAIT_TIME_COORD
 SERVER_WAIT_TIME_COORD = 2.0
@@ -63,8 +66,12 @@ goCellClient = actionlib.SimpleActionClient('Gocell', GocellAction)
 goCellBackClient = actionlib.SimpleActionClient('Gocell_back', GocellActionBackwards)
 spin90Client = actionlib.SimpleActionClient('spin_degrees', spin_degreesAction)
 
+global tipperClient
+tipperClient =  actionlib.SimpleActionClient('tipper_action', tipperAction)
+
 global coordNavClient 
 coordNavClient = actionlib.SimpleActionClient('move_base', MoveBaseAction)#Pose)
+
 
 global cameFromLoadOff
 cameFromLoadOff = False
@@ -238,10 +245,22 @@ class StateFreeAtLoadZone(smach.State):
             #ERROR  
 
     def tip(self):
+        rospy.loginfo("Tipping")
+        goal = tipperGoal()
+
+
+        goal.lift = True;
+        tipperClient.send_goal(goal)
+        tipperClient.wait_for_result(rospy.Duration.from_sec(SERVER_WAIT_TIME))
+        rospy.sleep(2)
 #        activateTipper()
-        rospy.sleep(debugWait)
-        rospy.loginfo("\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!TIPPING!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n")
         return 0
+#
+#    def tip(self):
+##        activateTipper()
+#        rospy.sleep(debugWait)
+#        rospy.loginfo("\n\n!!!!!!!!!!!!!!!!!!!!!!!!!!TIPPING!!!!!!!!!!!!!!!!!!!!!!!!!!\n\n")
+#        return 0
 
 # define state StateNavigateInCoordinateZone
 # Uses rabbit line following to navigate a list of internally defined waypoints,
@@ -772,10 +791,7 @@ class StateNavigateInLoadZone(smach.State):
         return 0
 
 
-    def tip(self):
-        rospy.loginfo("NOTTTTT Tipping")
-#        activateTipper()
-        return 0
+   
         
     def followLineToCross(self):
         rospy.loginfo("following line to cross")

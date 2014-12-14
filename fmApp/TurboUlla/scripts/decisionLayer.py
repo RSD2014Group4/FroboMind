@@ -14,8 +14,9 @@ import actionlib
 
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 
-from line_til_cross_action.msg import *
-from line_til_cross_action_backwards.msg import *
+from line_til_cross_action.msg import GocellAction, GocellGoal
+from line_til_cross_action_backwards.msg import GocellAction as GocellActionBackwards
+from line_til_cross_action_backwards.msg import GocellAction as GocellGoalBackwards
 
 from spin_90_degrees.msg import *
 
@@ -52,8 +53,8 @@ OFF = 0
 
 global goCellClient
 global spin90Client
-goCellClient = actionlib.SimpleActionClient('Gocell', line_til_cross_action.GocellAction)
-goCellBackClient = actionlib.SimpleActionClient('Gocell_back', line_til_cross_action_backwards.GocellAction)
+goCellClient = actionlib.SimpleActionClient('Gocell', GocellAction)
+goCellBackClient = actionlib.SimpleActionClient('Gocell_back', GocellActionBackwards)
 spin90Client = actionlib.SimpleActionClient('spin_degrees', spin_degreesAction)
 
 global coordNavClient 
@@ -715,7 +716,7 @@ class StateNavigateInLoadZone(smach.State):
     def driveBackwardsToLoadOff(self):
         global goCellBackClient
             
-        goal = GocellGoal()
+        goal = GocellGoalBackwards()
 
         #Send robot name.        
         goal.cell_name = getQRId()#'out'#'LoanOn1'
@@ -733,7 +734,7 @@ class StateNavigateInLoadZone(smach.State):
 #        if dist > 0.7:
         global goCellBackClient
             
-        goal = GocellGoal()
+        goal = GocellGoalBackwards()
 
         #Send robot name.        
         goal.cell_name = ""#getQRId()#'out'#'LoanOn1'

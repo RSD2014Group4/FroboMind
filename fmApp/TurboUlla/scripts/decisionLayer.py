@@ -43,7 +43,7 @@ global SERVER_WAIT_TIME
 SERVER_WAIT_TIME = 2.0
 
 global SERVER_WAIT_TIME_COORD
-SERVER_WAIT_TIME_COORD = 2.0
+SERVER_WAIT_TIME_COORD = 60.0
 
 #set from callback function from MES_command topic
 global MESCommand
@@ -99,9 +99,20 @@ class StateFreeAtCoordinateZone(smach.State):
         global path
         global nextPath
 #        r.sleep()
-        
+        rospy.loginfo("currCommand: " + str(MESCommand))
+        rospy.loginfo("currPath: " + str(path))    
+        rospy.loginfo("currNextPath: " + str(nextPath))
         #If nothing new received from MES, stay free
+
+        rospy.sleep(debugWait)
+
+
         while MESCommand == mes_mobile_command.COMMAND_WAIT:
+            rospy.loginfo("in COMMAND_WAIT while loop")
+            rospy.loginfo("currCommand: " + str(MESCommand))
+            rospy.loginfo("currPath: " + str(path))    
+            rospy.loginfo("currNextPath: " + str(nextPath))
+
             #sleep for 5 seconds
             rospy.loginfo('command was wait. 5 sec')
             status = mes_mobile_status()
@@ -111,8 +122,7 @@ class StateFreeAtCoordinateZone(smach.State):
             pubStatus.publish(status)
             rospy.sleep(debugWait)
  
-
-        rospy.sleep(debugWait)
+        rospy.loginfo("out of COMMAND_WAIT while loop")
 
         #If command received from MES server, Go to NavigateInCoordinateZone
         if MESCommand == mes_mobile_command.COMMAND_NAVIGATE:
@@ -146,6 +156,7 @@ class StateFreeAtLineZone(smach.State):
         global nextPath
 #        r.sleep()
         
+        rospy.sleep(debugWait)
         
         #If nothing new received from MES, stay free
         while MESCommand == mes_mobile_command.COMMAND_WAIT:
@@ -157,7 +168,7 @@ class StateFreeAtLineZone(smach.State):
             pubStatus.publish(status)
             rospy.sleep(debugWait)
  
-        rospy.sleep(debugWait)
+        
 
 
         
@@ -192,6 +203,8 @@ class StateFreeAtLoadZone(smach.State):
         global debugWait
         global path
         global nextPath
+        
+        rospy.sleep(debugWait)
         
         #If nothing new received from MES, stay free
         while MESCommand == mes_mobile_command.COMMAND_WAIT:
@@ -383,8 +396,8 @@ class StateNavigateInCoordinateZone(smach.State):
         pose = Pose(pos,ori)        
         name2coord['FloorIn'] = pose
 
-        pos = Point(1,2,0)
-        ori = Quaternion(3,4,5,6)
+        pos = Point(-0.500,-2.5000,0.000)
+        ori = Quaternion(0.000,0.000,-0.707,-0.707)
         pose = Pose(pos,ori)        
         name2coord['Line'] = pose
 
@@ -855,9 +868,13 @@ def mes_mobile_command_callback(data):
     #rospy.loginfo(data)
     global path
     global nextPath    
+    
     nextPath = data.path
+    rospy.loginfo("nextPath: " + nextPath)
     global MESCommand    
     MESCommand = data.command
+    rospy.loginfo("MESCommand: " + MESCommand)
+
 
 def done_navigating_callback(data):
     rospy.loginfo('In done_navigating_callback()')    

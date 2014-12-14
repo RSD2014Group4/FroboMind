@@ -202,7 +202,7 @@ class GocellAction
                // Publish output image
                //If the image is not empty
                counter_=0;
-               barcode_value_="";
+               
 
 
 
@@ -315,6 +315,8 @@ class GocellAction
                     }else{
 
                         counter_=0;
+
+			barcode_value_="";
 
                         while (ros::ok())
                         {

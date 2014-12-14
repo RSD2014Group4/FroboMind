@@ -531,7 +531,7 @@ class StateNavigateInLineZone(smach.State):
         global cameFromLoadOff
         
         goal = "End " + latestRobotCell
-        rospy.loginfo("goal:", goal)
+#        rospy.loginfo("goal:", goal)
         
         self.followLineToQR(goal)
         

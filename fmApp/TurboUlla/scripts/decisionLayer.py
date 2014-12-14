@@ -43,7 +43,7 @@ global SERVER_WAIT_TIME
 SERVER_WAIT_TIME = 2.0
 
 global SERVER_WAIT_TIME_COORD
-SERVER_WAIT_TIME_COORD = 60.0
+SERVER_WAIT_TIME_COORD = 180.0
 
 #set from callback function from MES_command topic
 global MESCommand
@@ -330,8 +330,11 @@ class StateNavigateInCoordinateZone(smach.State):
         global debugWait
             
         goal = MoveBaseGoal()        #self.getWayPointListFromStringCommand(path)
-        goal.target_pose.header.stamp = rospy.Time.now()
+        goal.target_pose.header.frame_id = "map"
+	goal.target_pose.header.stamp = rospy.Time.now()
         goal.target_pose.pose = waypoints
+
+	rospy.loginfo(goal)
         
         # Fill in the goal here
         coordNavClient.send_goal(goal)
@@ -396,8 +399,8 @@ class StateNavigateInCoordinateZone(smach.State):
         pose = Pose(pos,ori)        
         name2coord['FloorIn'] = pose
 
-        pos = Point(-0.500,-2.5000,0.000)
-        ori = Quaternion(0.000,0.000,-0.707,-0.707)
+        pos = Point(-0.4500,-2.150000,0.000)
+        ori = Quaternion(0.000,0.000,-0.707,0.707)
         pose = Pose(pos,ori)        
         name2coord['Line'] = pose
 
@@ -870,10 +873,10 @@ def mes_mobile_command_callback(data):
     global nextPath    
     
     nextPath = data.path
-    rospy.loginfo("nextPath: " + nextPath)
+    rospy.loginfo("nextPath: " + str(nextPath))
     global MESCommand    
     MESCommand = data.command
-    rospy.loginfo("MESCommand: " + MESCommand)
+    rospy.loginfo("MESCommand: " + str(MESCommand))
 
 
 def done_navigating_callback(data):

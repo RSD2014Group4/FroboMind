@@ -530,7 +530,8 @@ class StateNavigateInLineZone(smach.State):
         #QRId = 'Robot 1'
         global cameFromLoadOff
         
-        goal = "End" + latestRobotCell
+        goal = "End " + latestRobotCell
+        rospy.loginfo("goal:", goal)
         
         self.followLineToQR(goal)
         

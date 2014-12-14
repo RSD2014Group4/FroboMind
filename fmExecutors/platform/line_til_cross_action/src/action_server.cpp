@@ -141,7 +141,7 @@ class GocellAction
 
 
            cross_counter_=0;
-           encoder_offset_=370;
+           encoder_offset_=390;
 
            std::string goal_barcode;
 

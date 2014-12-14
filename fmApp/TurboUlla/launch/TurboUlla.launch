@@ -1,0 +1,37 @@
+<!-- Look mom, I'm an XML file.. -->
+<launch>
+  <arg name="sim" default="false" />
+  
+  <!-- Navigation hardware  -->
+  <group unless="$(arg sim)">
+    <include file="$(find TurboUlla)/launch/include/lidar.launch" />
+    <include file="$(find TurboUlla)/launch/include/imu.launch" />
+  </group>
+  
+  <include file="$(find TurboUlla)/launch/include/platform.launch">
+    <arg name="sim" value="$(arg sim)"/>
+  </include>
+  
+  <!-- Localizing -->
+  <include file="$(find TurboUlla)/launch/include/localizer.launch" />
+  
+  <!-- Navigation controllers -->
+  <include file="$(find TurboUlla)/launch/include/planner.launch">
+    <arg name="sim" value="$(arg sim)"/>
+  </include>
+  
+  <!-- Line following -->
+  <include file="$(find TurboUlla)/launch/include/camera_nodes.launch"/>
+  <include file="$(find TurboUlla)/launch/include/line_action_without_client.launch"/>
+  <include file="$(find TurboUlla)/launch/include/line_action_without_client_backwards.launch"/>
+  
+  <!-- Tipper -->
+  <include file="$(find TurboUlla)/launch/include/tipper.launch"/>
+  
+  <!-- MES Communication -->
+  <include file="$(find TurboUlla)/launch/include/mes_communication.launch"/>
+  
+  <!-- Decision layer -->
+  <node pkg="TurboUlla" name="decisionLayer" type="decisionLayer.py" output="screen" />
+  
+</launch>

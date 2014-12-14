@@ -438,7 +438,7 @@ class StateNavigateInLineZone(smach.State):
                 self.navigateToQR(QRId)
                
                
-                if loadOnOrOff() == "LoadOn":
+                if self.loadOnOrOff() == "LoadOn":
                     self.followLineToCross()
                     cameFromLoadOff = False #not necessary
                 else:
@@ -507,6 +507,7 @@ class StateNavigateInLineZone(smach.State):
         return QR
 
     def navigateToLongStretch(self):
+        rospy.loginfo("navigating to LongStretch")        
         self.followLineToCross()
         self.turn90DegRight()
         self.followLineToCross()
@@ -514,10 +515,12 @@ class StateNavigateInLineZone(smach.State):
       
 
     def navigateToQR(self,QRId):
+        rospy.loginfo("navigating to QR")
         self.followLineToQR(QRId)
         return 0
         
     def navigateToFloorIn(self):
+        rospy.loginfo("navigating to FloorIn")
         #QRId = 'Robot 1'
         global cameFromLoadOff
         
@@ -535,6 +538,7 @@ class StateNavigateInLineZone(smach.State):
         
 
     def followLineOut(self):
+        rospy.loginfo("following line out")
         global goCellClient
             
         goal = GocellGoal()
@@ -546,6 +550,7 @@ class StateNavigateInLineZone(smach.State):
         rospy.sleep(2)
         
     def followLineToCross(self):
+        rospy.loginfo("following line to cross")
         global goCellClient
             
         goal = GocellGoal()
@@ -558,6 +563,7 @@ class StateNavigateInLineZone(smach.State):
 
 
     def followLineToQR(self,QRId):
+        rospy.loginfo("following line to QR")
         global goCellClient
         
         goal = GocellGoal()
@@ -569,6 +575,7 @@ class StateNavigateInLineZone(smach.State):
         rospy.sleep(2)
 
     def followLineToEnd(self):
+        rospy.loginfo("following line to end")
         global goCellClient
         
         #TODO: Determine end signal...
@@ -582,6 +589,7 @@ class StateNavigateInLineZone(smach.State):
         rospy.sleep(2)
 
     def turn90DegRight(self):
+        rospy.loginfo("turning 90 deg right")
         global goCellClient
         
         goal = spin_degreesGoal()
@@ -594,6 +602,7 @@ class StateNavigateInLineZone(smach.State):
         
         
     def turn90DegLeft(self):
+        rospy.loginfo("turning 90 deg left")
         global goCellClient
         
         goal = spin_degreesGoal()
@@ -685,6 +694,7 @@ class StateNavigateInLoadZone(smach.State):
  
  
     def followLineOut(self):
+        rospy.loginfo("following line out")
         global goCellClient
             
         goal = GocellGoal()
@@ -696,6 +706,7 @@ class StateNavigateInLoadZone(smach.State):
         rospy.sleep(2)
             
     def driveForwardToLine(self):
+        rospy.loginfo("driving forward to line")
         global cameFromLoadOff
         #TODO: Ask Rudi how to set a certain measurement moovement.
 #        setMotorsForward()        
@@ -714,6 +725,7 @@ class StateNavigateInLoadZone(smach.State):
         return 0       
 
     def driveBackwardsToLoadOff(self):
+        rospy.loginfo("driving backwards to LoadOff")
         global goCellBackClient
             
         goal = GocellGoalBackwards()
@@ -730,6 +742,7 @@ class StateNavigateInLoadZone(smach.State):
         return 0
         
     def driveBackwardsToLoadOn(self):
+        rospy.loginfo("driving backwards to LoadOn")
 #        setMotorsReverse()        
 #        if dist > 0.7:
         global goCellBackClient
@@ -749,10 +762,12 @@ class StateNavigateInLoadZone(smach.State):
 
 
     def tip(self):
+        rospy.loginfo("NOTTTTT Tipping")
 #        activateTipper()
         return 0
         
     def followLineToCross(self):
+        rospy.loginfo("following line to cross")
         global goCellClient
             
         goal = GocellGoal()
@@ -764,6 +779,7 @@ class StateNavigateInLoadZone(smach.State):
         rospy.sleep(2)
 
     def turn90DegLeft(self):
+        rospy.loginfo("turning 90 deg left")
         global goCellClient
         
         goal = spin_degreesGoal()

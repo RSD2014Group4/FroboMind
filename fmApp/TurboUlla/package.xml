@@ -50,6 +50,8 @@
   <run_depend>mes_mobile_client</run_depend>
   <build_depend>line_til_cross_action</build_depend>
   <run_depend>line_til_cross_action</run_depend>
+  <build_depend>line_til_cross_action_backwards</build_depend>
+  <run_depend>line_til_cross_action_backwards</run_depend>
   <build_depend>spin_90_degrees</build_depend>
   <run_depend>spin_90_degrees</run_depend>
 

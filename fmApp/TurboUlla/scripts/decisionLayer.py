@@ -39,6 +39,9 @@ debugWait = 2.0
 global SERVER_WAIT_TIME
 SERVER_WAIT_TIME = 2.0
 
+global SERVER_WAIT_TIME_COORD
+SERVER_WAIT_TIME_COORD
+
 #set from callback function from MES_command topic
 global MESCommand
 MESCommand = mes_mobile_command.COMMAND_WAIT
@@ -301,7 +304,7 @@ class StateNavigateInCoordinateZone(smach.State):
         # Fill in the goal here
         coordNavClient.send_goal(goal)
         #wait 30 secs for robot to navigate to goal.
-        coordNavClient.wait_for_result(rospy.Duration.from_sec(SERVER_WAIT_TIME))
+        coordNavClient.wait_for_result(rospy.Duration.from_sec(SERVER_WAIT_TIME_COORD))
         
         #add communication delay for everything to sync.        
         rospy.sleep(2)      

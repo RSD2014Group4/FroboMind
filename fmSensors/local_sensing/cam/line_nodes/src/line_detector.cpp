@@ -78,7 +78,7 @@ class SubscribeAndPublish
 
 		 // Filter by color
 		 Mat mask;
-		 inRange(image_hsv,Scalar(100,90,90), Scalar(130, 255, 255),mask);
+		 inRange(image_hsv,Scalar(100,70,70), Scalar(130, 255, 255),mask);
 
 		// Open to delete small areas 
 		 Mat mask2;

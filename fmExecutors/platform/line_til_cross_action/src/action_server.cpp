@@ -289,7 +289,9 @@ class GocellAction
                         {
                             ROS_ERROR("Overflow on the encoder");
                             std::cout<<"Last value of encoder_val= "<<init_encoder<<std::endl;
-                            break;
+			    init_encoder=encoder_val_;
+
+                           // break;
                         }
 
                         s.sleep();

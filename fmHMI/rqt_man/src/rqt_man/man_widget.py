@@ -48,7 +48,7 @@ class ManWidget(QWidget):
 	self.labelName5.setText("Man. from active time: ")
 	self.labelName6.setText("Waiting in active time: ")
 	self.labelName7.setText("Overall Equipment Efficiency: ")
-	self.labelName8.setText("BATTERI SPAENDING ")
+	self.labelName8.setText("Battery voltage: ")
 
 	rospy.Subscriber("oee_data", oee_data, self.updateOEE)
 
@@ -68,6 +68,7 @@ class ManWidget(QWidget):
 	self.labelValue4.setText(data.prodEffPercentActiveRobot + ' [%]')
 	self.labelValue5.setText(data.manualPercentActiveRobot + ' [%]')
 	self.labelValue6.setText(data.waitingPercentActiveRobot + ' [%]')
+	self.labelValue7.setText(data.OEE )
 
     def _handle_deadman_clicked(self):
 	if self.deadman_state == False:

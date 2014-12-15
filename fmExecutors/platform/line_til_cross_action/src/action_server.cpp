@@ -197,15 +197,13 @@ class GocellAction
 
            while(true)
            {
+
                success_ = false;
                // Publish the image to the line_detector
                // Publish output image
                //If the image is not empty
                counter_=0;
                
-
-
-
 
                 prev_cross_= false;
 
@@ -233,6 +231,7 @@ class GocellAction
 
                     if(counter_>1000)
                     {
+			ROS_ERROR("Line server counter");
                         break;
                     }
                     if(success_)

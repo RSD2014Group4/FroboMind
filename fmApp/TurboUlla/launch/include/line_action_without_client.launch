@@ -10,11 +10,11 @@ RoboCard based frobits using 1800/700 ohm voltage dividers:
 
 <launch>
 
-	<node pkg="pid_controller" name="lineFollowFSM" type="lineFollowFSM.py" /> 
+	<node pkg="pid_controller" name="lineFollowFSM" respawn="true" type="lineFollowFSM.py" /> 
 
-	<node pkg="line_til_cross_action" name="Gocell" type="line_server" output="screen" /> 
+	<node pkg="line_til_cross_action" name="Gocell" respawn="true" type="line_server" output="screen" /> 
 
-	<node pkg="spin_90_degrees" name="spin_degrees" type="spin_server" output="screen" /> 
+	<node pkg="spin_90_degrees" name="spin_degrees" type="spin_server" respawn="true"  output="screen" /> 
 
 
 </launch>

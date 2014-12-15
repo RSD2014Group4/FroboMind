@@ -58,7 +58,7 @@ class CmdVelConverter():
           self.twist_pub.publish(self.pubMsg)
 
 if __name__ == '__main__':
-	rospy.init_node('cmd_vel_converter')
+	rospy.init_node('cmd_vel_converter_to_twiststamped')
 	node = CmdVelConverter()
 	rospy.spin()
 	

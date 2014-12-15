@@ -7,3 +7,4 @@ string prodEffPercentActiveRobot
 string manualPercentActiveRobot
 string waitingPercentActiveRobot
 string prodPercentageFromLogfileStart
+string OEE

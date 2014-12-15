@@ -96,18 +96,18 @@ class oeeNode():
 		self.prodPercentage = (self.stateTimes["production"].total_seconds()/self.totalTimePer.total_seconds())*100
 
 
-		rospy.loginfo(rospy.get_name() + " Active production percentage: " + str(self.productionEfficiencyPercentageWhileActive))
-		rospy.loginfo(rospy.get_name() + " Active manual percentage: " + str(self.manualPercentageWhileActive))
-		rospy.loginfo(rospy.get_name() + " Active waiting percentage: " + str(self.waitingPercentageWhileActive))
+#		rospy.loginfo(rospy.get_name() + " Active production percentage: " + str(self.productionEfficiencyPercentageWhileActive))
+#		rospy.loginfo(rospy.get_name() + " Active manual percentage: " + str(self.manualPercentageWhileActive))
+#		rospy.loginfo(rospy.get_name() + " Active waiting percentage: " + str(self.waitingPercentageWhileActive))
 
-		rospy.loginfo(rospy.get_name() + " Total time: " + str(self.totalTimePer))
-		rospy.loginfo(rospy.get_name() + " Production time: " + str(self.stateTimes["production"]))
-		rospy.loginfo(rospy.get_name() + " Manual time: " + str(self.stateTimes["manual"]))
-		rospy.loginfo(rospy.get_name() + " Waiting time: " + str(self.stateTimes["waiting"]))
+#		rospy.loginfo(rospy.get_name() + " Total time: " + str(self.totalTimePer))
+#		rospy.loginfo(rospy.get_name() + " Production time: " + str(self.stateTimes["production"]))
+#		rospy.loginfo(rospy.get_name() + " Manual time: " + str(self.stateTimes["manual"]))
+#		rospy.loginfo(rospy.get_name() + " Waiting time: " + str(self.stateTimes["waiting"]))
 
 
-		rospy.loginfo(rospy.get_name() + " Efficiency: " + str(self.prodPercentage))		
-		rospy.loginfo(rospy.get_name() + " Manual time: " + str(self.manPercentage))
+#		rospy.loginfo(rospy.get_name() + " Efficiency: " + str(self.prodPercentage))		
+#		rospy.loginfo(rospy.get_name() + " Manual time: " + str(self.manPercentage))
 
 		self.msg = oee_data()
 		self.msg.logfileTime = str(self.totalTimePer)[:str(self.totalTimePer).index('.')]
@@ -117,6 +117,8 @@ class oeeNode():
 		self.msg.prodEffPercentActiveRobot = str(self.productionEfficiencyPercentageWhileActive)[:str(self.productionEfficiencyPercentageWhileActive).index('.')+2]
 		self.msg.manualPercentActiveRobot = str(self.manualPercentageWhileActive)[:str(self.manualPercentageWhileActive).index('.')+2]
 		self.msg.waitingPercentActiveRobot = str(self.waitingPercentageWhileActive)[:str(self.waitingPercentageWhileActive).index('.')+2]
+
+		self.msg.OEE = "0.0"
 
 		self.pub.publish(self.msg)
 

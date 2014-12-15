@@ -12,7 +12,9 @@ from python_qt_binding.QtWebKit import QWebPage, QWebView
 from TurboUlla.msg import oee_data
 from rqt_man.msg import gui_command
 from lift_tipper.msg import tipperAction, tipperGoal
+from std_msgs.msg import Bool
 
+#fmCommand/deadman
 
 class ManWidget(QWidget):
     def __init__(self):
@@ -28,16 +30,25 @@ class ManWidget(QWidget):
 	self.manualMode = True
 	self.pushButtonMan.setStyleSheet("background-color: green")
 
-
         self.pushButtonTpRS.clicked.connect(self._handle_tp_R_S_clicked)
 	
 	self.pushButtonDeadman.clicked.connect(self._handle_deadman_clicked)
 	self.pushButtonDeadman.setStyleSheet("color: black; background-color: red")
-	self.deadmanActive = 'false'
+	self.deadman_state = False
+
+	self.deadman_topic = rospy.get_param("deadman_pub", "/fmCommand/deadman")
+	self.deadman_msg = Bool()
+	self.deadman_pub = rospy.Publisher('deadman_topic', Bool, queue_size=10)
+	rospy.Timer(rospy.Duration(0.05), self.deadmanUpdater)
 
 	self.labelName1.setText("Total Logging time: ")
-	self.labelName2.setText("Production percentage: ")
-	self.labelName3.setText("Manual percentage: ")
+	self.labelName2.setText("Active time: ")
+	self.labelName3.setText("Effective prod. from log time: ")
+	self.labelName4.setText("Effective prod. from active time: ")
+	self.labelName5.setText("Man. from active time: ")
+	self.labelName6.setText("Waiting in active time: ")
+	self.labelName7.setText("Overall Equipment Efficiency: ")
+	self.labelName8.setText("BATTERI SPAENDING ")
 
 	rospy.Subscriber("oee_data", oee_data, self.updateOEE)
 
@@ -46,19 +57,25 @@ class ManWidget(QWidget):
 	# Initialize publisher
 	self.pub = rospy.Publisher('gui_command', gui_command, queue_size=1)
 
+    def deadmanUpdater(self, event):
+		self.deadman_msg = self.deadman_state
+		self.deadman_pub.publish (self.deadman_msg)
+
     def updateOEE(self, data):
-	self.labelValue1.setText(data.logfileTime)
-	self.labelValue2.setText(data.prodPercentageFromLogfileStart + ' [%]')
-	self.labelValue3.setText(data.manualPercentActiveRobot + ' [%]')
-	self.labelValue4.setText(data.shutdownPercentage)
+	self.labelValue1.setText(data.logfileTime + ' [t]')
+	self.labelValue2.setText(data.ActiveTime + ' [t]')
+	self.labelValue3.setText(data.prodPercentageFromLogfileStart + ' [%]')
+	self.labelValue4.setText(data.prodEffPercentActiveRobot + ' [%]')
+	self.labelValue5.setText(data.manualPercentActiveRobot + ' [%]')
+	self.labelValue6.setText(data.waitingPercentActiveRobot + ' [%]')
 
     def _handle_deadman_clicked(self):
-	if self.deadmanActive == 'false':
-		self.deadmanActive = 'true'
+	if self.deadman_state == False:
+		self.deadman_state = True
 	        self.pushButtonDeadman.setStyleSheet("color: black; background-color: green")
 		self.pushButtonDeadman.setText('Deadman active')
 	else:
-		self.deadmanActive = 'false'
+		self.deadman_state = False
 	        self.pushButtonDeadman.setStyleSheet("color: black; background-color: red")
 		self.pushButtonDeadman.setText('Deadman inactive')
 	

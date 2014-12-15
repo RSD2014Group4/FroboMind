@@ -336,7 +336,7 @@
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="labelName4">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -371,7 +371,7 @@
         </widget>
        </item>
        <item row="4" column="1">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="labelName5">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -390,7 +390,7 @@
         </widget>
        </item>
        <item row="4" column="2">
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel" name="labelValue5">
          <property name="frameShape">
           <enum>QFrame::Box</enum>
          </property>
@@ -406,7 +406,7 @@
         </widget>
        </item>
        <item row="5" column="1">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="labelName6">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -425,7 +425,7 @@
         </widget>
        </item>
        <item row="5" column="2">
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel" name="labelValue6">
          <property name="frameShape">
           <enum>QFrame::Box</enum>
          </property>
@@ -441,7 +441,7 @@
         </widget>
        </item>
        <item row="6" column="1">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="labelName7">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -460,7 +460,7 @@
         </widget>
        </item>
        <item row="6" column="2">
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel" name="labelValue7">
          <property name="frameShape">
           <enum>QFrame::Box</enum>
          </property>
@@ -476,7 +476,7 @@
         </widget>
        </item>
        <item row="7" column="1">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="labelName8">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -495,7 +495,7 @@
         </widget>
        </item>
        <item row="7" column="2">
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel" name="labelValue8">
          <property name="frameShape">
           <enum>QFrame::Box</enum>
          </property>
@@ -511,7 +511,7 @@
         </widget>
        </item>
        <item row="8" column="1">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="labelName9">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -530,7 +530,7 @@
         </widget>
        </item>
        <item row="8" column="2">
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel" name="labelValue9">
          <property name="frameShape">
           <enum>QFrame::Box</enum>
          </property>
@@ -546,7 +546,7 @@
         </widget>
        </item>
        <item row="9" column="1">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="labelName10">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -565,7 +565,7 @@
         </widget>
        </item>
        <item row="9" column="2">
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel" name="labelValue10">
          <property name="frameShape">
           <enum>QFrame::Box</enum>
          </property>
@@ -581,7 +581,7 @@
         </widget>
        </item>
        <item row="10" column="1">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="labelName11">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -600,7 +600,7 @@
         </widget>
        </item>
        <item row="10" column="2">
-        <widget class="QLabel" name="label_1">
+        <widget class="QLabel" name="labelValue11">
          <property name="frameShape">
           <enum>QFrame::Box</enum>
          </property>
@@ -616,7 +616,7 @@
         </widget>
        </item>
        <item row="11" column="1">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="labelName12">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -635,7 +635,7 @@
         </widget>
        </item>
        <item row="11" column="2">
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel" name="labelValue12">
          <property name="frameShape">
           <enum>QFrame::Box</enum>
          </property>
@@ -651,7 +651,7 @@
         </widget>
        </item>
        <item row="12" column="1">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="labelName13">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
@@ -670,7 +670,7 @@
         </widget>
        </item>
        <item row="12" column="2">
-        <widget class="QLabel" name="label_4">
+        <widget class="QLabel" name="labelValue13">
          <property name="frameShape">
           <enum>QFrame::Box</enum>
          </property>

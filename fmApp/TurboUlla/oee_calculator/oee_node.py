@@ -86,14 +86,22 @@ class oeeNode():
 	def updateOEEPar(self):
 		self.totalTimePer = datetime.datetime.now() - self.stateTimes["totalTimePeriod"]
 		self.totalActiveTime = (self.stateTimes["manual"] + self.stateTimes["production"] + self.stateTimes["waiting"])
+		self.msg = oee_data()
 
 		# Calculations while only considuring the time where the robot is turned on
-		self.productionEfficiencyPercentageWhileActive = (self.stateTimes["production"].total_seconds()/self.totalActiveTime.total_seconds())*100
-		self.manualPercentageWhileActive = (self.stateTimes["manual"].total_seconds()/self.totalActiveTime.total_seconds())*100
-		self.waitingPercentageWhileActive = (self.stateTimes["waiting"].total_seconds()/self.totalActiveTime.total_seconds())*100
+		if not self.totalActiveTime.total_seconds() == 0:
+			self.productionEfficiencyPercentageWhileActive = (self.stateTimes["production"].total_seconds()/self.totalActiveTime.total_seconds())*100
+			self.manualPercentageWhileActive = (self.stateTimes["manual"].total_seconds()/self.totalActiveTime.total_seconds())*100
+			self.waitingPercentageWhileActive = (self.stateTimes["waiting"].total_seconds()/self.totalActiveTime.total_seconds())*100
+			self.msg.ActiveTime = str(self.totalActiveTime)[:str(self.totalActiveTime).index('.')]
+			self.msg.prodEffPercentActiveRobot = str(self.productionEfficiencyPercentageWhileActive)[:str(self.productionEfficiencyPercentageWhileActive).index('.')+2]
+			self.msg.manualPercentActiveRobot = str(self.manualPercentageWhileActive)[:str(self.manualPercentageWhileActive).index('.')+2]
+			self.msg.waitingPercentActiveRobot = str(self.waitingPercentageWhileActive)[:str(self.waitingPercentageWhileActive).index('.')+2]
 
 		# Calculations from logfile is created
-		self.prodPercentage = (self.stateTimes["production"].total_seconds()/self.totalTimePer.total_seconds())*100
+		if not self.totalTimePer.total_seconds() == 0:
+			self.prodPercentage = (self.stateTimes["production"].total_seconds()/self.totalTimePer.total_seconds())*100
+			self.msg.prodPercentageFromLogfileStart = str(self.prodPercentage)[:str(self.prodPercentage).index('.')+2]
 
 
 #		rospy.loginfo(rospy.get_name() + " Active production percentage: " + str(self.productionEfficiencyPercentageWhileActive))
@@ -105,21 +113,8 @@ class oeeNode():
 #		rospy.loginfo(rospy.get_name() + " Manual time: " + str(self.stateTimes["manual"]))
 #		rospy.loginfo(rospy.get_name() + " Waiting time: " + str(self.stateTimes["waiting"]))
 
-
-#		rospy.loginfo(rospy.get_name() + " Efficiency: " + str(self.prodPercentage))		
-#		rospy.loginfo(rospy.get_name() + " Manual time: " + str(self.manPercentage))
-
-		self.msg = oee_data()
-		self.msg.logfileTime = str(self.totalTimePer)[:str(self.totalTimePer).index('.')]
-		self.msg.prodPercentageFromLogfileStart = str(self.prodPercentage)[:str(self.prodPercentage).index('.')+2]
-
-		self.msg.ActiveTime = str(self.totalActiveTime)[:str(self.totalActiveTime).index('.')]
-		self.msg.prodEffPercentActiveRobot = str(self.productionEfficiencyPercentageWhileActive)[:str(self.productionEfficiencyPercentageWhileActive).index('.')+2]
-		self.msg.manualPercentActiveRobot = str(self.manualPercentageWhileActive)[:str(self.manualPercentageWhileActive).index('.')+2]
-		self.msg.waitingPercentActiveRobot = str(self.waitingPercentageWhileActive)[:str(self.waitingPercentageWhileActive).index('.')+2]
-
+#		self.msg.logfileTime = str(self.totalTimePer)[:str(self.totalTimePer).index('.')]
 		self.msg.OEE = "0.0"
-
 		self.pub.publish(self.msg)
 
 	# Before deleting -save time to file date.txt

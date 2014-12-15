@@ -12,11 +12,9 @@ from python_qt_binding.QtWebKit import QWebPage, QWebView
 from TurboUlla.msg import oee_data
 from rqt_man.msg import gui_command
 from lift_tipper.msg import tipperAction, tipperGoal
-from std_msgs.msg import Bool
+from std_msgs.msg import Bool #, Int
 from PyQt4 import QtGui, QtCore
 from geometry_msgs.msg import PoseWithCovarianceStamped
-
-#fmCommand/deadman
 
 class ManWidget(QWidget):
     def __init__(self):
@@ -45,7 +43,7 @@ class ManWidget(QWidget):
         self.deadman_state = False
         self.deadman_topic = rospy.get_param("deadman_pub", "/fmCommand/deadman")
         self.deadman_msg = Bool()
-        self.deadman_pub = rospy.Publisher('deadman_topic', Bool, queue_size=10)
+        self.deadman_pub = rospy.Publisher(self.deadman_topic, Bool, queue_size=10)
         rospy.Timer(rospy.Duration(0.05), self.deadmanUpdater)
     
         # OEE data
@@ -76,7 +74,13 @@ class ManWidget(QWidget):
         self.error = True
     
         # Initialize publisher
-        self.pub = rospy.Publisher('gui_command', gui_command, queue_size=1)
+        self.pub = rospy.Publisher('gui_command', oee_data, queue_size=1)
+
+	# Battery voltage
+#	rospy.Subscriber("/battery", Int, self.updateBatteryVoltage)
+
+#    def updateBatteryVoltage(self, data):
+#	self.labelValue8.setText(str(data/10))
     
     def reset_clicked(self):
         self.pushReset.setStyleSheet("background-color: light grey")

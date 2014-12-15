@@ -102,9 +102,11 @@ class oeeNode():
 		if not self.totalTimePer.total_seconds() == 0:
 			self.prodPercentage = (self.stateTimes["production"].total_seconds()/self.totalTimePer.total_seconds())*100
 			self.msg.prodPercentageFromLogfileStart = str(self.prodPercentage)[:str(self.prodPercentage).index('.')+2]
+			self.msg.logfileTime = str(self.totalTimePer)[:str(self.totalTimePer).index('.')]
 
 
-#		rospy.loginfo(rospy.get_name() + " Active production percentage: " + str(self.productionEfficiencyPercentageWhileActive))
+
+		rospy.loginfo(rospy.get_name() + " Time: " + str(self.totalTimePer.total_seconds()))
 #		rospy.loginfo(rospy.get_name() + " Active manual percentage: " + str(self.manualPercentageWhileActive))
 #		rospy.loginfo(rospy.get_name() + " Active waiting percentage: " + str(self.waitingPercentageWhileActive))
 
@@ -113,7 +115,6 @@ class oeeNode():
 #		rospy.loginfo(rospy.get_name() + " Manual time: " + str(self.stateTimes["manual"]))
 #		rospy.loginfo(rospy.get_name() + " Waiting time: " + str(self.stateTimes["waiting"]))
 
-#		self.msg.logfileTime = str(self.totalTimePer)[:str(self.totalTimePer).index('.')]
 		self.msg.OEE = "0.0"
 		self.pub.publish(self.msg)
 

@@ -35,6 +35,6 @@
   <node pkg="TurboUlla" name="decisionLayer" type="decisionLayer.py" output="screen" />
   
   <!-- OEE -->
-  <node pkg="oee_cal" name="oee_robot" type="oee_node.py" />
+  <node pkg="TurboUlla" name="oee_robot" type="oee_node.py" />
   
 </launch>

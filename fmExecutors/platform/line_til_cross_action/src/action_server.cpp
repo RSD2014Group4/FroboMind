@@ -232,7 +232,7 @@ class GocellAction
                     if(counter_>1000)
                     {
 			ROS_ERROR("Line server counter");
-                        break;
+                     //   break;
                     }
                     if(success_)
                     {

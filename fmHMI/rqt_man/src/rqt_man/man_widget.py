@@ -26,6 +26,7 @@ class ManWidget(QWidget):
         ui_file = os.path.join(rp.get_path('rqt_man'), 'resource', 'man_widget.ui')
         loadUi(ui_file, self)
         self.pathArrows = "../rsd_roswork/src/fmHMI/rqt_man/resource/leftDown.png"
+        self.pathArrows2 = "../rsd_roswork/src/fmHMI/rqt_man/resource/left.png"
         self.setObjectName('ManWidget')
 
         #Man auto reset
@@ -64,7 +65,7 @@ class ManWidget(QWidget):
         self.pushCharger1.clicked.connect(self.charger_1_clicked)
         self.pushCharger2.clicked.connect(self.charger_2_clicked)
         self.pushCharger3.clicked.connect(self.charger_3_clicked)
-        self.positionFromMan = rospy.Publisher('start_pos', PoseWithCovarianceStamped, queue_size=1)
+        self.positionFromMan = rospy.Publisher('initialpose', PoseWithCovarianceStamped, queue_size=1)
         self.startPos = PoseWithCovarianceStamped()
     
 #        self.pushButton_4.clicked.connect(self.action_find_pos_clicked)
@@ -204,12 +205,12 @@ class ManWidget(QWidget):
             self.pixmap = QtGui.QPixmap(self.pathArrows)
             self.labelArLeftDown1.setPixmap(self.pixmap.scaled (50, 50, QtCore.Qt.KeepAspectRatio))
     
-            self.pixmap = QtGui.QPixmap(self.pathArrows)
+            self.pixmap = QtGui.QPixmap(self.pathArrows2)
             self.pixmap = self.pixmap.scaled (50, 50, QtCore.Qt.KeepAspectRatio)
             self.pixmap = self.pixmap.transformed(QtGui.QTransform().rotate(0))
             self.labelArLeft1.setPixmap(self.pixmap)
     	
-            self.pixmap = QtGui.QPixmap(self.pathArrows)
+            #self.pixmap = QtGui.QPixmap(self.pathArrows2)
             self.pixmap = self.pixmap.scaled (50, 50, QtCore.Qt.KeepAspectRatio)
             self.pixmap = self.pixmap.transformed(QtGui.QTransform().rotate(90))
             self.labelArUp1.setPixmap(self.pixmap)

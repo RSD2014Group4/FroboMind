@@ -12,7 +12,7 @@ class PoseFromMarker():
     def __init__(self):
         self.initTopics()
         self.initAction()
-        return
+        self.transformer = tf.TransformListener()
         
     def initTopics(self):
         self.marker_pose = Odometry()
@@ -41,9 +41,8 @@ class PoseFromMarker():
         poseStamped.header = self.marker_pose.header
         poseStamped.pose = self.marker_pose.pose.pose
         
-        transformer = tf.TransformerROS()
         try:
-            poseStamped = transformer.transformPose(newframe,poseStamped)
+            poseStamped = self.transformer.transformPose(newframe,poseStamped)
         except tf.ConnectivityException as ex:
             rospy.logerr(ex)
             raise Exception("Transform failed")

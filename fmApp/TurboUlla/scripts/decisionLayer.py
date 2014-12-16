@@ -318,7 +318,7 @@ class StateNavigateInCoordinateZone(smach.State):
         wayPoints = self.getWayPointListFromStringCommand(path)
         
         # On the way to the line we want to make sure we are located correctly, so we use the LPS
-        if path == 'Line' or path == 'FloorIn':
+        if path == 'Line' or path == 'RampIn':
             self.getLPSFix()
         
         #Call Rudis Functions with list for coordinates, called wayPoints. 
@@ -389,7 +389,7 @@ class StateNavigateInCoordinateZone(smach.State):
         pose = Pose(pos,ori)
         name2coord['Dispenser'] = pose
 
-        pos = Point(4.428,0.100,0.000)
+        pos = Point(4.688,-0.060,0.000)
         ori = Quaternion(0.000,0.000,0.000,1.000)
         pose = Pose(pos,ori)
         name2coord['InBox'] = pose
@@ -409,7 +409,7 @@ class StateNavigateInCoordinateZone(smach.State):
         pose = Pose(pos,ori)        
         name2coord['Station3'] = pose
 
-        pos = Point(1.920,-0.450,0.000)
+        pos = Point(1.370,-0.590,0.000)
         ori = Quaternion(0.000,0.000,1.000,0.000)
         pose = Pose(pos,ori)                
         name2coord['RampOut'] = pose
@@ -429,7 +429,7 @@ class StateNavigateInCoordinateZone(smach.State):
         pose = Pose(pos,ori)        
         name2coord['FloorIn'] = pose
 
-        pos = Point(-0.4500,-2.150000,0.000)
+        pos = Point(-0.7500,-2.0000,0.000)
         ori = Quaternion(0.000,0.000,-0.707,0.707)
         pose = Pose(pos,ori)        
         name2coord['Line'] = pose

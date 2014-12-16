@@ -2,6 +2,7 @@
 
 import rospy
 import actionlib
+import tf
 
 from geometry_msgs.msg import PoseWithCovarianceStamped
 from nav_msgs.msg import Odometry
@@ -33,10 +34,12 @@ class PoseFromMarker():
         self.marker_pose_received = True
         
     def poseMessage(self):
-        mypose = PoseWithCovarianceStamped()
-        mypose.header = self.marker_pose.header
-        mypose.pose = self.marker_pose.pose
-        return mypose
+        newframe = "map"
+        posemsg = PoseWithCovarianceStamped()
+        posemsg.pose = tf.TransformerROS.transformPose(newframe,self.marker_pose.pose)
+        posemsg.header = self.marker_pose.header
+        posemsg.header.frame_id = newframe
+        return posemsg
         
     def actionReturnError(self):
         self.action_result.poseSent = False
@@ -47,7 +50,7 @@ class PoseFromMarker():
         self.action_result.poseSent = True
         self.action_server.set_succeeded(self.action_result)
         rospy.loginfo("Action succeeded")
-    
+
     def execute_cb(self, goal):
         self.action_result.poseSent = False
 
@@ -64,6 +67,7 @@ class PoseFromMarker():
                 self.actionReturnSucceeded()
             except:
                 rospy.logerr("Could not publish pose")
+                self.actionReturnError()
         else:
             rospy.loginfo("No pose requested?")
             self.actionReturnError()

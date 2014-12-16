@@ -27,8 +27,8 @@ class TCPBridgeClient(asyncore.dispatcher):
 
                 self.xMax = rospy.get_param("xMax", 3.0)
                 self.yMax = rospy.get_param("yMax", 3.0)
-                self.xMin = rospy.get_param("xMin", -4.0)
-                self.yMin = rospy.get_param("yMin", -4.0)
+                self.xMin = rospy.get_param("xMin", -2.0)
+                self.yMin = rospy.get_param("yMin", -2.0)
 		self.position=(0,0,0,0);
 		self.quarternion=(0,0,0,0);
                 self.allowPublish=False
@@ -86,7 +86,7 @@ class TCPBridgeClient(asyncore.dispatcher):
               if self.tf_sub.frameExists("/base_link") and self.tf_sub.frameExists("/map"):
                 self.position, self.quaternion = self.tf.lookupTransform("/base_link", "/map", rospy.Time(0))
 
-#	      self.allowPublish=(self.position.x>self.xMin and self.position.x<self.xMax and self.position.y>self.yMin and self.position.y<self.yMax);
+	      self.allowPublish=(self.position[0]>self.xMin and self.position[0]<self.xMax and self.position[1]>self.yMin and self.position[1]<self.yMax);
               if(self.allowPublish==True):
               	self.odom_pub.publish(odom);
 

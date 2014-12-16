@@ -66,8 +66,8 @@ class StateFollowLineQR(smach.State):
 	
 	xval=(y-b)/a - 0.1
 
-	if (xval < -0.3) or (xval > 0.3):
-	    xval=0
+	#if (xval < -1.0) or (xval > 1.0):
+	  #  xval=0
 
 
 	return xval

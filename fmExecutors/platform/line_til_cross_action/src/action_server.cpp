@@ -141,7 +141,7 @@ class GocellAction
 
 
            cross_counter_=0;
-           encoder_offset_=370;
+           encoder_offset_=390;
 
            std::string goal_barcode;
 
@@ -197,15 +197,13 @@ class GocellAction
 
            while(true)
            {
+
                success_ = false;
                // Publish the image to the line_detector
                // Publish output image
                //If the image is not empty
                counter_=0;
-               barcode_value_="";
-
-
-
+               
 
                 prev_cross_= false;
 
@@ -233,7 +231,8 @@ class GocellAction
 
                     if(counter_>1000)
                     {
-                        break;
+			ROS_ERROR("Line server counter");
+                     //   break;
                     }
                     if(success_)
                     {
@@ -289,7 +288,9 @@ class GocellAction
                         {
                             ROS_ERROR("Overflow on the encoder");
                             std::cout<<"Last value of encoder_val= "<<init_encoder<<std::endl;
-                            break;
+			    init_encoder=encoder_val_;
+
+                           // break;
                         }
 
                         s.sleep();
@@ -315,6 +316,8 @@ class GocellAction
                     }else{
 
                         counter_=0;
+
+			barcode_value_="";
 
                         while (ros::ok())
                         {

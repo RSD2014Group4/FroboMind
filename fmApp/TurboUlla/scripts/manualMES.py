@@ -28,7 +28,7 @@ def main():
     rospy.loginfo("now awake!")
     msg = mes_mobile_command()
         
-    msg.command = msg.COMMAND_NAVIGATE
+    msg.command = msg.COMMAND_NAVIGATE#NAVIGATE#TIP
     msg.path = sys.argv[1]
 #    rospy.loginfo('Executing state StateNavigateInCoordinateZone')
 #    rospy.loginfo(sys.argv[1])

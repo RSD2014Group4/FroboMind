@@ -1,3 +1,4 @@
+<!-- Look mom, I'm an XML file.. -->
 <launch>
   <arg name="sim" default="false" />
   
@@ -13,4 +14,7 @@
   <include file="$(find TurboUlla)/launch/include/planner.launch">
     <arg name="sim" value="$(arg sim)"/>
   </include>
+  
+  <!-- Pose estimate -->
+  <include file="$(find TurboUlla)/launch/include/lps_pose_estimate.launch" />
 </launch>

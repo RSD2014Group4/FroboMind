@@ -67,8 +67,6 @@ class PoseFromMarker():
         else:
             rospy.loginfo("No pose requested?")
             self.actionReturnError()
-            
-        rospy.loginfo("Should not be here")
 
 if __name__ == '__main__':
     rospy.init_node('pose_from_marker')

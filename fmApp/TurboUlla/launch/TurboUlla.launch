@@ -41,6 +41,6 @@
   <node pkg="TurboUlla" name="oee_robot" type="oee_node.py" />
   
   <!-- Manual control -->
-  <node pkg="TurboUlla" name="manual_control" type="manual_control.py" />
+  <include file="$(find TurboUlla)/launch/include/manual_control.launch"/>
   
 </launch>

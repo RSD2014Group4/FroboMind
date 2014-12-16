@@ -15,6 +15,9 @@
   <!-- Localizing -->
   <include file="$(find TurboUlla)/launch/include/localizer.launch" />
   
+  <!-- Pose estimate -->
+  <include file="$(find TurboUlla)/launch/include/lps_pose_estimate.launch" />
+  
   <!-- Navigation controllers -->
   <include file="$(find TurboUlla)/launch/include/planner.launch">
     <arg name="sim" value="$(arg sim)"/>
@@ -36,5 +39,6 @@
   
   <!-- OEE -->
   <node pkg="TurboUlla" name="oee_robot" type="oee_node.py" />
+  
   
 </launch>

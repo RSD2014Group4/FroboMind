@@ -1,0 +1,10 @@
+<!-- Look mom, I'm an XML file.. -->
+<launch>
+  <node pkg="tf" type="static_transform_publisher" name="mapToLPS" args=" 0 0 0 1.57 0 0 map lps 20" />
+  <node pkg="tf" type="static_transform_publisher" name="LPSToWorld" args=" 0 0 0 0 0 0 world lps 20" />
+    <node pkg="socket_pose" type="tcp_client.py" name="marker_locator_tcp_client" output="screen" respawn="true">
+      <param name="order" value="5" />
+      <param name="odom_pub" value="/fmInformation/marker_locator_pose" />
+    </node>
+    <node pkg="pose_to_estimate" type="pose_from_marker.py" name="pose_from_marker" />
+</launch>

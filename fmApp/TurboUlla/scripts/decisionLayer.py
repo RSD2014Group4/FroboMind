@@ -319,7 +319,7 @@ class StateNavigateInCoordinateZone(smach.State):
         
         # On the way to the line we want to make sure we are located correctly, so we use the LPS
         if path == 'Line' or path == 'FloorIn':
-            self.getLPSfix()
+            self.getLPSFix()
         
         #Call Rudis Functions with list for coordinates, called wayPoints. 
         #TODO: Should this function be a ROS action?        

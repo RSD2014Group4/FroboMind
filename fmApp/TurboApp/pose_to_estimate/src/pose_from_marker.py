@@ -4,7 +4,7 @@ import rospy
 import actionlib
 import tf
 
-from geometry_msgs.msg import PoseWithCovarianceStamped
+from geometry_msgs.msg import PoseWithCovarianceStamped, PoseStamped
 from nav_msgs.msg import Odometry
 from pose_to_estimate.msg import PoseEstimateAction, PoseEstimateGoal, PoseEstimateResult
 
@@ -36,8 +36,14 @@ class PoseFromMarker():
     def poseMessage(self):
         newframe = "map"
         posemsg = PoseWithCovarianceStamped()
+
+        poseStamped = PoseStamped()
+        poseStamped.header = self.marker_pose.header
+        poseStamped.pose = self.marker_pose.pose.pose
+        
+        transformer = tf.TransformerROS()
         try:
-            posemsg.pose = tf.TransformerROS.transformPose(newframe,self.marker_pose.pose)
+            poseStamped = transformer.transformPose(newframe,poseStamped)
         except tf.ConnectivityException as ex:
             rospy.logerr(ex)
             raise Exception("Transform failed")
@@ -48,8 +54,9 @@ class PoseFromMarker():
             rospy.logerr(ex)
             raise Exception("Transform failed")
             
-        posemsg.header = self.marker_pose.header
-        posemsg.header.frame_id = newframe
+        posemsg.header = poseStamped.header
+        posemsg.pose.pose = poseStamped.pose # Pose
+        posemsg.pose.covariance = self.marker_pose.pose.covariance
         return posemsg
         
     def actionReturnError(self):

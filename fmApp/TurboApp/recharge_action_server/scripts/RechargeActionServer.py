@@ -49,7 +49,7 @@ class RechargeActionServer():
         self._server.start()
 
     def execute(self,goal):
-        if(goal==True):
+        if(goal==1):
             if rospy.has_param('/move_base/local_costmap/footprint'):
                 rospy.set_param('/move_base/local_costmap/footprint', orig_footprint)
             if rospy.has_param('/move_base/global_costmap/footprint'):

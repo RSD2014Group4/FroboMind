@@ -17,6 +17,7 @@ from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from line_til_cross_action.msg import GocellAction, GocellGoal
 from line_til_cross_action_backwards.msg import GocellAction as GocellActionBackwards
 from line_til_cross_action_backwards.msg import GocellGoal as GocellGoalBackwards
+from pose_to_estimate.msg import PoseEstimateAction, PoseEstimateGoal
 
 from lift_tipper.msg import tipperAction, tipperGoal
 
@@ -71,6 +72,9 @@ tipperClient =  actionlib.SimpleActionClient('tipper_action', tipperAction)
 
 global coordNavClient 
 coordNavClient = actionlib.SimpleActionClient('move_base', MoveBaseAction)#Pose)
+
+global poseFromMarkerClient
+poseFromMarkerClient = actionlib.SimpleActionClient('posefrommarker', PoseEstimateAction)
 
 
 global cameFromLoadOff
@@ -305,12 +309,17 @@ class StateNavigateInCoordinateZone(smach.State):
         global debugWait
         global path
         global nextPath
+        global poseFromMarkerClient
 #        r.sleep()
 
         
         #goal assumed reached when navigateToGoal Returns.         
         
         wayPoints = self.getWayPointListFromStringCommand(path)
+        
+        # On the way to the line we want to make sure we are located correctly, so we use the LPS
+        if path == 'Line' or path == 'FloorIn':
+            self.getLPSfix()
         
         #Call Rudis Functions with list for coordinates, called wayPoints. 
         #TODO: Should this function be a ROS action?        
@@ -337,6 +346,13 @@ class StateNavigateInCoordinateZone(smach.State):
             path = nextPath
             return 'outcome2'
 
+    def getLPSFix(self):
+        global poseFromMarkerClient
+        goal = PoseEstimateGoal()
+        goal.sendPose = True
+        poseFromMarkerClient.send_goal(goal)
+        rospy.loginfo(" - - - - - - GETTING FIX FROM LPS! - - - - - - ")
+        poseFromMarkerClient.wait_for_result(rospy.Duration.from_sec(SERVER_WAIT_TIME_COORD))
 
     def navigateToGoal(self,waypoints):
         global path        

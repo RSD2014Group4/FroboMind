@@ -1,8 +1,8 @@
 # Define the goal
-bool goal
+int8 goal
 ---
 # Define the result
-bool result
+int8 result
 ---
 # Define a feedback message
-bool result
+int8 result

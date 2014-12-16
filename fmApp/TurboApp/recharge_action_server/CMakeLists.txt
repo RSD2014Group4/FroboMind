@@ -30,17 +30,20 @@ catkin_python_setup()
 #   Service1.srv
 #   Service2.srv
 # )
-add_action_files(DIRECTORY action FILES recharge.action)
 ## Generate added messages and services with any dependencies listed here
- generate_messages(
-   DEPENDENCIES
-   actionlib_msgs std_msgs
- )
 
 ###################################################
 ## Declare things to be passed to other projects ##
 ###################################################
-
+find_package(catkin REQUIRED genmsg actionlib_msgs actionlib)
+add_action_files(
+  DIRECTORY action
+  FILES recharge.action
+)
+ generate_messages(
+   DEPENDENCIES
+   actionlib_msgs std_msgs
+ )
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need

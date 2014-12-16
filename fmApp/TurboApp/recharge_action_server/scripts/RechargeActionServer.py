@@ -34,16 +34,16 @@ from recharge_action_server.msg import rechargeAction
 from dynamic_reconfigure.server import Server
 
 class RechargeActionServer():
-    def __init__(self,name):
-        # Init action server      
-        self._action_name = name
+    def __init__(self):
+        # Init action server
+        self._action_name = rospy.get_name()
         self._server = actionlib.SimpleActionServer(self._action_name, rechargeAction, auto_start=False, execute_cb=self.execute)
         
-        self.orig_footprint = "[[-0.25,-0.15],[-0.12,-0.15],[-0.12,-0.2],[0.13,-0.2],[0.13,-0.16],[0.13,-0.16],[0.22,-0.08],[0.22,-0.05],[0.22,0.05],[0.22,0.08],[0.13,0.16],[0.13,0.16],[0.13,0.2],[-0.12,0.2],[-0.12,0.15],[-0.25,0.15]]";
-        self_orig_footprintScale = 0.01;
-        self.l_footprint = "[[-0.25,-0.15],[-0.12,-0.15],[-0.12,-0.2],[1.13,-0.2],[1.13,-0.16],[1.22,-0.16],[1.31,-0.08],[1.31,-0.05],[1.35,-0.05],[1.35,0.05],[1.31,0.05],[1.31,0.08],[1.22,0.16],[1.13,0.16],[1.13,0.2],[-0.12,0.2],[-0.12,0.15],[-0.25,0.15]]";
-        self.g_footprint =" [[-0.25,-0.15],[-0.12,-0.15],[-0.12,-0.2],[0.13,-0.2],[0.13,-0.16],[0.13,-0.16],[0.22,-0.08],[0.22,-0.05],[0.22,0.05],[0.22,0.08],[0.13,0.16],[0.13,0.16],[0.13,0.2],[-0.12,0.2],[-0.12,0.15],[-0.25,0.15]]";
-        self.g_footprintScale = -0.1;
+#        self.orig_footprint = "[[-0.25,-0.15],[-0.12,-0.15],[-0.12,-0.2],[0.13,-0.2],[0.13,-0.16],[0.13,-0.16],[0.22,-0.08],[0.22,-0.05],[0.22,0.05],[0.22,0.08],[0.13,0.16],[0.13,0.16],[0.13,0.2],[-0.12,0.2],[-0.12,0.15],[-0.25,0.15]]";
+#        self_orig_footprintScale = 0.01;
+#        self.l_footprint = "[[-0.25,-0.15],[-0.12,-0.15],[-0.12,-0.2],[1.13,-0.2],[1.13,-0.16],[1.22,-0.16],[1.31,-0.08],[1.31,-0.05],[1.35,-0.05],[1.35,0.05],[1.31,0.05],[1.31,0.08],[1.22,0.16],[1.13,0.16],[1.13,0.2],[-0.12,0.2],[-0.12,0.15],[-0.25,0.15]]";
+#        self.g_footprint =" [[-0.25,-0.15],[-0.12,-0.15],[-0.12,-0.2],[0.13,-0.2],[0.13,-0.16],[0.13,-0.16],[0.22,-0.08],[0.22,-0.05],[0.22,0.05],[0.22,0.08],[0.13,0.16],[0.13,0.16],[0.13,0.2],[-0.12,0.2],[-0.12,0.15],[-0.25,0.15]]";
+#        self.g_footprintScale = -0.1;
 
         # Start the action server
         self._server.start()
@@ -74,9 +74,9 @@ class RechargeActionServer():
 
             
 if __name__ == '__main__':
+    rospy.init_node('rechargeAction')
     try:
-        rospy.init_node('rechargeAction')
-        action_server = RechargeActionServer(rospy.get_name())
+        action_server = RechargeActionServer()
         rospy.spin()
-    except rospy.exceptions.ROSInterruptException:
+    except rospy.ROSInterruptException:
         pass        

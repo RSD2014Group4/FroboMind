@@ -36,7 +36,18 @@ class PoseFromMarker():
     def poseMessage(self):
         newframe = "map"
         posemsg = PoseWithCovarianceStamped()
-        posemsg.pose = tf.TransformerROS.transformPose(newframe,self.marker_pose.pose)
+        try:
+            posemsg.pose = tf.TransformerROS.transformPose(newframe,self.marker_pose.pose)
+        except tf.ConnectivityException as ex:
+            rospy.logerr(ex)
+            raise Exception("Transform failed")
+        except tf.LookupException as ex:
+            rospy.logerr(ex)
+            raise Exception("Transform failed")
+        except tf.ExtrapolationException as ex:
+            rospy.logerr(ex)
+            raise Exception("Transform failed")
+            
         posemsg.header = self.marker_pose.header
         posemsg.header.frame_id = newframe
         return posemsg

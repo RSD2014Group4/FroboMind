@@ -606,6 +606,7 @@ class StateNavigateInLineZone(smach.State):
         self.followLineToCross()        
         self.turn90DegRight()
         self.followLineToCross()
+ 	self.followLineToCross()
         cameFromLoadOff = False
         
 
